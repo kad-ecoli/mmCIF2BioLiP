@@ -1,0 +1,123 @@
+
+#padd {
+
+        padding: 10px 10px 10px 10px;
+}
+
+
+#header {	
+	color: #FFFFFF;
+	position: relative;
+	height: 146px;
+	border-top: solid 1px #F7F1E8;
+	background:  url(images/BioLiP1.png) no-repeat  top left;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	 
+}
+
+
+#footer {
+	padding: 10px 0 15px 0;
+	text-align: center;
+	margin: 0 0 10px 0;
+
+}
+
+#footer a {
+	color: #DEDEDE;
+}
+
+
+#headerDiv, #contentDiv {
+float: left;
+width: 100%;
+}
+
+#titleText {
+float: left;
+font-size: 1.1em;
+font-weight: bold;
+margin: 5px;
+}
+#myHeader {
+font-size: 1.1em;
+font-weight: bold;
+margin: 5px;
+}
+#headerDiv {
+background-color: #FF9900;
+color:white;
+}
+
+#contentDiv {
+}
+#myContent {
+margin: 5px 10px;
+}
+#headerDiv a {
+float: right;
+margin: 10px 10px 5px 5px;
+}
+#headerDiv a:hover {
+color: #FFFFFF;
+}
+
+
+
+
+#menunav {
+	position: relative;
+
+	background: #DE2211 url(images/img04.gif) repeat-x top left;
+	font-family: Oswald, sans-serif;
+	left: 0;
+	bottom: 0;
+	
+
+	padding: 0 35px 0 35px;
+	border-top: solid 1px #FC403C;
+	border-bottom: solid 1px #B60000;
+	height: 30px;
+	margin: 0 0 0 0;
+}
+
+
+
+
+
+
+
+
+
+
+#navbar {
+	margin: 0;
+	padding: 0;
+	height: 1em; }
+#navbar li {
+	list-style: none;
+	float: left; }
+#navbar li a { 
+	display: block;
+	padding: 3px 8px;
+	
+	color: #fff;
+	text-decoration: none; }
+#navbar li ul {
+	display: none; 
+	width: 15em; /* Width to help Opera out */
+	background-color: #69f;}
+#navbar li:hover ul, #navbar li.hover ul {
+	display: block;
+	position: absolute;
+	margin: 0;
+	padding: 0; }
+#navbar li:hover li, #navbar li.hover li {
+	float: none; }
+#navbar li:hover li a, #navbar li.hover li a {
+	background-color: purple;
+	border-bottom: 1px solid #fff;
+	}
+#navbar li li a:hover {
+	background-color: #8db3ff; }
