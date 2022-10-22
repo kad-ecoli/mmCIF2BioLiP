@@ -90,6 +90,7 @@ foreach my $suffix(`ls $indir`)
 open(FP,">$outfile");
 print FP $txt;
 close(FP);
+system("gzip -f $outfile");
 exit(0);
 
 sub strip

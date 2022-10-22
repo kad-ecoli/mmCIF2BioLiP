@@ -12,4 +12,4 @@ This will download the initial set of mmCIF files for full asymetric unit to pdb
 script/rsyncLigand.sh
 script/ligand2tsv.pl
 ```
-This will download all types of ligand to pdb/refdata/chem_comp/ and extract their summary to data/ligand.tsv.
+This will download all types of ligand to pdb/refdata/chem_comp/ and extract their summary to data/ligand.tsv.gz.
