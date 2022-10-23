@@ -7,17 +7,18 @@ const char* docstring=""
 "    convert PDBx/mmCIF format input file 'input.cif' to PDB format output prefix*\n"
 "\n"
 "Ouput:\n"
-"    prefix[chainID].pdb        - protein and nucleic acid\n"
-"    prefix_res_chainID_idx.pdb - ligand\n"
-"    prefix.txt                 - citation title\n"
-"                                 pubmed ID\n"
-"                                 fasta sequence\n"
-"                                 ligand binding residues\n"
-"                                 [1] ligand filename\n"
-"                                 [2] receptor chainID\n"
-"                                 [3] idx\n"
-"                                 [4] original index of residue in contact\n"
-"                                 [5] renumber index of residue in contact\n"
+"    prefix[chainID].pdb         - protein\n"
+"    prefix_{peptide,rna,dna}_chainID_0.pdb - other polymer\n"
+"    prefix_res_chainID_[1-].pdb - ligand\n"
+"    prefix.txt                  - citation title\n"
+"                                  pubmed ID\n"
+"                                  fasta sequence\n"
+"                                  ligand binding residues\n"
+"                                  [1] ligand filename\n"
+"                                  [2] receptor chainID\n"
+"                                  [3] idx\n"
+"                                  [4] original index of residue in contact\n"
+"                                  [5] renumber index of residue in contact\n"
 ;
 
 #include <vector>
@@ -3459,6 +3460,8 @@ int cif2pdb(const string &infile, string &pdbid)
     vector<unsigned int> moltype_vec(3,0); // rna, dna, protein
     string metadata_txt=_citation_title+'\n'+_citation_pdbx_database_id_PubMed+'\n';
     vector<string> accession_vec;
+    vector<string> receptor_filename_vec;
+    vector<string> ligand_filename_vec;
     for (c0=0;c0<chainID_vec.size();c0++)
     {
         asym_id=chainID_vec[c0];
@@ -3525,12 +3528,6 @@ COLUMNS        DATA  TYPE    FIELD        DEFINITION
         if (serial)
         {
             fout_buf<<"TER"<<endl;
-            filename=pdbid+asym_id+".pdb";
-            cout<<filename<<endl;
-            fout.open(filename.c_str());
-            fout<<fout_buf.str()<<flush;
-            fout.close();
-
 
             pdbx_db_accession="";
             for (a=0;a<dbref_vec.size();a++)
@@ -3546,17 +3543,89 @@ COLUMNS        DATA  TYPE    FIELD        DEFINITION
             metadata_txt+=">"+asym_id+"\t";
             if (moltype_vec[2]>=moltype_vec[1] && moltype_vec[2]>=moltype_vec[0])
             {
-                if (sequence.size()<30) metadata_txt+="peptide\t";
-                else                    metadata_txt+="protein\t";
+                if (sequence.size()>=30)
+                {
+                    metadata_txt+="protein\t";
+                    filename=pdbid+asym_id+".pdb";
+                    receptor_filename_vec.push_back(filename);
+                }
+                else 
+                {
+                    metadata_txt+="peptide\t";
+                    filename=pdbid+"_peptide_"+asym_id+"_0.pdb";
+                    ligand_filename_vec.push_back(filename);
+                }
             }
-            else if (moltype_vec[0]>=moltype_vec[1]) metadata_txt+="rna\t";
-            else                                     metadata_txt+="dna\t";
+            else
+            {
+                if (moltype_vec[0]>=moltype_vec[1])
+                {
+                    metadata_txt+="rna\t";
+                    filename=pdbid+"_rna_"+asym_id+"_0.pdb";
+                }
+                else
+                {
+                    metadata_txt+="dna\t";
+                    filename=pdbid+"_dna_"+asym_id+"_0.pdb";
+                }
+                ligand_filename_vec.push_back(filename);
+            }
             buf<<pdbx_db_accession<<'\t'<<sequence.size()<<'\n'<<sequence<<endl;
             metadata_txt+=buf.str();
             buf.str(string());
+            
+            cout<<filename<<endl;
+            fout.open(filename.c_str());
+            fout<<fout_buf.str()<<flush;
+            fout.close();
         }
         sequence.clear();
         fout_buf.str(string());
+    }
+    
+    /* write small molecules */
+    map<string,int> ligand_dup_map;
+    for (c=0;c<pep.chains.size();c++)
+    {
+        asym_id=pep.chains[c].asym_id;
+        for (r=0;r<pep.chains[c].residues.size();r++)
+        {
+            if (pep.chains[c].residues[r].atoms.size()==0 ||
+                pep.chains[c].residues[r].het<3) continue;
+            buf<<setw(4)<<pep.chains[c].residues[r].resi
+                <<pep.chains[c].residues[r].icode;
+            resSeq=buf.str().substr(0,5);
+            buf.str(string());
+            comp_id=pep.chains[c].residues[r].resn;
+            filename=pdbid+"_"+comp_id+"_"+asym_id;
+            if (ligand_dup_map.count(filename)) ligand_dup_map[filename]++;
+            else ligand_dup_map[filename]=1;
+            buf<<filename<<'_'<<ligand_dup_map[filename]<<".pdb";
+            filename=buf.str();
+            buf.str(string());
+            for (a=0;a<pep.chains[c].residues[r].atoms.size();a++)
+            {
+                serial++;
+                fout_buf<<"HETATM"<<right<<setw(5)<<(a+1)%100000<<' '
+                    <<pep.chains[c].residues[r].atoms[a].name<<' '
+                    <<setw(3)<<comp_id.substr(0,3)
+                    <<setw(2)<<pep.chains[c].asym_id.substr(0,2)<<resSeq<<"   "
+                    <<writeDouble(pep.chains[c].residues[r].atoms[a].xyz[0],8,3)
+                    <<writeDouble(pep.chains[c].residues[r].atoms[a].xyz[1],8,3)
+                    <<writeDouble(pep.chains[c].residues[r].atoms[a].xyz[2],8,3)
+                    <<"  1.00"
+                    <<writeDouble(pep.chains[c].residues[r].atoms[a].bfactor,6,2)
+                    <<"          "
+                    <<setw(2)<<pep.chains[c].residues[r].atoms[a].element<<'\n';
+            }
+            fout_buf<<"TER"<<endl;
+            cout<<filename<<endl;
+            fout.open(filename.c_str());
+            fout<<fout_buf.str()<<flush;
+            fout.close();
+            fout_buf.str(string());
+            ligand_filename_vec.push_back(filename);
+        }
     }
 
     filename=pdbid+".txt";
@@ -3564,6 +3633,24 @@ COLUMNS        DATA  TYPE    FIELD        DEFINITION
     fout.open(filename.c_str());
     fout<<metadata_txt<<flush;
     fout.close();
+
+    /* compress file */
+    line="tar -czf "+pdbid+".tar.gz "+
+         Join(" ",receptor_filename_vec)+" "+
+         Join(" ",ligand_filename_vec)+" "+filename;
+    i=system(line.c_str());
+    ifstream fp((pdbid+".tar.gz").c_str());
+    if (fp.good())
+    {
+        line="del ";
+#if defined(REDI_PSTREAM_H_SEEN)
+        line="rm ";
+#endif
+        line+=Join(" ",receptor_filename_vec)+" "+
+              Join(" ",ligand_filename_vec);
+        i=system(line.c_str());
+        fp.close();
+    }
 
     /* clean up */
     filename.clear();
@@ -3590,6 +3677,8 @@ COLUMNS        DATA  TYPE    FIELD        DEFINITION
     
     moltype_vec.clear();
     metadata_txt.clear();
+    vector<string>().swap(receptor_filename_vec);
+    vector<string>().swap(ligand_filename_vec);
     return 0;
 }
 
