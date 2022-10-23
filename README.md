@@ -9,7 +9,6 @@ This will download the initial set of mmCIF files for full asymetric unit to pdb
 
 ### Step 1: Generate table for each type of ligand ###
 ```bash
-script/rsyncLigand.sh
-script/ligand2tsv.pl
+script/download_ligand.pl
 ```
-This will download all types of ligand to pdb/refdata/chem_comp/ and extract their summary to data/ligand.tsv.gz.
+This will download CCD ligand to pdb/data/monomers/components.cif.gz and extract their summary to data/ligand.tsv.gz.
