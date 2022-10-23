@@ -54,7 +54,6 @@ struct ResidueUnit
 struct ChainUnit
 {
     string asym_id;
-    int mol_type;
     vector<ResidueUnit> residues;
 };
 
@@ -93,6 +92,108 @@ void deepClean(ModelUnit &pep)
     pep.chains.clear();
 }
 
+void make_stdres(map<string,vector<string>> &stdres_dict)
+{
+    stdres_dict["ALA"]={" N  "," CA "," C  "," O  "," CB "};
+    stdres_dict["CYS"]={" N  "," CA "," C  "," O  "," CB "," SG "};
+    stdres_dict["ASP"]={" N  "," CA "," C  "," O  "," CB "," CG "," OD1",
+                        " OD2"};
+    stdres_dict["GLU"]={" N  "," CA "," C  "," O  "," CB "," CG "," CD ",
+                        " OE1", " OE2"};
+    stdres_dict["PHE"]={" N  "," CA "," C  "," O  "," CB "," CG "," CD1",
+                        " CD2"," CE1"," CE2"," CZ "};
+    stdres_dict["GLY"]={" N  "," CA "," C  "," O  "};
+    stdres_dict["HIS"]={" N  "," CA "," C  "," O  "," CB "," CG "," ND1",
+                        " CD2"," CE1"," NE2"};
+    stdres_dict["ILE"]={" N  "," CA "," C  "," O  "," CB "," CG1"," CG2",
+                        " CD1"};
+    stdres_dict["LYS"]={" N  "," CA "," C  "," O  "," CB "," CG "," CD ",
+                        " CE "," NZ "};
+    stdres_dict["LEU"]={" N  "," CA "," C  "," O  "," CB "," CG "," CD1",
+                        " CD2"};
+    stdres_dict["MET"]={" N  "," CA "," C  "," O  "," CB "," CG "," SD ",
+                        " CE "};
+    stdres_dict["ASN"]={" N  "," CA "," C  "," O  "," CB "," CG "," OD1",
+                        " ND2"};
+    stdres_dict["PRO"]={" N  "," CA "," C  "," O  "," CB "," CG "," CD "};
+    stdres_dict["GLN"]={" N  "," CA "," C  "," O  "," CB "," CG "," CD ",
+                        " OE1"," NE2"};
+    stdres_dict["ARG"]={" N  "," CA "," C  "," O  "," CB "," CG "," CD ",
+                        " NE "," CZ "," NH1"," NH2"};
+    stdres_dict["SER"]={" N  "," CA "," C  "," O  "," CB "," OG "};
+    stdres_dict["THR"]={" N  "," CA "," C  "," O  "," CB "," OG1"," CG2"};
+    stdres_dict["VAL"]={" N  "," CA "," C  "," O  "," CB "," CG1"," CG2"};
+    stdres_dict["TRP"]={" N  "," CA "," C  "," O  "," CB "," CG "," CD1",
+                        " CD2"," NE1"," CE2"," CE3"," CZ2"," CZ3"," CH2"};
+    stdres_dict["TYR"]={" N  "," CA "," C  "," O  "," CB "," CG "," CD1",
+                        " CD2"," CE1"," CE2"," CZ "," OH "};
+
+    stdres_dict["DA"] ={" P  "," OP1"," OP2"," O5'"," C5'"," C4'"," O4'",
+                        " C3'"," O3'"," C2'"," C1'"," N9 "," C8 "," N7 ",
+                        " C5 "," C6 "," N6 "," N1 "," C2 "," N3 "," C4 "};
+    stdres_dict["DC"] ={" P  "," OP1"," OP2"," O5'"," C5'"," C4'"," O4'",
+                        " C3'"," O3'"," C2'"," C1'"," N1 "," C2 "," O2 ",
+                        " N3 "," C4 "," N4 "," C5 "," C6 "};
+    stdres_dict["DG"] ={" P  "," OP1"," OP2"," O5'"," C5'"," C4'"," O4'",
+                        " C3'"," O3'"," C2'"," C1'"," N9 "," C8 "," N7 ",
+                        " C5 "," C6 "," O6 "," N1 "," C2 "," N2 "," N3 ",
+                        " C4 "};
+    stdres_dict["DT"] ={" P  "," OP1"," OP2"," O5'"," C5'"," C4'"," O4'",
+                        " C3'"," O3'"," C2'"," C1'"," N1 "," C2 "," O2 ",
+                        " N3 "," C4 "," O4 "," C5 "," C7 "," C6 "};
+
+    stdres_dict["A"]  ={" P  "," OP1"," OP2"," O5'"," C5'"," C4'"," O4'",
+                        " C3'"," O3'"," C2'"," O2'"," C1'"," N9 "," C8 ",
+                        " N7 "," C5 "," C6 "," N6 "," N1 "," C2 "," N3 ",
+                        " C4 "};
+    stdres_dict["C"]  ={" P  "," OP1"," OP2"," O5'"," C5'"," C4'"," O4'",
+                        " C3'"," O3'"," C2'"," O2'"," C1'"," N1 "," C2 ",
+                        " O2 "," N3 "," C4 "," N4 "," C5 "," C6 "};
+    stdres_dict["G"]  ={" P  "," OP1"," OP2"," O5'"," C5'"," C4'"," O4'",
+                        " C3'"," O3'"," C2'"," O2'"," C1'"," N9 "," C8 ",
+                        " N7 "," C5 "," C6 "," O6 "," N1 "," C2 "," N2 ",
+                        " N3 ", " C4 "};
+    stdres_dict["U"]  ={" P  "," OP1"," OP2"," O5'"," C5'"," C4'"," O4'",
+                        " C3'"," O3'"," C2'"," O2'"," C1'"," N1 "," C2 ",
+                        " O2 "," N3 "," C4 "," O4 "," C5 "," C6 "};
+}
+
+
+string map_stdres(const string &comp_id,ResidueUnit &residue,
+    map<string,vector<string>> &stdres_dict)
+{
+    if (stdres_dict.count(comp_id)) return comp_id;
+    map<string, vector<string> >::iterator it;
+    double maxTC=0;
+    string maxKey="UNK";
+    string key;
+    int TP,FP;
+    size_t a;
+    double TC;
+
+    for (it = stdres_dict.begin(); it != stdres_dict.end(); it++)
+    {
+        TP=FP=0;
+        key=it->first;
+        for (a=0;a<residue.atoms.size();a++)
+        {
+            if (find(stdres_dict[key].begin(),stdres_dict[key].end(),
+                residue.atoms[a].name)==stdres_dict[key].end())
+                FP++;
+            else TP++;
+        }
+        TC=1.*TP/(FP+stdres_dict[key].size());
+        if (TC>=maxTC)
+        {
+            maxKey=key;
+            maxTC=TC;
+        }
+    }
+    key.clear();
+    return maxKey;
+}
+
+/* PDBParser END */
 /* StringTools START */
 string Upper(const string &inputString)
 {
@@ -2584,8 +2685,10 @@ int read_semi_colon(vector<string> &line_vec, const int fields, int l,
 
 inline char aa3to1(const string resn)
 {
-    if (resn[0]==' ') return tolower(resn[2]);
-    else if (resn=="PSU") return 'u';
+    if (resn.size()==1)      return tolower(resn[0]);
+    else if (resn.size()==2) return tolower(resn[1]);
+    else if (resn[0]==' ')   return tolower(resn[2]);
+    else if (resn=="PSU")    return 'u';
 
     // 20 standard amino acid + MSE
     else if (resn=="ALA") return 'A';
@@ -2957,8 +3060,10 @@ int cif2pdb(const string &infile, string &pdbid)
     map<string,int> _citation;
     map<string,int> _atom_site;
     map<string,int> _struct_ref_seq;
-    string _citation_title="";
-    string _citation_pdbx_database_id_PubMed="";
+    map<string,int> _pdbx_struct_mod_residue;
+    string _citation_title="?";
+    string _citation_pdbx_database_id_PubMed="?";
+    string parent_comp_id="";
 
     string group_PDB  =""; // (ATOM/HETATM)
     string type_symbol="";    // (element symbol)
@@ -2996,6 +3101,11 @@ int cif2pdb(const string &infile, string &pdbid)
     
     ModelUnit pep;
 
+    map<string,vector<string>> stdres_dict;
+    make_stdres(stdres_dict);
+    map<string,string> modres_dict;
+    modres_dict["MSE"]="MET"; modres_dict["SEC"]="CYS"; modres_dict["PYL"]="LYS"; 
+    modres_dict["PSU"]="U";   modres_dict["I"]="A";
 
     size_t l;
     size_t a,c,r;
@@ -3018,9 +3128,16 @@ int cif2pdb(const string &infile, string &pdbid)
                 dbref_vec.push_back(make_pair(asym_id,pdbx_db_accession));
                 pdbx_db_accession.clear();
             }
+            if (parent_comp_id.size() && comp_id.size())
+            {
+                modres_dict[comp_id]=parent_comp_id;
+                parent_comp_id.clear();
+                comp_id.clear();
+            }
             _citation.clear();
             _atom_site.clear();
             _struct_ref_seq.clear();
+            _pdbx_struct_mod_residue.clear();
             loop_=false;
         }
         else if (line_vec.size()==1 && line_vec[0]=="loop_")
@@ -3085,8 +3202,7 @@ int cif2pdb(const string &infile, string &pdbid)
                     _citation_pdbx_database_id_PubMed=line_vec[1];
             }
         }
-        else if (_citation.size() && (_citation.count("title")==0 ||
-                 line_vec[_citation["id"]]=="pdbx_database_id_PubMed"))
+        else if (_citation.size())
         {
             l=read_semi_colon(line_vec, _citation.size(),
                 l, lines, line_append_vec, line,false,true);
@@ -3095,6 +3211,44 @@ int cif2pdb(const string &infile, string &pdbid)
             if (_citation.count("pdbx_database_id_PubMed"))
                 _citation_pdbx_database_id_PubMed=line_vec[
                 _citation["pdbx_database_id_PubMed"]];
+        }
+        else if (StartsWith(line,"_pdbx_struct_mod_residue."))
+        {
+            if (loop_)
+            {
+                line=line_vec[0];
+                clear_line_vec(line_vec);
+                Split(line,line_vec,'.');
+                if (line_vec.size()>1)
+                {
+                    j=_pdbx_struct_mod_residue.size();
+                    line=line_vec[1];
+                    _pdbx_struct_mod_residue[line]=j;
+                }
+            }
+            else
+            {
+                l=read_semi_colon(line_vec, 2, l, lines, line_append_vec, line,false,true);
+                if      (line_vec[0]=="_pdbx_struct_mod_residue.label_comp_id")
+                    comp_id=Trim(line_vec[1],"\"");
+                else if (comp_id.size()==0 &&
+                        line_vec[0]=="_pdbx_struct_mod_residue.auth_comp_id")
+                    comp_id=Trim(line_vec[1],"\"");
+                else if (line_vec[0]=="_pdbx_struct_mod_residue.parent_comp_id")
+                    parent_comp_id=Trim(line_vec[1],"\"");
+            }
+        }
+        else if (_pdbx_struct_mod_residue.size() && 
+                 _pdbx_struct_mod_residue.count("parent_comp_id"))
+        {
+            l=read_semi_colon(line_vec, _pdbx_struct_mod_residue.size(),
+                l, lines, line_append_vec, line,false,true);
+            if (_pdbx_struct_mod_residue.count("label_comp_id"))
+                comp_id=Trim(line_vec[_pdbx_struct_mod_residue["label_comp_id"]],"\"");
+            else if (_pdbx_struct_mod_residue.count("auth_comp_id"))
+                comp_id=Trim(line_vec[_pdbx_struct_mod_residue["auth_comp_id"]],"\"");
+            parent_comp_id=Trim(line_vec[_pdbx_struct_mod_residue["parent_comp_id"]],"\"");
+            modres_dict[comp_id]=parent_comp_id;
         }
         else if (StartsWith(line,"_atom_site."))
         {
@@ -3185,7 +3339,7 @@ int cif2pdb(const string &infile, string &pdbid)
 
             if (_atom_site.count("B_iso_or_equiv"))
                 B_iso_or_equiv=ReadDouble(line_vec[_atom_site["B_iso_or_equiv"]],2);
-
+            
             if (_atom_site.count("auth_alt_id"))
                 alt_id=line_vec[_atom_site["auth_alt_id"]];
             else if (_atom_site.count("label_alt_id"))
@@ -3235,14 +3389,14 @@ int cif2pdb(const string &infile, string &pdbid)
                 residue.resi=seq_id;
                 residue.icode=pdbx_PDB_ins_code[0];
                 residue.resn=comp_id;
-                if (group_PDB=="ATOM") residue.het=1;
+                if (group_PDB=="ATOM") het=1;
                 else if (group_PDB=="HETATM")
                 {
-                    residue.het=3;
+                    het=3;
                     if (_atom_site.count("label_seq_id") && 
-                        line_vec[_atom_site["label_seq_id"]]!=".")
-                        residue.het=2;
+                        line_vec[_atom_site["label_seq_id"]]!=".") het=2;
                 }
+                residue.het=het;
             }
 
             atom.name=atom_id;
@@ -3292,8 +3446,7 @@ int cif2pdb(const string &infile, string &pdbid)
             chainID_vec.end()) continue;
         chainID_vec.push_back(asym_id);
     }
-    /* TODO: map modified residues to standard residue */
-    /* TODO: check molecule type */
+    
 
     /* write macromolecules */
     ofstream fout;
@@ -3302,10 +3455,15 @@ int cif2pdb(const string &infile, string &pdbid)
     string resSeq;
     stringstream fout_buf;
     size_t c0;
+    string sequence;
+    vector<unsigned int> moltype_vec(3,0); // rna, dna, protein
+    string metadata_txt=_citation_title+'\n'+_citation_pdbx_database_id_PubMed+'\n';
+    vector<string> accession_vec;
     for (c0=0;c0<chainID_vec.size();c0++)
     {
         asym_id=chainID_vec[c0];
         serial=0;
+        moltype_vec[0]=moltype_vec[1]=moltype_vec[2]=0;
         for (c=0;c<pep.chains.size();c++)
         {
             if (asym_id!=pep.chains[c].asym_id) continue;
@@ -3334,14 +3492,26 @@ COLUMNS        DATA  TYPE    FIELD        DEFINITION
                 buf<<setw(4)<<pep.chains[c].residues[r].resi
                     <<pep.chains[c].residues[r].icode;
                 resSeq=buf.str().substr(0,5);
+                comp_id=pep.chains[c].residues[r].resn;
+                if (stdres_dict.count(comp_id)==0)
+                {
+                    if (modres_dict.count(comp_id)) 
+                        comp_id=modres_dict[comp_id];
+                    else comp_id=map_stdres(comp_id,
+                        pep.chains[c].residues[r],stdres_dict);
+                }
+                sequence+=aa3to1(comp_id);
+                if (comp_id.substr(0,2)=="  ") moltype_vec[0]++;
+                else if (comp_id.substr(0,2)==" D") moltype_vec[1]++;
+                else moltype_vec[comp_id.size()-1]++;
                 buf.str(string());
                 for (a=0;a<pep.chains[c].residues[r].atoms.size();a++)
                 {
                     serial++;
                     fout_buf<<"ATOM  "<<right<<setw(5)<<serial%100000<<' '
                         <<pep.chains[c].residues[r].atoms[a].name<<' '
-                        <<pep.chains[c].residues[r].resn.substr(0,3)
-                        <<' '<<pep.chains[c].asym_id[0]<<resSeq<<"   "
+                        <<setw(3)<<comp_id.substr(0,3)
+                        <<setw(2)<<pep.chains[c].asym_id.substr(0,2)<<resSeq<<"   "
                         <<writeDouble(pep.chains[c].residues[r].atoms[a].xyz[0],8,3)
                         <<writeDouble(pep.chains[c].residues[r].atoms[a].xyz[1],8,3)
                         <<writeDouble(pep.chains[c].residues[r].atoms[a].xyz[2],8,3)
@@ -3360,10 +3530,40 @@ COLUMNS        DATA  TYPE    FIELD        DEFINITION
             fout.open(filename.c_str());
             fout<<fout_buf.str()<<flush;
             fout.close();
+
+
+            pdbx_db_accession="";
+            for (a=0;a<dbref_vec.size();a++)
+            {
+                if (dbref_vec[a].first!=asym_id) continue;
+                pdbx_db_accession=dbref_vec[a].second;
+                if (find(accession_vec.begin(),accession_vec.end(),
+                    pdbx_db_accession)!=accession_vec.end()) continue;
+                accession_vec.push_back(pdbx_db_accession);
+            }
+            pdbx_db_accession=Join(",",accession_vec);
+            clear_line_vec(accession_vec);
+            metadata_txt+=">"+asym_id+"\t";
+            if (moltype_vec[2]>=moltype_vec[1] && moltype_vec[2]>=moltype_vec[0])
+            {
+                if (sequence.size()<30) metadata_txt+="peptide\t";
+                else                    metadata_txt+="protein\t";
+            }
+            else if (moltype_vec[0]>=moltype_vec[1]) metadata_txt+="rna\t";
+            else                                     metadata_txt+="dna\t";
+            buf<<pdbx_db_accession<<'\t'<<sequence.size()<<'\n'<<sequence<<endl;
+            metadata_txt+=buf.str();
+            buf.str(string());
         }
+        sequence.clear();
         fout_buf.str(string());
     }
 
+    filename=pdbid+".txt";
+    cout<<filename<<endl;
+    fout.open(filename.c_str());
+    fout<<metadata_txt<<flush;
+    fout.close();
 
     /* clean up */
     filename.clear();
@@ -3385,6 +3585,11 @@ COLUMNS        DATA  TYPE    FIELD        DEFINITION
     line.clear();
     vector<string>().swap(lines);
     vector<string>().swap(chainID_vec);
+    map<string,vector<string>>().swap(stdres_dict);
+    map<string,string>().swap(modres_dict);
+    
+    moltype_vec.clear();
+    metadata_txt.clear();
     return 0;
 }
 
