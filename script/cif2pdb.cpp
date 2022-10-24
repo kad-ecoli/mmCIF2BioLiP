@@ -3156,12 +3156,19 @@ inline bool atom2contact(const vector<double>&atom2,
     double dx,dy,dz;
     size_t a;
     double distance;
+    //const double dmax1=6;  // (2.75+2.75+0.5)
+    //const double dmax2=36; // dmax1^2
     for (a=0;a<ligand_vec.size();a++)
     {
         dx=atom2[0]-ligand_vec[a][0];
+        if (dx>6) continue;
         dy=atom2[1]-ligand_vec[a][1];
+        if (dy>6) continue;
         dz=atom2[2]-ligand_vec[a][2];
-        distance=sqrt(dx*dx+dy*dy+dz*dz);
+        if (dz>6) continue;
+        distance=dx*dx+dy*dy+dz*dz;
+        if (distance>36) continue;
+        distance=sqrt(distance);
         if (1<distance && distance<=atom2[3]+ligand_vec[a][3]+0.5)
             return true;
     }
@@ -3332,8 +3339,8 @@ int cif2pdb(const string &infile, string &pdbid,
     map<string,vector<string>> stdres_dict;
     make_stdres(stdres_dict);
     map<string,string> modres_dict;
-    modres_dict["MSE"]="MET"; modres_dict["SEC"]="CYS"; modres_dict["PYL"]="LYS"; 
-    modres_dict["PSU"]="U";   modres_dict["I"]="A";
+    modres_dict["MSE"]="MET"; modres_dict["SEC"]="CYS";
+    modres_dict["PYL"]="LYS"; modres_dict["PSU"]="U"; modres_dict["I"]="A";
 
     size_t l;
     size_t a,c,r;
