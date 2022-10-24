@@ -3034,46 +3034,76 @@ int cif2fasta(const string &infile, string &pdbid, const int do_upper,
 
 void make_vdw(map<string,double> &vdw_dict)
 {
-    vdw_dict["H"] =1.20; vdw_dict["He"]=1.40; vdw_dict["Li"]=1.82;
-    vdw_dict["Be"]=1.53; vdw_dict["B"] =1.92; vdw_dict["C"] =1.70;
-    vdw_dict["N"] =1.55; vdw_dict["O"] =1.52; vdw_dict["F"] =1.47;
-    vdw_dict["Ne"]=1.54; vdw_dict["Na"]=2.27; vdw_dict["Mg"]=1.73;
-    vdw_dict["Al"]=1.84; vdw_dict["Si"]=2.10; vdw_dict["P"] =1.80;
-    vdw_dict["S"] =1.80; vdw_dict["Cl"]=1.75; vdw_dict["Ar"]=1.88;
-    vdw_dict["K"] =2.75; vdw_dict["Ca"]=2.31; vdw_dict["Sc"]=2.11;
-    vdw_dict["Ti"]=2.46; vdw_dict["V"] =2.42; vdw_dict["Cr"]=2.45;
-    vdw_dict["Mn"]=2.45; vdw_dict["Fe"]=2.44; vdw_dict["Co"]=2.40;
-    vdw_dict["Ni"]=1.63; vdw_dict["Cu"]=1.40; vdw_dict["Zn"]=1.39;
-    vdw_dict["Ga"]=1.87; vdw_dict["Ge"]=2.11; vdw_dict["As"]=1.85;
-    vdw_dict["Se"]=1.90; vdw_dict["Br"]=1.85; vdw_dict["Kr"]=2.02;
-    vdw_dict["Rb"]=3.03; vdw_dict["Sr"]=2.49; vdw_dict["Y"] =2.75;
-    vdw_dict["Zr"]=2.52; vdw_dict["Nb"]=2.56; vdw_dict["Mo"]=2.45;
-    vdw_dict["Tc"]=2.44; vdw_dict["Ru"]=2.46; vdw_dict["Rh"]=2.44;
-    vdw_dict["Pd"]=1.63; vdw_dict["Ag"]=1.72; vdw_dict["Cd"]=1.58;
-    vdw_dict["In"]=1.93; vdw_dict["Sn"]=2.17; vdw_dict["Sb"]=2.06;
-    vdw_dict["Te"]=2.06; vdw_dict["I"] =1.98; vdw_dict["Xe"]=2.16;
-    vdw_dict["Cs"]=3.43; vdw_dict["Ba"]=2.68; vdw_dict["Lu"]=2.63;
-    vdw_dict["Hf"]=2.53; vdw_dict["Ta"]=2.57; vdw_dict["W"] =2.49;
-    vdw_dict["Re"]=2.48; vdw_dict["Os"]=2.41; vdw_dict["Ir"]=2.29;
-    vdw_dict["Pt"]=1.75; vdw_dict["Au"]=1.66; vdw_dict["Hg"]=1.55;
-    vdw_dict["Tl"]=1.96; vdw_dict["Pb"]=2.02; vdw_dict["Bi"]=2.07;
-    vdw_dict["Po"]=1.97; vdw_dict["At"]=2.02; vdw_dict["Rn"]=2.20;
-    vdw_dict["Fr"]=3.48; vdw_dict["Ra"]=2.83; vdw_dict["La"]=2.98;
-    vdw_dict["Ce"]=2.88; vdw_dict["Pr"]=2.92; vdw_dict["Nd"]=2.95;
-    vdw_dict["Pm"]=2.90; vdw_dict["Sm"]=2.87; vdw_dict["Eu"]=2.83;
-    vdw_dict["Gd"]=2.79; vdw_dict["Tb"]=2.87; vdw_dict["Dy"]=2.81;
-    vdw_dict["Ho"]=2.83; vdw_dict["Er"]=2.79; vdw_dict["Tm"]=2.80;
-    vdw_dict["Yb"]=2.74; vdw_dict["Ac"]=2.83; vdw_dict["Th"]=3.05;
-    vdw_dict["Pa"]=3.40; vdw_dict["U"] =1.86; vdw_dict["Np"]=2.70;
-    
-    map<string, double>::iterator it;
-    string key;
-    for (it = vdw_dict.begin(); it != vdw_dict.end(); it++)
-    {
-        key=it->first;
-        if (Upper(key)!=key) vdw_dict[Upper(key)]=vdw_dict[key];
-    }
-    key.clear();
+    vdw_dict["AC"]=2.00; vdw_dict["Ac"]=2.00; vdw_dict["AG"]=1.72;
+    vdw_dict["Ag"]=1.72; vdw_dict["AL"]=2.00; vdw_dict["Al"]=2.00;
+    vdw_dict["AM"]=2.00; vdw_dict["Am"]=2.00; vdw_dict["AR"]=1.88;
+    vdw_dict["Ar"]=1.88; vdw_dict["AS"]=1.85; vdw_dict["As"]=1.85;
+    vdw_dict["AT"]=2.00; vdw_dict["At"]=2.00; vdw_dict["AU"]=1.66;
+    vdw_dict["Au"]=1.66; vdw_dict["B" ]=2.00; vdw_dict["BA"]=2.00;
+    vdw_dict["Ba"]=2.00; vdw_dict["BE"]=2.00; vdw_dict["Be"]=2.00;
+    vdw_dict["BH"]=2.00; vdw_dict["Bh"]=2.00; vdw_dict["BI"]=2.00;
+    vdw_dict["Bi"]=2.00; vdw_dict["BK"]=2.00; vdw_dict["Bk"]=2.00;
+    vdw_dict["Br"]=1.85; vdw_dict["BR"]=1.85; vdw_dict["C" ]=1.70;
+    vdw_dict["CA"]=2.00; vdw_dict["Ca"]=2.00; vdw_dict["CD"]=1.58;
+    vdw_dict["Cd"]=1.58; vdw_dict["CE"]=2.00; vdw_dict["Ce"]=2.00;
+    vdw_dict["CF"]=2.00; vdw_dict["Cf"]=2.00; vdw_dict["CL"]=1.75;
+    vdw_dict["Cl"]=1.75; vdw_dict["CM"]=2.00; vdw_dict["Cm"]=2.00;
+    vdw_dict["CO"]=2.00; vdw_dict["Co"]=2.00; vdw_dict["CR"]=2.00;
+    vdw_dict["Cr"]=2.00; vdw_dict["CS"]=2.00; vdw_dict["Cs"]=2.00;
+    vdw_dict["CU"]=1.40; vdw_dict["Cu"]=1.40; vdw_dict["DB"]=2.00;
+    vdw_dict["Db"]=2.00; vdw_dict["DS"]=2.00; vdw_dict["Ds"]=2.00;
+    vdw_dict["DY"]=2.00; vdw_dict["Dy"]=2.00; vdw_dict["ER"]=2.00;
+    vdw_dict["Er"]=2.00; vdw_dict["ES"]=2.00; vdw_dict["Es"]=2.00;
+    vdw_dict["EU"]=2.00; vdw_dict["Eu"]=2.00; vdw_dict["F" ]=1.47;
+    vdw_dict["Fe"]=2.00; vdw_dict["FE"]=2.00; vdw_dict["FM"]=2.00;
+    vdw_dict["Fm"]=2.00; vdw_dict["Fr"]=2.00; vdw_dict["FR"]=2.00;
+    vdw_dict["GA"]=1.87; vdw_dict["Ga"]=1.87; vdw_dict["H" ]=1.09;
+    vdw_dict["GD"]=2.00; vdw_dict["Gd"]=2.00; vdw_dict["GE"]=2.00;
+    vdw_dict["Ge"]=2.00; vdw_dict["HE"]=1.40; vdw_dict["He"]=1.40;
+    vdw_dict["HF"]=2.00; vdw_dict["Hf"]=2.00; vdw_dict["HG"]=1.55;
+    vdw_dict["Hg"]=1.55; vdw_dict["HO"]=2.00; vdw_dict["Ho"]=2.00;
+    vdw_dict["HS"]=2.00; vdw_dict["Hs"]=2.00; vdw_dict["I" ]=1.98;
+    vdw_dict["K" ]=2.75; vdw_dict["IN"]=1.93; vdw_dict["In"]=1.93;
+    vdw_dict["IR"]=2.00; vdw_dict["Ir"]=2.00; vdw_dict["KR"]=2.02;
+    vdw_dict["Kr"]=2.02; vdw_dict["LA"]=2.00; vdw_dict["La"]=2.00;
+    vdw_dict["LI"]=1.82; vdw_dict["Li"]=1.82; vdw_dict["LR"]=1.50;
+    vdw_dict["Lr"]=1.50; vdw_dict["LU"]=2.00; vdw_dict["Lu"]=2.00;
+    vdw_dict["MD"]=2.00; vdw_dict["Md"]=2.00; vdw_dict["MG"]=1.73;
+    vdw_dict["Mg"]=1.73; vdw_dict["MN"]=2.00; vdw_dict["Mn"]=2.00;
+    vdw_dict["MO"]=2.00; vdw_dict["Mo"]=2.00; vdw_dict["MT"]=2.00;
+    vdw_dict["Mt"]=2.00; vdw_dict["N" ]=1.55; vdw_dict["O" ]=1.52;
+    vdw_dict["NA"]=2.27; vdw_dict["Na"]=2.27; vdw_dict["NB"]=2.00;
+    vdw_dict["Nb"]=2.00; vdw_dict["ND"]=2.00; vdw_dict["Nd"]=2.00;
+    vdw_dict["NE"]=1.54; vdw_dict["Ne"]=1.54; vdw_dict["NI"]=1.63;
+    vdw_dict["Ni"]=1.63; vdw_dict["NO"]=2.00; vdw_dict["No"]=2.00;
+    vdw_dict["NP"]=2.00; vdw_dict["Np"]=2.00; vdw_dict["OS"]=2.00;
+    vdw_dict["Os"]=2.00; vdw_dict["P" ]=1.80; vdw_dict["S" ]=1.80;
+    vdw_dict["PA"]=2.00; vdw_dict["Pa"]=2.00; vdw_dict["PB"]=2.02;
+    vdw_dict["Pb"]=2.02; vdw_dict["PD"]=1.63; vdw_dict["Pd"]=1.63;
+    vdw_dict["PM"]=2.00; vdw_dict["Pm"]=2.00; vdw_dict["PO"]=2.00;
+    vdw_dict["Po"]=2.00; vdw_dict["PR"]=2.00; vdw_dict["Pr"]=2.00;
+    vdw_dict["PT"]=1.72; vdw_dict["Pt"]=1.72; vdw_dict["PU"]=2.00;
+    vdw_dict["Pu"]=2.00; vdw_dict["RA"]=2.00; vdw_dict["Ra"]=2.00;
+    vdw_dict["RB"]=2.00; vdw_dict["Rb"]=2.00; vdw_dict["RE"]=2.00;
+    vdw_dict["Re"]=2.00; vdw_dict["RF"]=2.00; vdw_dict["Rf"]=2.00;
+    vdw_dict["RH"]=2.00; vdw_dict["Rh"]=2.00; vdw_dict["RN"]=2.00;
+    vdw_dict["Rn"]=2.00; vdw_dict["RU"]=2.00; vdw_dict["Ru"]=2.00;
+    vdw_dict["SB"]=2.00; vdw_dict["Sb"]=2.00; vdw_dict["SC"]=2.00;
+    vdw_dict["Sc"]=2.00; vdw_dict["SE"]=1.90; vdw_dict["Se"]=1.90;
+    vdw_dict["SG"]=2.00; vdw_dict["Sg"]=2.00; vdw_dict["SI"]=2.10;
+    vdw_dict["Si"]=2.10; vdw_dict["SM"]=2.00; vdw_dict["Sm"]=2.00;
+    vdw_dict["SN"]=2.17; vdw_dict["Sn"]=2.17; vdw_dict["SR"]=2.00;
+    vdw_dict["Sr"]=2.00; vdw_dict["TA"]=2.00; vdw_dict["Ta"]=2.00;
+    vdw_dict["TB"]=2.00; vdw_dict["Tb"]=2.00; vdw_dict["TC"]=2.00;
+    vdw_dict["Tc"]=2.00; vdw_dict["TE"]=2.06; vdw_dict["Te"]=2.06;
+    vdw_dict["TH"]=2.00; vdw_dict["Th"]=2.00; vdw_dict["TI"]=2.00;
+    vdw_dict["Ti"]=2.00; vdw_dict["TL"]=1.96; vdw_dict["Tl"]=1.96;
+    vdw_dict["TM"]=2.00; vdw_dict["U" ]=1.86; vdw_dict["V" ]=2.00;
+    vdw_dict["W" ]=2.00; vdw_dict["XE"]=2.16; vdw_dict["Xe"]=2.16;
+    vdw_dict["YB"]=2.00; vdw_dict["Yb"]=2.00; vdw_dict["ZN"]=1.39;
+    vdw_dict["Zn"]=1.39; vdw_dict["ZR"]=2.00; vdw_dict["Zr"]=2.00;
+    vdw_dict["Y" ]=2.00; vdw_dict["D" ]=1.00; vdw_dict["XD"]=1.09;
+    vdw_dict["O" ]=1.52;
 }
 
 
@@ -3125,13 +3155,14 @@ inline bool atom2contact(const vector<double>&atom2,
 {
     double dx,dy,dz;
     size_t a;
+    double distance;
     for (a=0;a<ligand_vec.size();a++)
     {
         dx=atom2[0]-ligand_vec[a][0];
         dy=atom2[1]-ligand_vec[a][1];
         dz=atom2[2]-ligand_vec[a][2];
-        //if (sqrt(dx*dx+dy*dy+dz*dz)<=atom2[3]+ligand_vec[a][3]+0.5)
-        if (sqrt(dx*dx+dy*dy+dz*dz)<=atom2[3]+ligand_vec[a][3])
+        distance=sqrt(dx*dx+dy*dy+dz*dz);
+        if (1<distance && distance<=atom2[3]+ligand_vec[a][3]+0.5)
             return true;
     }
     return false;
@@ -3140,7 +3171,8 @@ inline bool atom2contact(const vector<double>&atom2,
 void getContact(const vector<vector<double> >&ligand_vec, 
     const string &asym_id,const string &comp_id,const size_t ligIdx,
     ModelUnit &pep,const vector<string> &protein_vec,
-    map<string,double> &vdw_dict, string &metadata_txt)
+    map<string,double> &vdw_dict, string &metadata_txt,
+    const bool artifact=false)
 {
     string asym_receptor;
     vector<double> atom2(4,0);
@@ -3163,7 +3195,7 @@ void getContact(const vector<vector<double> >&ligand_vec,
                 if (vdw_dict.count(pep.chains[c].residues[r].atoms[a].element))
                     atom2[3]=vdw_dict[
                         pep.chains[c].residues[r].atoms[a].element];
-                else atom2[3]=vdw_dict["C"];
+                else atom2[3]=1.75;
                 
                 if (atom2contact(atom2,ligand_vec))
                 {
@@ -3173,6 +3205,18 @@ void getContact(const vector<vector<double> >&ligand_vec,
             }
         }
         if (resi_vec.size()==0) continue;
+        if (artifact)
+        {
+            if (resi_vec.size()<=1) continue;
+            bool consecutive=true;
+            for (a=1;a<resi_vec.size();a++)
+            {
+                if (resi_vec[a]-resi_vec[a-1]==1) continue;
+                consecutive=false;
+                break;
+            }
+            if (consecutive) continue;
+        }
         metadata_txt+=asym_receptor+'\t'+comp_id+"\t"+asym_id+"\t";
         buf<<ligIdx<<"\t";
         for (a=0;a<resi_vec.size();a++)
@@ -3797,7 +3841,7 @@ COLUMNS        DATA  TYPE    FIELD        DEFINITION
                     if (vdw_dict.count(pep.chains[c].residues[r].atoms[a].element))
                         tmp_vec[3]=vdw_dict[
                             pep.chains[c].residues[r].atoms[a].element];
-                    else tmp_vec[3]=vdw_dict["C"];
+                    else tmp_vec[3]=2.00;
                     ligand_vec.push_back(tmp_vec);
                 }
             }
@@ -3860,11 +3904,14 @@ COLUMNS        DATA  TYPE    FIELD        DEFINITION
                 if (vdw_dict.count(pep.chains[c].residues[r].atoms[a].element))
                     tmp_vec[3]=vdw_dict[
                         pep.chains[c].residues[r].atoms[a].element];
-                else tmp_vec[3]=vdw_dict["C"];
+                else tmp_vec[3]=2.00;
                 ligand_vec.push_back(tmp_vec);
             }
             getContact(ligand_vec, asym_id, comp_id, ligand_dup_map[filename],
-                pep, protein_vec, vdw_dict, metadata_txt);
+                pep, protein_vec, vdw_dict, metadata_txt, 
+                artifact_dict.count(comp_id));
+            for (a=0;a<ligand_vec.size();a++) ligand_vec[a].clear();
+            ligand_vec.clear();
 
             buf<<filename<<'_'<<ligand_dup_map[filename]<<".pdb";
             filename=buf.str();
