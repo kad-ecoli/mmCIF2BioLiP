@@ -1,6 +1,9 @@
 *.swo
 *.swp
 *.pyc
+data/*.tsv.gz
+taxonomy/
+sifts/
 
 # Prerequisites
 *.d
