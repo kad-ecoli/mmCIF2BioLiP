@@ -18,3 +18,9 @@ This will download CCD ligand to pdb/data/monomers/components.cif.gz and extract
 ./script/download_sifts.pl
 ```
 This will download taxonomy, uniprot accession, EC, GO and pubmed ID.
+
+### Step 3: Download missing PDB entries ###
+```bash
+./script/download_pdb.pl
+```
+This will download the set of missing mmCIF files for full asymetric unit to pdb/data/structures/divided/.
