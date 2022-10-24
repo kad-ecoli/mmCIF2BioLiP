@@ -1,4 +1,5 @@
 #!/usr/bin/perl
+# download and process CCD ligand definition from the PDB database
 use strict;
 use File::Basename;
 use Cwd 'abs_path';
