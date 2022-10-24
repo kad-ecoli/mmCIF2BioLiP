@@ -30,3 +30,12 @@ This script downloads the set of missing mmCIF files for full asymetric unit to 
 ./script/curate_pdb.pl
 ```
 This script converts mmCIF files from pdb/data/structures/divided/ed pdb/data/structures/divided/mmCIF to interim/*/*.tar.gz and interim/*/*.txt
+
+### Step 5: download pubmed abstract ###
+```bash
+./script/download_pubmed.pl
+```
+This script checks interim/*/*.txt for artifact ligand and download pubmed
+abstract for corresponding entry.
+
+### Step 6: remove artifact and unbound ligand ###
