@@ -3211,7 +3211,11 @@ size_t getContact(const vector<vector<double> >&ligand_vec,
             }
             if (contact_num>=2) resi_vec.push_back(r);
         }
-        if (resi_vec.size()<=1) continue; // at least two residues in binding site
+        if (resi_vec.size()<=1)
+        {
+            resi_vec.clear();
+            continue; // at least two residues in binding site
+        }
         if (artifact)
         {
             bool consecutive=true;
@@ -3221,7 +3225,11 @@ size_t getContact(const vector<vector<double> >&ligand_vec,
                 consecutive=false;
                 break;
             }
-            if (consecutive) continue;
+            if (consecutive)
+            {
+                resi_vec.clear();
+                continue;
+            }
         }
         metadata_txt+=asym_receptor+'\t'+comp_id+"\t"+asym_id+"\t";
         buf<<ligIdx<<"\t";
