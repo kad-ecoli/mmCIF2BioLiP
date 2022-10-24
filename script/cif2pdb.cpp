@@ -3952,7 +3952,7 @@ COLUMNS        DATA  TYPE    FIELD        DEFINITION
     /* compress file */
     line="tar -czf "+pdbid+".tar.gz "+
          Join(" ",receptor_filename_vec)+" "+
-         Join(" ",ligand_filename_vec)+" "+filename;
+         Join(" ",ligand_filename_vec);
     i=system(line.c_str());
     ifstream fp((pdbid+".tar.gz").c_str());
     if (fp.good())
