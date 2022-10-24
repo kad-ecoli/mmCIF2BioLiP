@@ -25,8 +25,15 @@ table, th, td {
 <table>
 ''')
 
-code=form.getfirst("code",'').upper()
-if code:
+code=form.getfirst("code",'')
+if code in ["peptide","rna","dna"]:
+    print('''
+<tr><th>New BioLiP code for polymer</th><th>Old BioLiP code for Polymer</th></tr>
+<tr><td>peptide</td><td>III</td></tr>
+<tr><td>rna</td><td>NUC</td></tr>
+<tr><td>dna</td><td>NUC</td></tr>
+''')
+elif code:
     fp=gzip.open(rootdir+"/data/ligand.tsv.gz",'rt')
     txt_table=''
     for line in fp.read().splitlines():
