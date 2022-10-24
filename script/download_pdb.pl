@@ -22,8 +22,8 @@ foreach my $pdb(`grep ';' $rootdir/pdb/derived_data/index/resolu.idx|cut -f1 -d'
     system("mkdir -p $inputdir") if (!-d $inputdir);
     next if (-s "$inputdir/$pdb.cif.gz");
     my $outdir="$rootdir/interim/$divided";
-    next if (-s "$outdir/$pdb.txt" && 
-            (-s "$outdir/$pdb.tar.gz" || -s "$outdir/$pdb.tar.bz2"));
+    next if (-s "$outdir/$pdb.txt" &&  ( -s "$outdir/$pdb.ignore" ||
+             -s "$outdir/$pdb.tar.gz" || -s "$outdir/$pdb.tar.bz2"));
     my $cmd="wget -q ftp://files.wwpdb.org/pub/pdb/data/structures/divided/mmCIF/$divided/$pdb.cif.gz -O $inputdir/$pdb.cif.gz";
     print "$cmd\n";
     system("$cmd");
