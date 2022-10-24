@@ -3150,7 +3150,7 @@ size_t read_artifact_list(const string &infile,
     return artifact_dict.size();
 }
 
-inline bool atom2contact(const vector<double>&atom2,
+inline size_t atom2contact(const vector<double>&atom2,
     const vector<vector<double> >&ligand_vec)
 {
     double dx,dy,dz;
@@ -3158,6 +3158,7 @@ inline bool atom2contact(const vector<double>&atom2,
     double distance;
     //const double dmax1=6;  // (2.75+2.75+0.5)
     //const double dmax2=36; // dmax1^2
+    size_t contact_num=0;
     for (a=0;a<ligand_vec.size();a++)
     {
         dx=atom2[0]-ligand_vec[a][0];
@@ -3169,13 +3170,12 @@ inline bool atom2contact(const vector<double>&atom2,
         distance=dx*dx+dy*dy+dz*dz;
         if (distance>36) continue;
         distance=sqrt(distance);
-        if (1<distance && distance<=atom2[3]+ligand_vec[a][3]+0.5)
-            return true;
+        contact_num+=(1<distance && distance<=atom2[3]+ligand_vec[a][3]+0.5);
     }
-    return false;
+    return contact_num;
 }
 
-void getContact(const vector<vector<double> >&ligand_vec, 
+size_t getContact(const vector<vector<double> >&ligand_vec, 
     const string &asym_id,const string &comp_id,const size_t ligIdx,
     ModelUnit &pep,const vector<string> &protein_vec,
     map<string,double> &vdw_dict, string &metadata_txt,
@@ -3186,6 +3186,8 @@ void getContact(const vector<vector<double> >&ligand_vec,
     vector<size_t> resi_vec;
     stringstream buf;
     size_t r,c,a;
+    size_t contact_num;
+    size_t bindingPocket_num=0;
     for (c=0;c<pep.chains.size();c++)
     {
         asym_receptor=pep.chains[c].asym_id;
@@ -3194,6 +3196,7 @@ void getContact(const vector<vector<double> >&ligand_vec,
         for (r=0;r<pep.chains[c].residues.size();r++)
         {
             if (pep.chains[c].residues[r].het>=3) continue;
+            contact_num=0;
             for (a=0;a<pep.chains[c].residues[r].atoms.size();a++)
             {
                 atom2[0]=pep.chains[c].residues[r].atoms[a].xyz[0];
@@ -3204,17 +3207,13 @@ void getContact(const vector<vector<double> >&ligand_vec,
                         pep.chains[c].residues[r].atoms[a].element];
                 else atom2[3]=1.75;
                 
-                if (atom2contact(atom2,ligand_vec))
-                {
-                    resi_vec.push_back(r);
-                    break;
-                }
+                contact_num+=(atom2contact(atom2,ligand_vec));
             }
+            if (contact_num>=2) resi_vec.push_back(r);
         }
-        if (resi_vec.size()==0) continue;
+        if (resi_vec.size()<=1) continue; // at least two residues in binding site
         if (artifact)
         {
-            if (resi_vec.size()<=1) continue;
             bool consecutive=true;
             for (a=1;a<resi_vec.size();a++)
             {
@@ -3248,12 +3247,14 @@ void getContact(const vector<vector<double> >&ligand_vec,
         metadata_txt+=buf.str();
         buf.str(string());
         resi_vec.clear();
+        bindingPocket_num++;
     }
 
     /* clean up */
     vector<size_t>().swap(resi_vec);
     vector<double>().swap(atom2);
     string ().swap(asym_receptor);
+    return bindingPocket_num;
 }
 
 int cif2pdb(const string &infile, string &pdbid,
@@ -3914,21 +3915,23 @@ COLUMNS        DATA  TYPE    FIELD        DEFINITION
                 else tmp_vec[3]=2.00;
                 ligand_vec.push_back(tmp_vec);
             }
-            getContact(ligand_vec, asym_id, comp_id, ligand_dup_map[filename],
-                pep, protein_vec, vdw_dict, metadata_txt, 
-                artifact_dict.count(comp_id));
+            if (getContact(ligand_vec, asym_id, comp_id,
+                ligand_dup_map[filename], pep, protein_vec, vdw_dict,
+                metadata_txt, artifact_dict.count(comp_id)))
+            {
+                buf<<filename<<'_'<<ligand_dup_map[filename]<<".pdb";
+                filename=buf.str();
+                buf.str(string());
+                cout<<filename<<endl;
+                fout.open(filename.c_str());
+                fout<<fout_buf.str()<<flush;
+                fout.close();
+                fout_buf.str(string());
+                ligand_filename_vec.push_back(filename);
+            }
+            else ligand_dup_map[filename]--;
             for (a=0;a<ligand_vec.size();a++) ligand_vec[a].clear();
             ligand_vec.clear();
-
-            buf<<filename<<'_'<<ligand_dup_map[filename]<<".pdb";
-            filename=buf.str();
-            buf.str(string());
-            cout<<filename<<endl;
-            fout.open(filename.c_str());
-            fout<<fout_buf.str()<<flush;
-            fout.close();
-            fout_buf.str(string());
-            ligand_filename_vec.push_back(filename);
         }
     }
 
