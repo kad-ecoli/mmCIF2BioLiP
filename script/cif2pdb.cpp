@@ -3701,7 +3701,11 @@ int cif2pdb(const string &infile, string &pdbid,
     size_t c0;
     string sequence;
     vector<unsigned int> moltype_vec(3,0); // rna, dna, protein
-    string metadata_txt=_citation_title+'\n'+_citation_pdbx_database_id_PubMed+'\n';
+    if (_citation_pdbx_database_id_PubMed=="-1" || 
+        _citation_pdbx_database_id_PubMed==".")
+        _citation_pdbx_database_id_PubMed=="?";
+    string metadata_txt=_citation_title+"\npmid:"+
+        _citation_pdbx_database_id_PubMed+'\n';
     vector<string> accession_vec;
     vector<string> receptor_filename_vec;
     vector<string> ligand_filename_vec;
