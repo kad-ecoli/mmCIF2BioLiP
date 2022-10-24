@@ -12,3 +12,9 @@ This will download the initial set of mmCIF files for full asymetric unit to pdb
 script/download_ligand.pl
 ```
 This will download CCD ligand to pdb/data/monomers/components.cif.gz and extract their summary to data/ligand.tsv.gz.
+
+## Step 2: Download SIFTS function annotation ###
+```bash
+./script/download_sifts.pl
+```
+This will download taxonomy, uniprot accession, EC, GO and pubmed ID.
