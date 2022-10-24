@@ -14,11 +14,20 @@ const char* docstring=""
 "                                  pubmed ID\n"
 "                                  fasta sequence\n"
 "                                  ligand binding residues\n"
-"                                  [1] ligand filename\n"
-"                                  [2] receptor chainID\n"
-"                                  [3] idx\n"
-"                                  [4] original index of residue in contact\n"
-"                                  [5] renumber index of residue in contact\n"
+"                                  [1] receptor chainID\n"
+"                                  [2] ligand name\n"
+"                                  [3] ligand chainID\n"
+"                                  [4] ligand index\n"
+"                                  [3] original index of residue in contact\n"
+"                                  [4] renumber index of residue in contact\n"
+"\n"
+"cif2pdb input.cif prefix ligand_list\n"
+"    convert PDBx/mmCIF format input file 'input.cif' to PDB format output prefix*\n"
+"    exclude ligand listed by 'ligand_list' if\n"
+"    [1] ligand repeated >15 times; OR\n"
+"    [2] contact <2; OR\n"
+"    [3] all contact consecutive\n"
+"\n"
 ;
 
 #include <vector>
@@ -3023,7 +3032,181 @@ int cif2fasta(const string &infile, string &pdbid, const int do_upper,
     return seqNum;
 }
 
-int cif2pdb(const string &infile, string &pdbid)
+void make_vdw(map<string,double> &vdw_dict)
+{
+    vdw_dict["H"] =1.20; vdw_dict["He"]=1.40; vdw_dict["Li"]=1.82;
+    vdw_dict["Be"]=1.53; vdw_dict["B"] =1.92; vdw_dict["C"] =1.70;
+    vdw_dict["N"] =1.55; vdw_dict["O"] =1.52; vdw_dict["F"] =1.47;
+    vdw_dict["Ne"]=1.54; vdw_dict["Na"]=2.27; vdw_dict["Mg"]=1.73;
+    vdw_dict["Al"]=1.84; vdw_dict["Si"]=2.10; vdw_dict["P"] =1.80;
+    vdw_dict["S"] =1.80; vdw_dict["Cl"]=1.75; vdw_dict["Ar"]=1.88;
+    vdw_dict["K"] =2.75; vdw_dict["Ca"]=2.31; vdw_dict["Sc"]=2.11;
+    vdw_dict["Ti"]=2.46; vdw_dict["V"] =2.42; vdw_dict["Cr"]=2.45;
+    vdw_dict["Mn"]=2.45; vdw_dict["Fe"]=2.44; vdw_dict["Co"]=2.40;
+    vdw_dict["Ni"]=1.63; vdw_dict["Cu"]=1.40; vdw_dict["Zn"]=1.39;
+    vdw_dict["Ga"]=1.87; vdw_dict["Ge"]=2.11; vdw_dict["As"]=1.85;
+    vdw_dict["Se"]=1.90; vdw_dict["Br"]=1.85; vdw_dict["Kr"]=2.02;
+    vdw_dict["Rb"]=3.03; vdw_dict["Sr"]=2.49; vdw_dict["Y"] =2.75;
+    vdw_dict["Zr"]=2.52; vdw_dict["Nb"]=2.56; vdw_dict["Mo"]=2.45;
+    vdw_dict["Tc"]=2.44; vdw_dict["Ru"]=2.46; vdw_dict["Rh"]=2.44;
+    vdw_dict["Pd"]=1.63; vdw_dict["Ag"]=1.72; vdw_dict["Cd"]=1.58;
+    vdw_dict["In"]=1.93; vdw_dict["Sn"]=2.17; vdw_dict["Sb"]=2.06;
+    vdw_dict["Te"]=2.06; vdw_dict["I"] =1.98; vdw_dict["Xe"]=2.16;
+    vdw_dict["Cs"]=3.43; vdw_dict["Ba"]=2.68; vdw_dict["Lu"]=2.63;
+    vdw_dict["Hf"]=2.53; vdw_dict["Ta"]=2.57; vdw_dict["W"] =2.49;
+    vdw_dict["Re"]=2.48; vdw_dict["Os"]=2.41; vdw_dict["Ir"]=2.29;
+    vdw_dict["Pt"]=1.75; vdw_dict["Au"]=1.66; vdw_dict["Hg"]=1.55;
+    vdw_dict["Tl"]=1.96; vdw_dict["Pb"]=2.02; vdw_dict["Bi"]=2.07;
+    vdw_dict["Po"]=1.97; vdw_dict["At"]=2.02; vdw_dict["Rn"]=2.20;
+    vdw_dict["Fr"]=3.48; vdw_dict["Ra"]=2.83; vdw_dict["La"]=2.98;
+    vdw_dict["Ce"]=2.88; vdw_dict["Pr"]=2.92; vdw_dict["Nd"]=2.95;
+    vdw_dict["Pm"]=2.90; vdw_dict["Sm"]=2.87; vdw_dict["Eu"]=2.83;
+    vdw_dict["Gd"]=2.79; vdw_dict["Tb"]=2.87; vdw_dict["Dy"]=2.81;
+    vdw_dict["Ho"]=2.83; vdw_dict["Er"]=2.79; vdw_dict["Tm"]=2.80;
+    vdw_dict["Yb"]=2.74; vdw_dict["Ac"]=2.83; vdw_dict["Th"]=3.05;
+    vdw_dict["Pa"]=3.40; vdw_dict["U"] =1.86; vdw_dict["Np"]=2.70;
+    
+    map<string, double>::iterator it;
+    string key;
+    for (it = vdw_dict.begin(); it != vdw_dict.end(); it++)
+    {
+        key=it->first;
+        if (Upper(key)!=key) vdw_dict[Upper(key)]=vdw_dict[key];
+    }
+    key.clear();
+}
+
+
+size_t read_artifact_list(const string &infile,
+    map<string,unsigned int> &artifact_dict)
+{
+    stringstream buf;
+    if (infile=="-") buf<<cin.rdbuf();
+#if defined(REDI_PSTREAM_H_SEEN)
+    else if (EndsWith(infile,".gz"))
+    {
+        redi::ipstream fp_gz; // if file is compressed
+        fp_gz.open("gunzip -c "+infile);
+        buf<<fp_gz.rdbuf();
+        fp_gz.close();
+    }
+#endif
+    else
+    {
+        ifstream fp;
+        fp.open(infile.c_str(),ios::in); //ifstream fp(filename,ios::in);
+        buf<<fp.rdbuf();
+        fp.close();
+    }
+    vector<string> lines;
+    Split(buf.str(),lines,'\n');
+    buf.str(string());
+
+    size_t l;
+    string line;
+    vector<string> line_vec;
+    for (l=0;l<lines.size();l++)
+    {
+        line=lines[l];
+        if (line.size()==0 || line[0]=='#') continue;
+        Split(line,line_vec,'\t');
+        line=line_vec[0];
+        clear_line_vec(line_vec);
+        artifact_dict[line]=0;
+    }
+
+    vector<string> ().swap(lines);
+    vector<string> ().swap(line_vec);
+    return artifact_dict.size();
+}
+
+inline bool atom2contact(const vector<double>&atom2,
+    const vector<vector<double> >&ligand_vec)
+{
+    double dx,dy,dz;
+    size_t a;
+    for (a=0;a<ligand_vec.size();a++)
+    {
+        dx=atom2[0]-ligand_vec[a][0];
+        dy=atom2[1]-ligand_vec[a][1];
+        dz=atom2[2]-ligand_vec[a][2];
+        //if (sqrt(dx*dx+dy*dy+dz*dz)<=atom2[3]+ligand_vec[a][3]+0.5)
+        if (sqrt(dx*dx+dy*dy+dz*dz)<=atom2[3]+ligand_vec[a][3])
+            return true;
+    }
+    return false;
+}
+
+void getContact(const vector<vector<double> >&ligand_vec, 
+    const string &asym_id,const string &comp_id,const size_t ligIdx,
+    ModelUnit &pep,const vector<string> &protein_vec,
+    map<string,double> &vdw_dict, string &metadata_txt)
+{
+    string asym_receptor;
+    vector<double> atom2(4,0);
+    vector<size_t> resi_vec;
+    stringstream buf;
+    size_t r,c,a;
+    for (c=0;c<pep.chains.size();c++)
+    {
+        asym_receptor=pep.chains[c].asym_id;
+        if (find(protein_vec.begin(),protein_vec.end(),asym_receptor)==
+                 protein_vec.end()) continue;
+        for (r=0;r<pep.chains[c].residues.size();r++)
+        {
+            if (pep.chains[c].residues[r].het>=3) continue;
+            for (a=0;a<pep.chains[c].residues[r].atoms.size();a++)
+            {
+                atom2[0]=pep.chains[c].residues[r].atoms[a].xyz[0];
+                atom2[1]=pep.chains[c].residues[r].atoms[a].xyz[1];
+                atom2[2]=pep.chains[c].residues[r].atoms[a].xyz[2];
+                if (vdw_dict.count(pep.chains[c].residues[r].atoms[a].element))
+                    atom2[3]=vdw_dict[
+                        pep.chains[c].residues[r].atoms[a].element];
+                else atom2[3]=vdw_dict["C"];
+                
+                if (atom2contact(atom2,ligand_vec))
+                {
+                    resi_vec.push_back(r);
+                    break;
+                }
+            }
+        }
+        if (resi_vec.size()==0) continue;
+        metadata_txt+=asym_receptor+'\t'+comp_id+"\t"+asym_id+"\t";
+        buf<<ligIdx<<"\t";
+        for (a=0;a<resi_vec.size();a++)
+        {
+            r=resi_vec[a];
+            buf<<aa3to1(pep.chains[c].residues[r].resn)
+                <<pep.chains[c].residues[r].resi;
+            if (pep.chains[c].residues[r].icode!=' ')
+                buf<<pep.chains[c].residues[r].icode;
+            if (a+1<resi_vec.size()) buf<<' ';
+        }
+        buf<<'\t'<<flush;
+        metadata_txt+=buf.str();
+        buf.str(string());
+        for (a=0;a<resi_vec.size();a++)
+        {
+            r=resi_vec[a];
+            buf<<aa3to1(pep.chains[c].residues[r].resn)<<r+1;
+            if (a+1<resi_vec.size()) buf<<' ';
+        }
+        buf<<endl;
+        metadata_txt+=buf.str();
+        buf.str(string());
+        resi_vec.clear();
+    }
+
+    /* clean up */
+    vector<size_t>().swap(resi_vec);
+    vector<double>().swap(atom2);
+    string ().swap(asym_receptor);
+}
+
+int cif2pdb(const string &infile, string &pdbid,
+    map<string,unsigned int>&artifact_dict)
 {
 
     stringstream buf;
@@ -3462,6 +3645,8 @@ int cif2pdb(const string &infile, string &pdbid)
     vector<string> accession_vec;
     vector<string> receptor_filename_vec;
     vector<string> ligand_filename_vec;
+    vector<string> protein_vec;
+    vector<pair<string,string>> nonprotein_vec;
     for (c0=0;c0<chainID_vec.size();c0++)
     {
         asym_id=chainID_vec[c0];
@@ -3548,12 +3733,14 @@ COLUMNS        DATA  TYPE    FIELD        DEFINITION
                     metadata_txt+="protein\t";
                     filename=pdbid+asym_id+".pdb";
                     receptor_filename_vec.push_back(filename);
+                    protein_vec.push_back(asym_id);
                 }
                 else 
                 {
                     metadata_txt+="peptide\t";
                     filename=pdbid+"_peptide_"+asym_id+"_0.pdb";
                     ligand_filename_vec.push_back(filename);
+                    nonprotein_vec.push_back(make_pair(asym_id,"peptide"));
                 }
             }
             else
@@ -3562,11 +3749,13 @@ COLUMNS        DATA  TYPE    FIELD        DEFINITION
                 {
                     metadata_txt+="rna\t";
                     filename=pdbid+"_rna_"+asym_id+"_0.pdb";
+                    nonprotein_vec.push_back(make_pair(asym_id,"rna"));
                 }
                 else
                 {
                     metadata_txt+="dna\t";
                     filename=pdbid+"_dna_"+asym_id+"_0.pdb";
+                    nonprotein_vec.push_back(make_pair(asym_id,"dna"));
                 }
                 ligand_filename_vec.push_back(filename);
             }
@@ -3582,7 +3771,55 @@ COLUMNS        DATA  TYPE    FIELD        DEFINITION
         sequence.clear();
         fout_buf.str(string());
     }
+
+    /* calculate contact for polymer */
+    map<string,double> vdw_dict;
+    make_vdw(vdw_dict);
+    metadata_txt+="#recCha\tCCD\tligCha\tligIdx\tresidueOriginal\tresidueRenumbered\n";
+    vector<double> tmp_vec(4,0); // xyz, vdw
+    vector<vector<double> > ligand_vec;
+    for (c0=0;c0<nonprotein_vec.size();c0++)
+    {
+        asym_id=nonprotein_vec[c0].first;
+        comp_id=nonprotein_vec[c0].second;
+        
+        for (c=0;c<pep.chains.size();c++)
+        {
+            if (pep.chains[c].asym_id!=asym_id) continue;
+            for (r=0;r<pep.chains[c].residues.size();r++)
+            {
+                if (pep.chains[c].residues[r].het>=3) continue;
+                for (a=0;a<pep.chains[c].residues[r].atoms.size();a++)
+                {
+                    tmp_vec[0]=pep.chains[c].residues[r].atoms[a].xyz[0];
+                    tmp_vec[1]=pep.chains[c].residues[r].atoms[a].xyz[1];
+                    tmp_vec[2]=pep.chains[c].residues[r].atoms[a].xyz[2];
+                    if (vdw_dict.count(pep.chains[c].residues[r].atoms[a].element))
+                        tmp_vec[3]=vdw_dict[
+                            pep.chains[c].residues[r].atoms[a].element];
+                    else tmp_vec[3]=vdw_dict["C"];
+                    ligand_vec.push_back(tmp_vec);
+                }
+            }
+        }
+
+        getContact(ligand_vec, asym_id, comp_id, 0,
+            pep, protein_vec, vdw_dict, metadata_txt);
+        for (a=0;a<ligand_vec.size();a++) ligand_vec[a].clear();
+        ligand_vec.clear();
+    }
     
+    /* count artifact ligand repeat */
+    for (c=0;c<pep.chains.size();c++)
+    {
+        for (r=0;r<pep.chains[c].residues.size();r++)
+        {
+            if (pep.chains[c].residues[r].het<=2) continue;
+            comp_id=pep.chains[c].residues[r].resn;
+            if (artifact_dict.count(comp_id)) artifact_dict[comp_id]++;
+        }
+    }
+
     /* write small molecules */
     map<string,int> ligand_dup_map;
     for (c=0;c<pep.chains.size();c++)
@@ -3592,17 +3829,16 @@ COLUMNS        DATA  TYPE    FIELD        DEFINITION
         {
             if (pep.chains[c].residues[r].atoms.size()==0 ||
                 pep.chains[c].residues[r].het<3) continue;
+            comp_id=pep.chains[c].residues[r].resn;
+            if (artifact_dict.count(comp_id) && artifact_dict[comp_id]>15)
+                continue;
             buf<<setw(4)<<pep.chains[c].residues[r].resi
                 <<pep.chains[c].residues[r].icode;
             resSeq=buf.str().substr(0,5);
             buf.str(string());
-            comp_id=pep.chains[c].residues[r].resn;
             filename=pdbid+"_"+comp_id+"_"+asym_id;
             if (ligand_dup_map.count(filename)) ligand_dup_map[filename]++;
             else ligand_dup_map[filename]=1;
-            buf<<filename<<'_'<<ligand_dup_map[filename]<<".pdb";
-            filename=buf.str();
-            buf.str(string());
             for (a=0;a<pep.chains[c].residues[r].atoms.size();a++)
             {
                 serial++;
@@ -3617,8 +3853,22 @@ COLUMNS        DATA  TYPE    FIELD        DEFINITION
                     <<writeDouble(pep.chains[c].residues[r].atoms[a].bfactor,6,2)
                     <<"          "
                     <<setw(2)<<pep.chains[c].residues[r].atoms[a].element<<'\n';
+
+                tmp_vec[0]=pep.chains[c].residues[r].atoms[a].xyz[0];
+                tmp_vec[1]=pep.chains[c].residues[r].atoms[a].xyz[1];
+                tmp_vec[2]=pep.chains[c].residues[r].atoms[a].xyz[2];
+                if (vdw_dict.count(pep.chains[c].residues[r].atoms[a].element))
+                    tmp_vec[3]=vdw_dict[
+                        pep.chains[c].residues[r].atoms[a].element];
+                else tmp_vec[3]=vdw_dict["C"];
+                ligand_vec.push_back(tmp_vec);
             }
-            fout_buf<<"TER"<<endl;
+            getContact(ligand_vec, asym_id, comp_id, ligand_dup_map[filename],
+                pep, protein_vec, vdw_dict, metadata_txt);
+
+            buf<<filename<<'_'<<ligand_dup_map[filename]<<".pdb";
+            filename=buf.str();
+            buf.str(string());
             cout<<filename<<endl;
             fout.open(filename.c_str());
             fout<<fout_buf.str()<<flush;
@@ -3679,13 +3929,19 @@ COLUMNS        DATA  TYPE    FIELD        DEFINITION
     metadata_txt.clear();
     vector<string>().swap(receptor_filename_vec);
     vector<string>().swap(ligand_filename_vec);
+    vector<string>().swap(protein_vec);
+    vector<pair<string,string>>().swap(nonprotein_vec);
+    map<string,double>().swap(vdw_dict);
+    vector<double>().swap(tmp_vec);
+    vector<vector<double> >().swap(ligand_vec);
     return 0;
 }
 
 int main(int argc,char **argv)
 {
-    string infile ="";
-    string pdbid  ="";
+    string infile              ="";
+    string pdbid               ="";
+    string ligand_list_filename="";
 
     for (int a=1;a<argc;a++)
     {
@@ -3693,6 +3949,8 @@ int main(int argc,char **argv)
             infile=argv[a];
         else if (pdbid.size()==0)
             pdbid=argv[a];
+        else if (ligand_list_filename.size()==0)
+            ligand_list_filename=argv[a];
         else
         {
             cerr<<"ERROR: unknown option "<<argv[a]<<endl;
@@ -3706,11 +3964,16 @@ int main(int argc,char **argv)
         return 1;
     }
 
-    cif2pdb(infile,pdbid);
+    map<string,unsigned int> artifact_dict;
+    read_artifact_list(ligand_list_filename,artifact_dict);
+
+    cif2pdb(infile,pdbid,artifact_dict);
 
     /* clean up */
+    map<string,unsigned int>().swap(artifact_dict);
     string ().swap(infile);
     string ().swap(pdbid);
+    string ().swap(ligand_list_filename);
     return 0;
 }
 
