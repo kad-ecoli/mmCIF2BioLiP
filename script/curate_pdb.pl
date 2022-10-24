@@ -18,12 +18,41 @@ foreach my $pdb(@pdb_list)
     my $divided=substr($pdb,length($pdb)-3,2);
     my $inputdir="$rootdir/pdb/data/structures/divided/mmCIF/$divided";
     my $outdir="$rootdir/interim/$divided";
-    next if (-s "$outdir/$pdb.txt" && 
-            (-s "$outdir/$pdb.tar.gz" || -s "$outdir/$pdb.tar.bz2"));
+    next if (-s "$outdir/$pdb.txt" &&  ( -s "$outdir/$pdb.ignore" ||
+             -s "$outdir/$pdb.tar.gz" || -s "$outdir/$pdb.tar.bz2"));
     system("mkdir -p $outdir") if (!-d "$outdir");
     my $cmd="cd $outdir; $bindir/cif2pdb $inputdir/$pdb.cif.gz $pdb $rootdir/ligand_list";
     printf "$cmd\n";
     system("$cmd");
+
+    next if (!-s "$outdir/$pdb.txt");
+    my $receptorNum=0;
+    my $ligandNum=0;
+    my $startTable=0;
+    foreach my $line(`cat $outdir/$pdb.txt|tail +3`)
+    {
+        if ($line=~/^#rec/)
+        {
+            $startTable=1;
+        }
+        elsif ($startTable==0 && $line=~/^>\S+\tprotein\t/)
+        {
+            $receptorNum++;
+        }
+        elsif ($startTable==1)
+        {
+            $ligandNum++;
+        }
+    }
+    my $msg="";
+    $msg.="no_protein\n" if ($receptorNum==0);
+    $msg.="no_ligand\n" if ($ligandNum==0);
+    next if (length $msg==0);
+    print "ignore $outdir/$pdb.txt\n";
+    open(FP,">$outdir/$pdb.ignore");
+    print FP $msg;
+    close(FP);
+    system("rm $outdir/$pdb.tar.gz");
 }
 
 print "update pubmed citation\n";
@@ -37,23 +66,22 @@ foreach my $line(`zcat $rootdir/data/pdb2pubmed.tsv.gz`)
         $pubmed_dict{$pdb}=$pubmed;
     }
 }
-foreach my $pdb(@pdb_list)
+foreach my $divided(`ls $rootdir/interim`)
 {
-    my $divided=substr($pdb,length($pdb)-3,2);
-    my $outdir="$rootdir/interim/$divided";
-    next if (!exists $pubmed_dict{$pdb} || !-s "$outdir/$pdb.txt");
-    my $pubmed=`head -2 $outdir/$pdb.txt|tail -1`;
-    chomp($pubmed);
-    next if ($pubmed=~/^\d+$/);
-    print "updating pubmed for $outdir/$pdb.txt\n";
-    $pubmed=$pubmed_dict{$pdb};
-    system("cat $outdir/$pdb.txt|gzip - > $outdir/$pdb.txt.backup.gz");
-    my $txt=`head -1 $outdir/$pdb.txt`;
-    $txt.="$pubmed\n";
-    $txt.=`tail +3 $outdir/$pdb.txt`;
-    open(FP,">$outdir/$pdb.txt");
-    print FP $txt;
-    close(FP);
+    chomp($divided);
+    foreach my $line(`grep --with-filename 'pmid:?' $rootdir/interim/$divided/*.txt`)
+    {
+        chomp($line);
+        my $filename=substr($line,0,(length $line)-7);
+        my $ignorefilename=substr($filename,0,(length $filename)-4).".ignore";
+        $filename=~/(\w+)\.txt$/;
+        my $pdb="$1";
+        next if (!exists $pubmed_dict{$pdb} || -s "$ignorefilename");
+        print "update citation for $filename\n";
+        my $pubmed=$pubmed_dict{$pdb};
+        system("cat $filename|gzip - > $filename.backup.gz");
+        system("sed -i 's/^pmid:?/pmid:$pubmed/' $filename");
+    }
 }
 
 exit();
