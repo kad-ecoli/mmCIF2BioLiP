@@ -52,7 +52,7 @@ foreach my $pdb(@pdb_list)
     open(FP,">$outdir/$pdb.ignore");
     print FP $msg;
     close(FP);
-    system("rm $outdir/$pdb.tar.gz");
+    system("rm $outdir/$pdb.tar.gz") if (-s "$outdir/$pdb.tar.gz");
 }
 
 print "update pubmed citation\n";
@@ -74,9 +74,11 @@ foreach my $divided(`ls $rootdir/interim`)
         chomp($line);
         my $filename=substr($line,0,(length $line)-7);
         my $ignorefilename=substr($filename,0,(length $filename)-4).".ignore";
+        my $targzfilename =substr($filename,0,(length $filename)-4).".tar.gz";
         $filename=~/(\w+)\.txt$/;
         my $pdb="$1";
-        next if (!exists $pubmed_dict{$pdb} || -s "$ignorefilename");
+        next if (!exists $pubmed_dict{$pdb} || -s "$ignorefilename" ||
+                 !-s "$targzfilename");
         print "update citation for $filename\n";
         my $pubmed=$pubmed_dict{$pdb};
         system("cat $filename|gzip - > $filename.backup.gz");
