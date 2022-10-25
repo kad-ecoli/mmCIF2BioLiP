@@ -28,7 +28,7 @@ if (-s "$rootdir/taxonomy/names.dmp")
 
 system("mkdir -p $rootdir/data");
 print "parsing taxonomy\n";
-system("zcat $rootdir/sifts/flatfiles/tsv/pdb_chain_taxonomy.tsv.gz |tail +3|cut -f1-3|uniq > $rootdir/data/chain2taxonomy.tsv");
+system("zcat $rootdir/sifts/flatfiles/tsv/pdb_chain_taxonomy.tsv.gz |tail -n +3|cut -f1-3|uniq > $rootdir/data/chain2taxonomy.tsv");
 my @taxid_list;
 foreach my $taxid(`cat $rootdir/data/chain2taxonomy.tsv|cut -f3|sort|uniq`)
 {
@@ -58,16 +58,16 @@ system("gzip -f $rootdir/data/taxid2name.tsv");
 &concatenate_sift("cat $rootdir/data/chain2taxonomy.tsv","$rootdir/data/chain2taxonomy.tsv");
 
 print "parsing uniprot accession\n";
-&concatenate_sift("zcat $rootdir/sifts/flatfiles/tsv/pdb_chain_uniprot.tsv.gz |tail +3|cut -f1-3|sort|uniq","$rootdir/data/chain2uniprot.tsv");
+&concatenate_sift("zcat $rootdir/sifts/flatfiles/tsv/pdb_chain_uniprot.tsv.gz |tail -n +3|cut -f1-3|sort|uniq","$rootdir/data/chain2uniprot.tsv");
 
 print "parsing EC\n";
-&concatenate_sift("zcat $rootdir/sifts/flatfiles/tsv/pdb_chain_enzyme.tsv.gz |tail +3|cut -f1,2,4|sort|uniq","$rootdir/data/chain2ec.tsv");
+&concatenate_sift("zcat $rootdir/sifts/flatfiles/tsv/pdb_chain_enzyme.tsv.gz |tail -n +3|cut -f1,2,4|sort|uniq","$rootdir/data/chain2ec.tsv");
 
 print "parsing GO\n";
-&concatenate_sift("zcat $rootdir/sifts/flatfiles/tsv/pdb_chain_go.tsv.gz |tail +3|cut -f1,2,6|sort|uniq","$rootdir/data/chain2go.tsv");
+&concatenate_sift("zcat $rootdir/sifts/flatfiles/tsv/pdb_chain_go.tsv.gz |tail -n +3|cut -f1,2,6|sort|uniq","$rootdir/data/chain2go.tsv");
 
 print "parsing pubmed\n";
-system("zcat $rootdir/sifts/flatfiles/tsv/pdb_pubmed.tsv.gz |tail +3|grep -P '\\t0\\t'|cut -f1,3|sort|uniq|gzip - > $rootdir/data/pdb2pubmed.tsv.gz");
+system("zcat $rootdir/sifts/flatfiles/tsv/pdb_pubmed.tsv.gz |tail -n +3|grep -P '\\t0\\t'|cut -f1,3|sort|uniq|gzip - > $rootdir/data/pdb2pubmed.tsv.gz");
 
 exit(0);
 
