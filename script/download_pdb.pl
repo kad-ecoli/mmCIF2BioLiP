@@ -34,15 +34,19 @@ foreach my $pdb(`grep ';' $rootdir/pdb/derived_data/index/resolu.idx|cut -f1 -d'
     system("$cmd");
     if (!-s "$inputdir/$pdb.cif.gz")
     {
-        $cmd="wget -q --tries=2 ftp://files.wwpdb.org/pub/pdb/data/structures/divided/mmCIF/$divided/$pdb.cif.gz -O $inputdir/$pdb.cif.gz";
+        $cmd="wget -q --tries=2 https://files.rcsb.org/download/$pdb.cif.gz -O $inputdir/$pdb.cif.gz";
         print "$cmd\n";
         system("$cmd");
     }
     if (!-s "$inputdir/$pdb.cif.gz")
     {
-        $cmd="wget -q https://files.rcsb.org/download/$pdb.cif.gz -O $inputdir/$pdb.cif.gz";
+        $cmd="wget -q --tries=3 ftp://files.wwpdb.org/pub/pdb/data/structures/divided/mmCIF/$divided/$pdb.cif.gz -O $inputdir/$pdb.cif.gz";
         print "$cmd\n";
         system("$cmd");
+    }
+    if (!-s "$inputdir/$pdb.cif.gz")
+    {
+        print "ERROR! cannot download $inputdir/$pdb.cif.gz\n";
     }
 }
 
