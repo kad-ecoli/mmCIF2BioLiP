@@ -1,5 +1,12 @@
 A local copy of ligand and binding site information created from mmCIF files of the PDB database.
 
+## Installation ##
+```bash
+cd script/
+make
+```
+The compilation requires GCC with C++ 11 support.
+
 ### Step 0: Initialize database ###
 This step is only needed the first time the database is created. It will not be necessary for subsequent database update.
 ```bash
@@ -42,4 +49,4 @@ abstract for corresponding entry.
 ```bash
 ./script/curate_ligand.pl
 ```
-This script check potential artifact ligand against pubmed abstract. It repackages receptor and biologically relevent ligand pdb files into interim/*/*.tar.bz2. Binding site are written to interim/*/*.bsr
+This script check potential artifact ligand against pubmed abstract. It repackages receptor and biologically relevent ligand pdb files into interim/*/*.tar.bz2. Binding sites are written to interim/*/*.bsr.
