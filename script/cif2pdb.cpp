@@ -169,7 +169,7 @@ void make_stdres(map<string,vector<string>> &stdres_dict)
 }
 
 
-string map_stdres(const string &comp_id,ResidueUnit &residue,
+string map_stdres(const string &comp_id,const ResidueUnit &residue,
     map<string,vector<string>> &stdres_dict)
 {
     if (stdres_dict.count(comp_id)) return comp_id;
@@ -2878,6 +2878,39 @@ size_t getContact(const vector<vector<double> >&ligand_vec,
     return bindingPocket_num;
 }
 
+/* return 3 if residue is heteroatom 
+ *        2 if residue is either RNA or DNA
+ *        1 if residue is protein and has CA atom
+ *        0 if residue is protein and without CA */
+int hasCA(const ResidueUnit &residue, map<string,vector<string>> &stdres_dict,
+    map<string,string> &modres_dict)
+{
+    if (residue.het>=3) return 3;
+    string comp_id=residue.resn;
+    if (modres_dict.count(comp_id)) comp_id=modres_dict[comp_id];
+    if (stdres_dict.count(comp_id) && comp_id.size()<=2)
+    {
+        comp_id.clear();
+        return 2;
+    }
+    comp_id=map_stdres(comp_id,residue,stdres_dict);
+    if (stdres_dict.count(comp_id) && comp_id.size()<=2)
+    {
+        comp_id.clear();
+        return 2;
+    }
+    size_t a;
+    for (a=0;a<residue.atoms.size();a++)
+    {
+        if (residue.atoms[a].name!=" CA ") continue;
+        comp_id.clear();
+        return 1;
+    }
+    comp_id.clear();
+    return 0;
+}
+
+
 int cif2pdb(const string &infile, string &pdbid,
     map<string,unsigned int>&artifact_dict)
 {
@@ -3228,7 +3261,7 @@ int cif2pdb(const string &infile, string &pdbid,
             if (asym_id!=asym_prev || seq_id!=seq_id_prev || 
                 pdbx_PDB_ins_code!=ins_code_prev)
             {
-                if (residue.atoms.size())
+                if (residue.atoms.size() && hasCA(residue,stdres_dict,modres_dict))
                 {
                     chain.residues.push_back(residue);
                     deepClean(residue);
@@ -3277,7 +3310,7 @@ int cif2pdb(const string &infile, string &pdbid,
     lines.clear();
 
     deepClean(atom);
-    if (residue.atoms.size())
+    if (residue.atoms.size() && hasCA(residue,stdres_dict,modres_dict))
     {
         chain.residues.push_back(residue);
         deepClean(residue);
