@@ -2319,7 +2319,7 @@ size_t fasta2nr(const string &infile, const string &outfile)
     else
     {
         ofstream fout;
-        fout.open(outfile);
+        fout.open(outfile.c_str());
         fout<<line<<flush;
         fout.close();
     }
