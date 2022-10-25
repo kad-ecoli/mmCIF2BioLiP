@@ -3600,21 +3600,24 @@ COLUMNS        DATA  TYPE    FIELD        DEFINITION
     fout.close();
 
     /* compress file */
-    line="tar -czf "+pdbid+".tar.gz "+
-         Join(" ",receptor_filename_vec)+" "+
-         Join(" ",ligand_filename_vec);
-    i=system(line.c_str());
-    ifstream fp((pdbid+".tar.gz").c_str());
-    if (fp.good())
+    if (receptor_filename_vec.size()+ligand_filename_vec.size())
     {
-        line="del ";
-#if defined(REDI_PSTREAM_H_SEEN)
-        line="rm ";
-#endif
-        line+=Join(" ",receptor_filename_vec)+" "+
-              Join(" ",ligand_filename_vec);
+        line="tar -czf "+pdbid+".tar.gz "+
+             Join(" ",receptor_filename_vec)+" "+
+             Join(" ",ligand_filename_vec);
         i=system(line.c_str());
-        fp.close();
+        ifstream fp((pdbid+".tar.gz").c_str());
+        if (fp.good())
+        {
+            line="del ";
+#if defined(REDI_PSTREAM_H_SEEN)
+            line="rm ";
+#endif
+            line+=Join(" ",receptor_filename_vec)+" "+
+                  Join(" ",ligand_filename_vec);
+            i=system(line.c_str());
+            fp.close();
+        }
     }
 
     /* clean up */

@@ -2325,12 +2325,14 @@ size_t fasta2nr(const string &infile, const string &outfile)
     }
 
     /* clean up */
+    l=sequence_vec.size();
     vector<string> ().swap(sequence_vec);
     vector<string> ().swap(line_vec);
     string ().swap(line);
     string ().swap(sequence);
     map<string,string>().swap(fasta_dict);
     vector<string> ().swap(lines);
+    return l;
 }
 
 int main(int argc,char **argv)
