@@ -39,3 +39,7 @@ This script checks interim/*/*.txt for artifact ligand and download pubmed
 abstract for corresponding entry.
 
 ### Step 6: remove artifact and unbound ligand ###
+```bash
+./script/curate_ligand.pl
+```
+This script check potential artifact ligand against pubmed abstract. It repackages receptor and biologically relevent ligand pdb files into interim/*/*.tar.bz2. Binding site are written to interim/*/*.bsr
