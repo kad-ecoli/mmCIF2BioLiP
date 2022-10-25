@@ -12,7 +12,7 @@ Example entry:
 The columns are (from left to right):
 01	PDB ID
 02	Receptor chain
-03	Resolution
+03	Resolution. "-1.00" stands for lack of resolution information, e.g. for NMR
 04	Binding site number code
 05	Ligand ID
 06	Ligand chain
@@ -23,7 +23,7 @@ The columns are (from left to right):
 11      Catalytic site residues (different sites are separated by ';') (with residue re-numbered starting from 1)
 12	EC number
 13	GO terms
-14	Binding affinity by manual suervey of the original literature. The information in '()' is the PubMed ID
+14	Binding affinity by manual survey of the original literature. The information in '()' is the PubMed ID
 15	Binding affinity provided by the Binding MOAD database. The information in '()' is the ligand information in Binding MOAD
 16	Binding affinity provided by the PDBbind-CN database. The information in '()' is the ligand information in PDBbind-CN
 17	Binding affinity provided by the BindingDB database
