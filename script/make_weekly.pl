@@ -23,11 +23,12 @@ foreach my $divided(`ls $rootdir/pdb/data/structures/divided/mmCIF/`)
     {
         chomp($filename);
         system("cd $rootdir/weekly/$divided; tar -xf $rootdir/interim/$divided/$filename; mv *_*_*.pdb $rootdir/weekly/$divided/ligand/; mv *.pdb $rootdir/weekly/$divided/receptor/");
-        foreach my $moltype(("receptor","ligand"))
-        {
-            print "$rootdir/weekly/${moltype}_$divided.tar.bz2\n";
-            system("cd $rootdir/weekly/$divided; tar -cjvf $rootdir/weekly/${moltype}_$divided.tar.bz2 $moltype/");
-        }
+    }
+    system("ls $rootdir/weekly/$divided/receptor/ | $bindir/receptor1 $rootdir/weekly/$divided/receptor/ $rootdir/weekly/$divided/receptor1/ -");
+    foreach my $moltype(("receptor","receptor1","ligand"))
+    {
+        print "$rootdir/weekly/${moltype}_$divided.tar.bz2\n";
+        system("cd $rootdir/weekly/$divided; tar -cjvf $rootdir/weekly/${moltype}_$divided.tar.bz2 $moltype/");
     }
     system("cd $rootdir/interim/$divided/; sed -n '/^#pdb/{ :a; n; p; ba; }' *.bsr|gzip - > $rootdir/weekly/BioLiP_$divided.bsr.gz");
 }
