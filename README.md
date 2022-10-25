@@ -50,3 +50,8 @@ abstract for corresponding entry.
 ./script/curate_ligand.pl
 ```
 This script check potential artifact ligand against pubmed abstract. It repackages receptor and biologically relevent ligand pdb files into interim/*/*.tar.bz2. Binding sites are written to interim/*/*.bsr.
+
+### Step 7: prepare redundant dataset ###
+```bash
+./script/make_weekly.pl
+```
