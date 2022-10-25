@@ -75,7 +75,7 @@ foreach my $divided(`ls $rootdir/interim`)
         chomp($line);
         my @items=split(/:pmid:/,$line);
         my $filename=$items[0];
-        system("sed -i 's/^pmid:-1/pmid:?/' $filename") if ($line=~/pmid:-1/);r($line,0,(length $line)-7);
+        system("sed -i 's/^pmid:-1/pmid:?/' $filename") if ($line=~/pmid:-1/);
         my $ignorefilename=substr($filename,0,(length $filename)-4).".ignore";
         my $targzfilename =substr($filename,0,(length $filename)-4).".tar.gz";
         $filename=~/(\w+)\.txt$/;
