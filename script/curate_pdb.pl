@@ -18,8 +18,9 @@ foreach my $pdb(@pdb_list)
     my $divided=substr($pdb,length($pdb)-3,2);
     my $inputdir="$rootdir/pdb/data/structures/divided/mmCIF/$divided";
     my $outdir="$rootdir/interim/$divided";
-    next if (-s "$outdir/$pdb.txt" &&  ( -s "$outdir/$pdb.ignore" ||
-             -s "$outdir/$pdb.tar.gz" || -s "$outdir/$pdb.tar.bz2"));
+    next if (!-s "$inputdir/$pdb.cif.gz" ||
+            ( -s "$outdir/$pdb.txt" &&  ( -s "$outdir/$pdb.ignore" ||
+              -s "$outdir/$pdb.tar.gz" || -s "$outdir/$pdb.tar.bz2")));
     system("mkdir -p $outdir") if (!-d "$outdir");
     my $cmd="cd $outdir; $bindir/cif2pdb $inputdir/$pdb.cif.gz $pdb $rootdir/ligand_list";
     printf "$cmd\n";
@@ -29,7 +30,7 @@ foreach my $pdb(@pdb_list)
     my $receptorNum=0;
     my $ligandNum=0;
     my $startTable=0;
-    foreach my $line(`cat $outdir/$pdb.txt|tail +3`)
+    foreach my $line(`cat $outdir/$pdb.txt|tail -n +3`)
     {
         if ($line=~/^#rec/)
         {
