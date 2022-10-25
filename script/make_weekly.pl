@@ -17,6 +17,7 @@ foreach my $divided(`ls $rootdir/pdb/data/structures/divided/mmCIF/`)
     }
     system("rm -rf $rootdir/weekly/$divided/") if (-d "$rootdir/weekly/$divided");
     system("mkdir -p $rootdir/weekly/$divided/receptor/");
+    system("mkdir -p $rootdir/weekly/$divided/receptor1/");
     system("mkdir -p $rootdir/weekly/$divided/ligand/");
     foreach my $filename(`ls $rootdir/interim/$divided/|grep .tar.bz2`)
     {
@@ -36,6 +37,16 @@ system("mkdir -p $rootdir/data") if (!-d "$rootdir/data");
 foreach my $moltype(("protein","peptide","rna","dna"))
 {
     system("cd $rootdir/weekly; zcat ${moltype}_*.fasta.gz > $rootdir/data/$moltype.fasta");
+    if ($moltype eq "protein")
+    {
+        system("$bindir/cd-hit -i $rootdir/data/$moltype.fasta -o $rootdir/data/${moltype}_nr.fasta");
+    }
+    else
+    {
+        system("$bindir/fasta2nr $rootdir/data/$moltype.fasta $rootdir/data/${moltype}_nr.fasta");
+    }
+    system("gzip -f $rootdir/data/$moltype.fasta");
+    system("gzip -f $rootdir/data/${moltype}_nr.fasta");
     system("cd $rootdir/weekly; rm ${moltype}_*.fasta.gz");
 }
 
