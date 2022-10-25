@@ -6,7 +6,7 @@ my $bindir = dirname(abs_path(__FILE__));
 my $rootdir = dirname($bindir);
 
 system("mkdir -p $rootdir/weekly") if (!-d "$rootdir/weekly");
-foreach my $divided(`ls $rootdir/pdb/data/structures/divided/mmCIF/`)
+foreach my $divided(`ls $rootdir/interim/`)
 {
     chomp($divided);
     next if (`ls $rootdir/interim/$divided/|grep bsr|wc -l`+0==0);
