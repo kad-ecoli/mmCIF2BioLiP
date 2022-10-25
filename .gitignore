@@ -5,6 +5,7 @@ data/*.tsv.gz
 data/*.fasta.gz
 taxonomy/
 sifts/
+interim/
 
 # Prerequisites
 *.d
