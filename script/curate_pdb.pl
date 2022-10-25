@@ -70,10 +70,12 @@ foreach my $line(`zcat $rootdir/data/pdb2pubmed.tsv.gz`)
 foreach my $divided(`ls $rootdir/interim`)
 {
     chomp($divided);
-    foreach my $line(`grep --with-filename 'pmid:?' $rootdir/interim/$divided/*.txt`)
+    foreach my $line(`grep --with-filename -P 'pmid:(\\?|-1)' $rootdir/interim/$divided/*.txt`)
     {
         chomp($line);
-        my $filename=substr($line,0,(length $line)-7);
+        my @items=split(/:pmid:/,$line);
+        my $filename=$items[0];
+        system("sed -i 's/^pmid:-1/pmid:?/' $filename") if ($line=~/pmid:-1/);r($line,0,(length $line)-7);
         my $ignorefilename=substr($filename,0,(length $filename)-4).".ignore";
         my $targzfilename =substr($filename,0,(length $filename)-4).".tar.gz";
         $filename=~/(\w+)\.txt$/;
