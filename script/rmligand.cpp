@@ -2916,12 +2916,30 @@ int rmligand(const string &pdbid, map<string,vector<string> >&artifact_dict,
     map<string,int> artifact_check_dict; // 0 - unchecked; 1 - confirmed; -1 - rejected
     vector<string> line_vec;
     vector<vector<string> > bsr_mat;
+    map<string,string> fasta_dict;
     size_t l;
     int i;
     size_t startTable=0;
+    string recCha,ligCha,ligIdx;
+    string moltype;
     for (l=2;l<lines.size();l++)
     {
         if (StartsWith(lines[l],"#rec")) startTable=l;
+        else if (startTable==0)
+        {
+            if (StartsWith(lines[l],">"))
+            {
+                Split(lines[l],line_vec,'\t');
+                recCha=line_vec[0].substr(1);
+                moltype=line_vec[1];
+                if (moltype=="protein") fasta_dict[recCha]=">"+pdbid;
+                else fasta_dict[recCha]=">"+pdbid+"_"+moltype+"_";
+                fasta_dict[recCha]+=recCha+"\t"+lines[l].substr(1)+"\n"+
+                    lines[l+1]+'\n';
+                l++;
+                clear_line_vec(line_vec);
+            }
+        }
         else if (startTable)
         {
             Split(lines[l],line_vec,'\t');
@@ -2976,8 +2994,8 @@ int rmligand(const string &pdbid, map<string,vector<string> >&artifact_dict,
     /* get the list of ligand and receptor */
     vector<string> receptor_filename_vec;
     vector<string> ligand_filename_vec;
-    string recCha,ligCha,ligIdx;
     string line;
+    vector<string> chainID_vec;
     for (l=0;l<bsr_mat.size();l++)
     {
         resn=bsr_mat[l][1];
@@ -2997,10 +3015,22 @@ int rmligand(const string &pdbid, map<string,vector<string> >&artifact_dict,
         if (find(ligand_filename_vec.begin(),ligand_filename_vec.end(),
             line)==ligand_filename_vec.end())
             ligand_filename_vec.push_back(line);
+        if (find(chainID_vec.begin(),chainID_vec.end(),    recCha)==
+                 chainID_vec.end())  chainID_vec.push_back(recCha);
+        if ((bsr_mat[l][1]=="rna" || bsr_mat[l][1]=="peptide" || 
+             bsr_mat[l][1]=="rna") && find(chainID_vec.begin(),
+             chainID_vec.end(),ligCha)==   chainID_vec.end())  
+             chainID_vec.push_back(ligCha);
     }
 
     string summary_txt;
-    summary_txt="#recCha\tBS\tCCD\tligCha\tligIdx\tresidueOriginal\tresidueRenumbered\n";
+    for (l=0;l<chainID_vec.size();l++)
+    {
+        recCha=chainID_vec[l];
+        if (fasta_dict.count(recCha)) summary_txt+=fasta_dict[recCha];
+    }
+    summary_txt+="#pdb\trecCha\tBS\tCCD\tligCha\tligIdx"
+        "\tresidueOriginal\tresidueRenumbered\n";
     map <string,int> bs_dict;
     for (l=0;l<bsr_mat.size();l++)
     {
@@ -3008,7 +3038,7 @@ int rmligand(const string &pdbid, map<string,vector<string> >&artifact_dict,
         recCha=bsr_mat[l][0];
         if (bs_dict.count(recCha)) bs_dict[recCha]++;
         else bs_dict[recCha]=1;
-        buf<<recCha<<"\tBS"<<setfill('0')<<setw(2)<<bs_dict[recCha]
+        buf<<pdbid<<'\t'<<recCha<<"\tBS"<<setfill('0')<<setw(2)<<bs_dict[recCha]
             <<'\t'<<Join("\t",bsr_mat[l],1)<<endl;
         summary_txt+=buf.str();
         buf.str(string());
@@ -3048,12 +3078,14 @@ int rmligand(const string &pdbid, map<string,vector<string> >&artifact_dict,
         if (receptor_filename_vec.size()==0 && ligand_filename_vec.size()==0)
         {
             fout.open((pdbid+".ignore").c_str());
-            fout<<"no_protein\nno_ligand"<<endl;
+            fout<<"no_biological_ligand"<<endl;
             fout.close();
         }
     }
 
     /* clean up */
+    map<string,string>().swap(fasta_dict);
+    vector<string>().swap(chainID_vec);
     map <string,int>().swap(bs_dict);
     string ().swap(cmd);
     string ().swap(line);
