@@ -6,6 +6,8 @@ data/*.fasta.gz
 taxonomy/
 sifts/
 interim/
+pubmed/
+m-csa/
 
 # Prerequisites
 *.d
