@@ -113,7 +113,7 @@ $size=keys %affman_dict;
 print "$size affinity from manual survey of literature\n";
 
 my %csa_dict;
-foreach my $line(`zcat $rootdir/data/csa.tsv.gz`)
+foreach my $line(`cat $rootdir/data/csa.tsv`)
 {
     if ($line=~/^(\S+)\t(\S+)\t(\S+)/)
     {

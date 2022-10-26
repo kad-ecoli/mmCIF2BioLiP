@@ -141,7 +141,6 @@ if (scalar @chain_list)
     open(FP,">$rootdir/data/csa.tsv");
     print FP "$txt";
     close(FP);
-    system("gzip -f $rootdir/data/csa.tsv");
 }
 
 
