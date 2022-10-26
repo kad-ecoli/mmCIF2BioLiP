@@ -8,6 +8,13 @@ sifts/
 interim/
 pubmed/
 m-csa/
+bind/index/INDEX_*
+bind/pocket/*.pdb
+bind/ligand/*.mol2
+bind/*.gz
+bind/Download.jsp
+bind/*.zip
+bind/every.csv
 
 # Prerequisites
 *.d
