@@ -35,6 +35,13 @@ This script downloads catalytic site to ``m-csa/api/residues.json`` and extract 
 ```
 This script downloads BindingDB to ``bind/BindingDB*`` and extract the summary to ``data/BindingDB.tsv.gz``
 
+Optionally, run the following script to download MOAD. Since MOAD only updates every few years, it is not necessary to run it weekly.
+```bash
+./script/download_moad.pl
+```
+This script downloads MOAD to ``bind/every.csv`` and extract the summary to ``data/moad.tsv``.
+
+
 ### Step 3: Download missing PDB entries ###
 ```bash
 ./script/download_pdb.pl
