@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# download binding affinity from BindingDB, MOAD and PDBbind-CN
+# download binding affinity from BindingDB and PDBbind-CN
 use strict;
 use File::Basename;
 use Cwd 'abs_path';
@@ -8,7 +8,6 @@ my $rootdir = dirname($bindir);
 
 print "download BindingDB\n";
 system("mkdir -p $rootdir/bind");
-=pod
 system("wget 'https://www.bindingdb.org/rwd/bind/chemsearch/marvin/Download.jsp' -O $rootdir/bind/Download.jsp");
 if (`cat $rootdir/bind/Download.jsp`=~/(BindingDB_All_\w+.tsv.zip)/)
 {
@@ -21,7 +20,6 @@ if (`cat $rootdir/bind/Download.jsp`=~/(BindingDB_All_\w+.tsv.zip)/)
         system("gzip -f $rootdir/bind/BindingDB.tsv");
     }
 }
-=cut
 
 my %pdb2chain;
 my %chain2uniprot;
