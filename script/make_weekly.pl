@@ -19,7 +19,7 @@ foreach my $divided(`ls $rootdir/interim/`)
     system("mkdir -p $rootdir/weekly/$divided/receptor/");
     system("mkdir -p $rootdir/weekly/$divided/receptor1/");
     system("mkdir -p $rootdir/weekly/$divided/ligand/");
-    foreach my $filename(`ls $rootdir/interim/$divided/|grep .tar.bz2`)
+    foreach my $filename(`ls $rootdir/interim/$divided/|grep '.tar.bz2\$'`)
     {
         chomp($filename);
         system("cd $rootdir/weekly/$divided; tar -xf $rootdir/interim/$divided/$filename; mv *_*_*.pdb $rootdir/weekly/$divided/ligand/; mv *.pdb $rootdir/weekly/$divided/receptor/");
@@ -28,9 +28,18 @@ foreach my $divided(`ls $rootdir/interim/`)
     foreach my $moltype(("receptor","receptor1","ligand"))
     {
         print "$rootdir/weekly/${moltype}_$divided.tar.bz2\n";
-        system("cd $rootdir/weekly/$divided; tar -cjvf $rootdir/weekly/${moltype}_$divided.tar.bz2 $moltype/");
+        system("cd $rootdir/weekly/$divided; tar -cjf $rootdir/weekly/${moltype}_$divided.tar.bz2 $moltype/");
     }
-    system("cd $rootdir/interim/$divided/; sed -n '/^#pdb/{ :a; n; p; ba; }' *.bsr|gzip - > $rootdir/weekly/BioLiP_$divided.bsr.gz");
+    my $bsr_txt="";
+    foreach my $filename(`ls $rootdir/interim/$divided/|grep '.bsr\$'`)
+    {
+        chomp($filename);
+        $bsr_txt.=`sed -n '/^#pdb/{ :a; n; p; ba; }' $rootdir/interim/$divided/$filename`;
+    }
+    open(FP,">$rootdir/weekly/BioLiP_$divided.bsr");
+    print FP $bsr_txt;
+    close(FP);
+    system("gzip -f $rootdir/weekly/BioLiP_$divided.bsr");
 }
 
 print "combine data\n";
@@ -40,7 +49,10 @@ foreach my $moltype(("protein","peptide","rna","dna"))
     system("cd $rootdir/weekly; zcat ${moltype}_*.fasta.gz > $rootdir/data/$moltype.fasta");
     if ($moltype eq "protein")
     {
-        system("$bindir/cd-hit -i $rootdir/data/$moltype.fasta -o $rootdir/data/${moltype}_nr.fasta");
+        my $cmd="cd-hit -i $rootdir/data/protein.fasta -o $rootdir/data/protein_nr.fasta";
+        system("$bindir/$cmd");
+        system("$cmd") if (!-s "$rootdir/data/protein_nr.fasta");
+        system("rm $rootdir/data/protein_nr.fasta.clstr");
     }
     else
     {
