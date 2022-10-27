@@ -52,14 +52,42 @@ foreach my $moltype(("protein","peptide","rna","dna"))
         my $cmd="cd-hit -i $rootdir/data/protein.fasta -o $rootdir/data/protein_nr.fasta";
         system("$bindir/$cmd");
         system("$cmd") if (!-s "$rootdir/data/protein_nr.fasta");
+        system("cut -f1 $rootdir/data/protein_nr.fasta > $rootdir/data/protein_nr.fasta.tmp; mv $rootdir/data/protein_nr.fasta.tmp $rootdir/data/protein_nr.fasta");
+        system("cd $rootdir/data; $bindir/makeblastdb -in protein_nr.fasta -dbtype prot -out protein_nr");
+        my $txt="";
+        foreach my $block(split(/>Cluster/,`cat $rootdir/data/protein_nr.fasta.clstr`))
+        {
+            my $repr="";
+            my $memb="";
+            foreach my $line(split(/\n/,$block))
+            {
+                if ($line=~/>(\w+)\.\.\. (\S+)/)
+                {
+                    my $chain="$1";
+                    my $stat ="$2";
+                    if ($stat eq "*")       { $repr=$chain; }
+                    elsif (length $memb==0) { $memb=$chain; }
+                    else                { $memb.=",$chain"; }
+                }
+            }
+            $txt.="$repr\t$memb\n" if (length $memb);
+        }
+        open(FP,">$rootdir/data/protein_nr.fasta.clust");
+        print FP $txt;
+        close(FP);
         system("rm $rootdir/data/protein_nr.fasta.clstr");
     }
     else
     {
         system("$bindir/fasta2nr $rootdir/data/$moltype.fasta $rootdir/data/${moltype}_nr.fasta");
+        if (-s "$rootdir/data/${moltype}_nr.fasta" && $moltype ne "peptide")
+        {
+            system("cd $rootdir/data; $bindir/makeblastdb -in ${moltype}_nr.fasta -dbtype nucl -out ${moltype}_nr");
+        }
     }
     system("gzip -f $rootdir/data/$moltype.fasta");
     system("gzip -f $rootdir/data/${moltype}_nr.fasta");
+    system("gzip -f $rootdir/data/${moltype}_nr.fasta.clust");
     system("cd $rootdir/weekly; rm ${moltype}_*.fasta.gz");
 }
 

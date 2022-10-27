@@ -2,7 +2,8 @@
 *.swp
 *.pyc
 data/*.tsv.gz
-data/*.fasta.gz
+data/*.fasta*.gz
+data/*_nr.*
 taxonomy/
 sifts/
 interim/
@@ -15,6 +16,7 @@ bind/*.gz
 bind/Download.jsp
 bind/*.zip
 bind/every.csv
+download/lig_frequency.txt
 
 # Prerequisites
 *.d

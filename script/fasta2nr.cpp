@@ -2283,6 +2283,7 @@ size_t fasta2nr(const string &infile, const string &outfile)
     buf.str(string());
 
     map<string,string> fasta_dict; // sequence -> header
+    map<string,string> clust_dict; // represent -> member
     string line;
     string sequence;
     vector<string> line_vec;
@@ -2293,10 +2294,17 @@ size_t fasta2nr(const string &infile, const string &outfile)
         sequence=lines[l+1];
         line=lines[l].substr(1);
         Split(line,line_vec,'\t');
-        if (fasta_dict.count(sequence)) fasta_dict[sequence]+=","+line_vec[0];
+        if (fasta_dict.count(sequence))
+        {
+            if (clust_dict[fasta_dict[sequence]].size())
+                clust_dict[fasta_dict[sequence]]+=","+line_vec[0];
+            else
+                clust_dict[fasta_dict[sequence]]=line_vec[0];
+        }
         else 
         {
-            fasta_dict[sequence]+=line_vec[0];
+            fasta_dict[sequence]=line_vec[0];
+            clust_dict[line_vec[0]]="";
             sequence_vec.push_back(sequence);
         }
         clear_line_vec(line_vec);
@@ -2324,6 +2332,29 @@ size_t fasta2nr(const string &infile, const string &outfile)
         fout.close();
     }
 
+    line.clear();
+    for (l=0;l<sequence_vec.size();l++)
+        if (clust_dict[fasta_dict[sequence_vec[l]]].size())
+            line+=fasta_dict[sequence_vec[l]]+"\t"+
+                clust_dict[fasta_dict[sequence_vec[l]]]+"\n";
+    if (outfile=="-") ;
+    else if (EndsWith(outfile,".gz"))
+    {
+        ofstream fout;
+        fout.open((outfile.substr(0,outfile.size()-3)+".clust").c_str());
+        fout<<line<<flush;
+        fout.close();
+        line="gzip -f "+outfile.substr(0,outfile.size()-3)+".clust";
+        int r=system(line.c_str());
+    }
+    else
+    {
+        ofstream fout;
+        fout.open((outfile+".clust").c_str());
+        fout<<line<<flush;
+        fout.close();
+    }
+
     /* clean up */
     l=sequence_vec.size();
     vector<string> ().swap(sequence_vec);
@@ -2331,6 +2362,7 @@ size_t fasta2nr(const string &infile, const string &outfile)
     string ().swap(line);
     string ().swap(sequence);
     map<string,string>().swap(fasta_dict);
+    map<string,string>().swap(clust_dict);
     vector<string> ().swap(lines);
     return l;
 }

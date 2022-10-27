@@ -7,7 +7,8 @@ make
 ```
 The compilation requires GCC with C++ 11 support.
 The binary executable of [cd-hit](https://github.com/weizhongli/cdhit) is available at ``script/cd-hit`` for 64 bit Linux.
-Reinstall cd-hit if using other operating system.
+The binary executable of makeblastdb, blastn and blastp from the [NCBI BLAST+](ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/) are available at ``script/`` for 64 bit Linux.
+Reinstall cd-hit, makeblastdb, blastn and blastp if using other operating system.
 
 ### Step 0: Initialize database ###
 This step is only needed the first time the database is created. It will not be necessary for subsequent database update.

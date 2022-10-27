@@ -49,7 +49,7 @@ elif code:
         txt_table+="<tr><td>"+"</td><td>".join(items)+"</td></tr>"
         res=items[0]
         svg="https://cdn.rcsb.org/images/ccd/labeled/%s/%s.svg"%(res[0],res)
-        print("<p><ul><a href=%s target=_blank><img src=%s width=300></a><br>"%(svg,svg))
+        print("<p><ul><a href=%s target=_blank><img src=%s alt='' width=300></a><br>"%(svg,svg))
         print("View <a href=https://rcsb.org/ligand/%s target=_blank>%s</a> at the PDB database</ul></p>"%(
         res,res))
     print(txt_table)
