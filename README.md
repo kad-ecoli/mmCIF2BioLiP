@@ -87,7 +87,7 @@ This script reads ``interim/*/*.tar.bz2`` and ``interim/*/*.bsr`` and writes ``w
 FASTA sequence of protein, peptide, rna, dna are saved to ``data/*.fasta.gz``
 
 ### Step 8: prepare nonredundant dataset ###
-This step must be performed after step 7.
+This step must be performed after step 3 and 7.
 ```bash
 ./script/make_nr.pl
 ```
