@@ -1,0 +1,347 @@
+/*
+Design by Free CSS Templates
+http://www.freecsstemplates.org
+Released for free under a Creative Commons Attribution 3.0 License
+
+Name       : Lower Priority
+Description: A two-column, fixed-width design with a bright color scheme.
+Version    : 1.0
+Released   : 20120130
+*/
+
+* {
+	padding: 0;
+	margin: 0;
+}
+
+
+
+
+a:link {color:#0000FF;}      /* unvisited link */
+a:visited {color:#800080;}  /* visited link */
+a:hover {color:#FF00FF;}  /* mouse over link */
+a:active {color:#FF0000;}  /* active link */ 
+
+
+
+
+
+
+body {
+	background: #E0E0E0;
+	font-size: 12pt;
+	color: #808080;
+	line-height: 1.75em;
+}
+
+body,input {
+	font-family: Tahoma, sans-serif;
+}
+
+br.clearfix {
+	clear: both;
+}
+
+h1,h2,h3,h4 {
+	font-weight: normal;
+	letter-spacing: -1px;
+}
+
+h2 {
+	font-size: 2.25em;
+}
+
+h2,h3,h4 {
+	margin-bottom: 1em;
+	color: #FFFFFF;
+	font-family: Oswald, sans-serif;
+}
+
+h3 {
+	font-size: 1.75em;
+}
+
+h4 {
+	font-size: 1.5em;
+}
+
+img.alignleft {
+	float: left;
+	margin: 5px 20px 20px 0;
+}
+
+img.aligntop {
+	margin: 5px 0 20px 0;
+}
+
+p {
+	margin-bottom: 1.5em;
+}
+
+ul {
+	margin-bottom: 0em;
+}
+
+ul h4 {
+	margin-bottom: 0.35em;
+}
+
+#content {
+	padding: 0;
+	width: 75%;
+	float: left;
+}
+
+#footer {
+	padding: 40px 0 95px 0;
+	text-align: center;
+	margin: 0 0 50px 0;
+}
+
+#footer a {
+	color: #707070;
+}
+
+div#z_body div#z_page div#header {
+	
+	color: #FFFFFF;
+	position: relative;
+	height: 146px;
+	border-top: solid 1px #F7F1E8;
+	background:  url(images/BioLiP1.png) no-repeat top left;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	
+}
+
+#logo {
+	line-height: 149px;
+	top: 0;
+	left: 35px;
+	height: 149px;
+	position: absolute;
+	text-shadow: 0px 2px 1px #3F372B;
+}
+
+#logo a {
+	text-decoration: none;
+	color: #FFFFFF;
+}
+
+#logo h1 {
+	font-family: Oswald, sans-serif;
+	font-size: 3.25em;
+}
+
+
+
+#menunav {
+	position: relative;
+
+	background: #DE2211 url(images/img04.gif) repeat-x top left;
+	font-family: Oswald, sans-serif;
+	left: 0;
+	bottom: 0;
+	
+
+	padding: 0 35px 0 35px;
+	border-top: solid 1px #FC403C;
+	border-bottom: solid 1px #B60000;
+	height: 30px;
+	margin: 0 0 0 0;
+}
+
+
+
+#menup {
+	position: relative;
+	line-height: 55px;
+	width: 100%;
+	background: #DE2211 url(images/img04.gif) repeat-x top left;
+	font-family: Oswald, sans-serif;
+	left: 0;
+	bottom: 0;
+
+	padding: 0 35px 0 35px;
+	border-top: solid 1px #FC403C;
+	border-bottom: solid 1px #B60000;
+	height: 55px;
+	margin: 0 0 0 0;
+}
+
+#menup a {
+	color: #FFFFFF;
+	
+	font-size: 1.2em;
+	letter-spacing: -1px;
+	text-decoration: none;
+	text-shadow: 0px 1px 1px #590200;
+}
+
+#menup ul {
+	list-style: none;
+}
+
+#menup ul li {
+	padding: 0 15px 0 15px;
+	display: inline;
+}
+
+#menup ul li.first {
+	padding-left: 0;
+}
+
+#page {
+	width: 100%;
+	
+	position: relative;
+	border-top: solid 1px #FFFFFF;
+	
+	margin: 0 0 0 0;
+	border-bottom: solid 5px #D0D0D0;
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+}
+
+
+
+#padd {
+
+	padding: 20px 35px 15px 35px;
+
+}
+
+
+
+#page .section-list {
+	padding-left: 0;
+	list-style: none;
+}
+
+#page .section-list li {
+	padding: 20px 0 20px 0;
+	clear: both;
+}
+
+#page h2, #page h3, #page h4 {
+	color: #2F2F2F;
+	text-shadow: 0px 2px 0px #FFFFFF;
+}
+
+#page strong {
+	color: #121212;
+}
+
+#page ul {
+	list-style: none;
+}
+
+
+
+#page ul li.first {
+	border-top: 0;
+	padding-top: 0;
+}
+
+
+.post {
+	overflow: hidden;
+	margin: 0 0 20px 0;
+}
+
+mytd
+{
+    margin:10px;
+    padding:5px
+}
+
+
+#search {
+	line-height: 159px;
+	position: absolute;
+	top: 0;
+	right: 35px;
+	height: 159px;
+}
+
+#search input.form-submit {
+	border: 0;
+	border-top: solid 1px #FC403C;
+	border-bottom: solid 1px #B60000;
+	font-family: Oswald, sans-serif;
+	margin-left: 1em;
+	color: #FFFFFF;
+	padding: 2px 8px 3px 8px;
+	background: #CF1302;
+	text-shadow: 0px 1px 1px #590200;
+	border-radius: 5px;
+}
+
+#search input.form-text {
+	background: #5C4D37;
+	border: 0;
+	border-bottom: solid 1px #A89983;
+	padding: 5px 8px 5px 8px;
+	color: #C4B8A8;
+	border-radius: 5px;
+}
+
+#sidebar {
+	padding: 0;
+	width: 25%;
+	margin: 0 0 0 auto;
+	position: relative;
+}
+
+
+#searchbar {
+	padding: 0;	
+	width: 220px;	
+	margin: 0 0 0 -50px;
+	position: relative;
+	}
+
+
+#wrapper {
+	margin: 10px auto 0 auto;
+	width: 100%;
+	position: relative;
+
+}
+
+
+
+
+
+
+
+#navbar {
+	margin: 0;
+	padding: 0;
+	height: 1em; }
+#navbar li {
+	list-style: none;
+	float: left; }
+#navbar li a { 
+	display: block;
+	padding: 3px 8px;
+	
+	color: #fff;
+	text-decoration: none; }
+#navbar li ul {
+	display: none; 
+	width: 16em; /* Width to help Opera out */
+	background-color: #69f;}
+#navbar li:hover ul, #navbar li.hover ul {
+	display: block;
+	position: absolute;
+	margin: 0;
+	padding: 0; }
+#navbar li:hover li, #navbar li.hover li {
+	float: none; }
+#navbar li:hover li a, #navbar li.hover li a {
+	background-color: purple;
+	border-bottom: 1px solid #fff;
+ }
+#navbar li li a:hover {
+	background-color: #8db3ff; }
