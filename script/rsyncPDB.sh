@@ -25,3 +25,6 @@ PORT=33444                                                    # port RCSB PDB se
 
 mkdir -p $MIRRORDIR/data/structures/divided/mmCIF
 ${RSYNC} -rlpt -v -z --delete --port=$PORT ${SERVER}/data/structures/divided/mmCIF/ $MIRRORDIR/data/structures/divided/mmCIF > $LOGFILE 2>/dev/null
+
+mkdir -p $MIRRORDIR/derived_data/index
+${RSYNC} -rlpt -v -z --delete --port=$PORT ${SERVER}/derived_data/index/resolu.idx $MIRRORDIR/derived_data/index/ >> $LOGFILE 2>/dev/null
