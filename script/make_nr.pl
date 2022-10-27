@@ -172,15 +172,6 @@ foreach my $line(`cat $rootdir/data/csa.tsv`)
         my $divided=substr($pdbid,(length $pdbid)-3,2);
         my $filename="$rootdir/weekly/$divided/receptor/$pdbid$asym_id.pdb";
            $filename="$rootdir/weekly/$divided/receptor_nr/$pdbid$asym_id.pdb" if (!-s "$filename");
-<<<<<<< HEAD
-        if (!-s "$filename")
-        {
-            print "no pdb file for $pdbid$asym_id from csa\n";
-            next;
-        }
-        my $csaOrig="";
-        my $csaRenu="";
-=======
         next if (!-s "$filename");
         my @res_list=split(/,/,$csaOrig);
         my %res_dict=map { $_, 0 } @res_list; 
@@ -201,7 +192,6 @@ foreach my $line(`cat $rootdir/data/csa.tsv`)
         }
         $csaRenu=~s/^,//;
         $csa_dict{$pdbid.$asym_id}="$csaOrig\t$csaRenu";
->>>>>>> 6d976944793182f0eafff928e0bddd154ef35e08
     }
 }
 $size=keys %csa_dict;
