@@ -6,9 +6,21 @@ import gzip
 
 rootdir=os.path.dirname(os.path.abspath(__file__))
 
+html_header=""
+html_footer=""
+if os.path.isfile(os.path.join(rootdir,"index.html")):
+    fp=open(os.path.join(rootdir,"index.html"))
+    txt=fp.read()
+    fp.close()
+    html_header=txt.split('<!-- CONTENT START -->')[0]
+    html_footer=txt.split('<!-- CONTENT END -->')[-1]
+
 form = cgi.FieldStorage()
 print("Content-type: text/html\n")
-print('''<html>
+if len(html_header):
+   print(html_header)
+else:
+    print('''<html>
 <head>
 <link rel="stylesheet" type="text/css" href="page.css" />
 <title>BioLiP:Ligand Information</title>
@@ -16,6 +28,9 @@ print('''<html>
 <body bgcolor="#F0FFF0">
 <img src=images/BioLiP1.png ></br>
 <p><a href=.>[Back to Home]</a></p>
+''')
+
+print('''
 <style>
 table, th, td {
   border: 1px solid black;
@@ -65,8 +80,9 @@ else:
     print("No ligand code provided. You may <a href=%s?code=%s>[browse a random ligand]</a>"%(
         os.path.basename(__file__),code
     ))
-print('''
-</table>
-</body>
-</html>
-''')
+print("</table>")
+
+if len(html_footer):
+    print(html_footer)
+else:
+    print("</body> </html>")
