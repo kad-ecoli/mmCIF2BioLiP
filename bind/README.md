@@ -22,6 +22,11 @@ Raw data can be downloaded from http://www.pdbbind.org.cn/download.php after log
 index/INDEX_general_PL_data.*
 index/INDEX_general_PL_PN.*
 ```
+For release 2020, the file names are
+```
+index/INDEX_general_PL_data.2020
+index/INDEX_general_PN.2020
+```
 
 2. Extract files endding with ligand.mol2 and pocket.pdb from "Protein-ligand complexes" and place them under:
 ```
