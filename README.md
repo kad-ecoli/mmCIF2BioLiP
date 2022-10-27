@@ -77,7 +77,7 @@ Binding sites are written to ``interim/*/*.bsr``.
 This script reads ``interim/*/*.tar.bz2`` and ``interim/*/*.bsr`` and writes ``weekly/receptor_*.tar.bz2``, ``weekly/receptor1_*.tar.bz2``, ``weekly/ligand_*.tar.bz2`` and ``weekly/BioLiP_*.bsr.gz``.
 FASTA sequence of protein, peptide, rna, dna are saved to ``data/*.fasta.gz``
 
-#### Step 8: prepare nonredundant dataset ###
+### Step 8: prepare nonredundant dataset ###
 ```bash
 ./script/make_nr.pl
 ```
