@@ -373,4 +373,78 @@ foreach my $line(`zcat $rootdir/data/lig_all.tsv.gz |cut -f4|sort|uniq -c|sort -
 open(FP,">$rootdir/download/lig_frequency.txt");
 print FP $txt;
 close(FP);
+
+
+
+my @html_items=split(/<!-- CONTENT [A-Z]+ -->/,`cat $rootdir/index.html`);
+my $html_head =<<EOF
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="page.css" />
+<title>BioLiP</title>
+</head>
+<body>
+
+<body bgcolor="#F0FFF0">
+<img src=images/BioLiP1.png ></br>
+<p><a href=.>[Back to database home]</a></p>
+<style>
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+</style>
+EOF
+;
+
+
+my $html=<<EOF
+<div align="justify">
+For your convenience, you can use this Perl script for automatic download of all the datasets: <a href=download/download_all_sets.pl>download_all_sets.pl</a>. 
+Non-redundant dataset is a subset of the redundant dataset by protein sequence clustering at 90% sequence identity.
+For both redundant and non-redundant datasets, the following files are provided:
+<br><br>
+<li>Receptor: 3D structure of proteins interacting with at least one biologically relevent ligand; original PDB residue numbering.</li>
+<li>Receptor1: the same as above but with with residues re-numbered starting from 1.</li>
+<li>Ligand: 3D structures of biologically relevant ligands</li>
+<li>Annotations: The annotations for each ligand-protein interaction site, as explained in <a href=download/readme.txt>README</a>.
+<br><br>
+<table border=2>
+<tr><th width=10%>ID</th><th colspan="4" width=45%>Redundant set</th> <th colspan="4" width=45%>Non-redundant set</th></tr>
+EOF
+;
+foreach my $divided(`ls $rootdir/weekly/|grep -P "BioLiP_\\w+\\.bsr\\.gz"|cut -f1 -d.|cut -f2 -d_`)
+{
+    chomp($divided);
+    $html.=<<EOF
+
+<tr><td>$divided</td>
+<td align=middle> <a href=weekly/receptor_$divided.tar.bz2>Receptor</a> </td> <td align=middle> <a href=weekly/receptor1_$divided.tar.bz2> Recepto1 </a></td> <td align=middle> <a href=weekly/ligand_$divided.tar.bz2>Ligand</a> </td> <td align=middle> <a href=weekly/BioLiP_$divided.txt>Annotation</a></td>
+<td align=middle> <a href=weekly/receptor_${divided}_nr.tar.bz2>Receptor</a> </td> <td align=middle> <a href=weekly/receptor1_${divided}_nr.tar.bz2> Recepto1 </a></td> <td align=middle> <a href=weekly/ligand_${divided}_nr.tar.bz2>Ligand</a> </td> <td align=middle> <a href=weekly/BioLiP_${divided}_nr.txt>Annotation</a></td>
+</tr>
+
+EOF
+;
+}
+$html.=<<EOF
+</table>
+</div>
+EOF
+;
+my $html_tail=<<EOF
+</body>
+</html>
+EOF
+;
+
+if (scalar @html_items>=2)
+{
+    $html_head=$html_items[0];
+    $html_tail=$html_items[2];
+}
+
+open(FP,">$rootdir/weekly.html");
+print FP "$html_head$html$html_tail";
+close(FP);
+
 exit();
