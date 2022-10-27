@@ -8,8 +8,8 @@ rootdir=os.path.dirname(os.path.abspath(__file__))
 
 html_header=""
 html_footer=""
-if os.path.isfile(os.path.join(rootdir,"index.html")):
-    fp=open(os.path.join(rootdir,"index.html"))
+if os.path.isfile(rootdir+"/index.html"):
+    fp=open(rootdir+"/index.html")
     txt=fp.read()
     fp.close()
     html_header=txt.split('<!-- CONTENT START -->')[0]
