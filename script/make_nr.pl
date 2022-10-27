@@ -106,7 +106,7 @@ foreach my $line(`cat $rootdir/data/affman.tsv`)
         my $pdbid="$1";
         my $asym_id="$2";
         my $affman="$3";
-        $affman_dict{$pdbid.$asym_id};
+        $affman_dict{$pdbid.$asym_id}=$affman;
     }
 }
 $size=keys %affman_dict;
@@ -124,6 +124,11 @@ foreach my $line(`cat $rootdir/data/csa.tsv`)
         my $divided=substr($pdbid,(length $pdbid)-3,2);
         my $filename="$rootdir/weekly/$divided/receptor/$pdbid$asym_id.pdb";
            $filename="$rootdir/weekly/$divided/receptor_nr/$pdbid$asym_id.pdb" if (!-s "$filename");
+        if (!-s "$filename")
+        {
+            print "no pdb file for $pdbid$asym_id from csa\n";
+            next;
+        }
         my $csaOrig="";
         my $csaRenu="";
     }
