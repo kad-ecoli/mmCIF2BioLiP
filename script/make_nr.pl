@@ -106,7 +106,7 @@ foreach my $line(`cat $rootdir/data/affman.tsv`)
         my $pdbid="$1";
         my $asym_id="$2";
         my $affman="$3";
-        $affman_dict{$pdbid.$asym_id};
+        $affman_dict{$pdbid.$asym_id}=$affman;
     }
 }
 $size=keys %affman_dict;
@@ -119,13 +119,32 @@ foreach my $line(`cat $rootdir/data/csa.tsv`)
     {
         my $pdbid  ="$1";
         my $asym_id="$2";
-        my @res_list=split(/,/,"$3");
+        my $csaOrig="$3";
+        my $csaRenu="";
 
         my $divided=substr($pdbid,(length $pdbid)-3,2);
         my $filename="$rootdir/weekly/$divided/receptor/$pdbid$asym_id.pdb";
            $filename="$rootdir/weekly/$divided/receptor_nr/$pdbid$asym_id.pdb" if (!-s "$filename");
-        my $csaOrig="";
-        my $csaRenu="";
+        next if (!-s "$filename");
+        my @res_list=split(/,/,$csaOrig);
+        my %res_dict=map { $_, 0 } @res_list; 
+        
+        my $r=0;
+        foreach my $resSeq(`grep -F ' CA ' $filename|cut -c23-27`)
+        {
+            $r++;
+            my $resi=substr($resSeq,0,4);
+            $resi=~s/ //g;
+            next if (!exists $res_dict{$resi});
+            my $icode=substr($resSeq,4);
+            $res_dict{$resi}=$r if ($icode eq " " || $res_dict{$resi}==0);
+        }
+        foreach my $resi(@res_list)
+        {
+            $csaRenu.=",$res_dict{$resi}";
+        }
+        $csaRenu=~s/^,//;
+        $csa_dict{$pdbid.$asym_id}="$csaOrig\t$csaRenu";
     }
 }
 $size=keys %csa_dict;
@@ -173,6 +192,29 @@ foreach my $divided(`ls $rootdir/weekly/|grep -P "BioLiP_\\w+\\.bsr\\.gz"|cut -f
         my $pubmed =""; # [19] pubmed id
            $pubmed =$pubmed_dict{$pdbid} if (exists $uniprot_dict{$pdbid});
         my $sequence=$fasta_dict{$chain};#[20] receptor sequence
+        if (exists $csa_dict{$chain})
+        {
+            my $line=$csa_dict{$chain};
+            if ($line=~/(\S+)\t(\S+)/)
+            {
+                $csaOrig="$1";
+                $csaRenu="$2";
+                my @csaOrig_list=split(/,/,$csaOrig);
+                my @csaRenu_list=split(/,/,$csaRenu);
+                $csaOrig="";
+                $csaRenu="";
+                for (my $i=0;$i<scalar @csaRenu_list;$i++)
+                {
+                    my $rOrig=$csaOrig_list[$i];
+                    my $rRenu=$csaRenu_list[$i];
+                    my $aa=substr($sequence,$rRenu-1,1);
+                    $csaOrig.=" $aa$rOrig";
+                    $csaRenu.=" $aa$rRenu";
+                }
+                $csaOrig=~s/^\s//g;
+                $csaRenu=~s/^\s//g;
+            }
+        }
         $line="$pdbid\t$recCha\t$resolu\t$bs\t$ccd\t$ligCha\t$ligIdx\t".
               "$resOrig\t$resRenu\t$csaOrig\t$csaRenu\t$ec\t$go\t$affman\t".
               "$moad\t$bindcn\t$binddb\t$uniprot\t$pubmed\t$sequence\n";
@@ -204,9 +246,9 @@ foreach my $divided(`ls $rootdir/weekly/|grep -P "BioLiP_\\w+\\.bsr\\.gz"|cut -f
     {
         system("mv $rootdir/weekly/$divided/ligand/$filename $rootdir/weekly/$divided/ligand_nr/$filename");
     }
-    system("cd $rootdir/weekly/$divided/; tar -cjvf $rootdir/weekly/receptor1_${divided}_nr.tar.bz2 receptor_nr1/");
-    system("cd $rootdir/weekly/$divided/; tar -cjvf $rootdir/weekly/receptor_${divided}_nr.tar.bz2 receptor_nr/");
-    system("cd $rootdir/weekly/$divided/; tar -cjvf $rootdir/weekly/ligand_${divided}_nr.tar.bz2 ligand_nr/");
+    system("cd $rootdir/weekly/$divided/; tar -cjf $rootdir/weekly/receptor1_${divided}_nr.tar.bz2 receptor_nr1/");
+    system("cd $rootdir/weekly/$divided/; tar -cjf $rootdir/weekly/receptor_${divided}_nr.tar.bz2 receptor_nr/");
+    system("cd $rootdir/weekly/$divided/; tar -cjf $rootdir/weekly/ligand_${divided}_nr.tar.bz2 ligand_nr/");
 }
 
 
