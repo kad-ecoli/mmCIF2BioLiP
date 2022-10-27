@@ -112,6 +112,52 @@ foreach my $line(`cat $rootdir/data/affman.tsv`)
 $size=keys %affman_dict;
 print "$size affinity from manual survey of literature\n";
 
+my %moad_dict;
+foreach my $line(`cat $rootdir/data/moad.tsv`)
+{
+    if ($line=~/^(\S+)\t(\S+)\t(\S+)\t(\S+)/)
+    {
+        my $pdbid  ="$1";
+        my $comp_id="$2";
+        my $asym_id="$3";
+        my $kd     ="$4";
+        $moad_dict{$pdbid.$asym_id."\t".$comp_id}=$kd;
+    }
+}
+$size=keys %moad_dict;
+print "$size affinity from moad\n";
+
+my %bindcn_dict;
+foreach my $line(`cat $rootdir/data/PDBbind.tsv`)
+{
+    if ($line=~/^(\S+)\t(\S+)\t(\S+)\t(\S+)/)
+    {
+        my $pdbid  ="$1";
+        my $asym_id="$2";
+        my $comp_id="$3";
+        my $kd     ="$4";
+        $bindcn_dict{$pdbid.$asym_id."\t".$comp_id}=$kd;
+    }
+}
+$size=keys %bindcn_dict;
+print "$size affinity from PDBbind-CN\n";
+
+my %binddb_dict;
+foreach my $line(`zcat $rootdir/data/BindingDB.tsv.gz`)
+{
+    $line=~s/, /,/g;
+    if ($line=~/^(\S+)\t(\S+)\t(\S+)\t([\s\S]+)/)
+    {
+        my $pdbid  ="$1";
+        my $asym_id="$2";
+        my $comp_id="$3";
+        my $kd     ="$4";
+        $binddb_dict{$pdbid.$asym_id."\t".$comp_id}=$kd;
+    }
+}
+$size=keys %binddb_dict;
+print "$size affinity from BindingDB\n";
+
 my %csa_dict;
 foreach my $line(`cat $rootdir/data/csa.tsv`)
 {
@@ -150,6 +196,13 @@ foreach my $line(`cat $rootdir/data/csa.tsv`)
 $size=keys %csa_dict;
 print "$size csa site\n";
 
+
+my $lig_full_all="#pdb\trecCha\tBS\tCCD\tligCha\tligIdx\t".
+                 "affman\tmoad\tbindcn\tbinddn\n";
+my $lig_nr_all  ="$lig_full_all";
+my $pdb_full_all="#pdb\trecCha\tresolu\tcsaOrig\tcsaRenu\t". 
+                 "ec\tgo\tuniprot\tpubmed\tsequence\n";
+my $pdb_nr_all  ="$pdb_full_all";
 foreach my $divided(`ls $rootdir/weekly/|grep -P "BioLiP_\\w+\\.bsr\\.gz"|cut -f1 -d.|cut -f2 -d_`)
 {
     chomp($divided);
@@ -185,8 +238,24 @@ foreach my $divided(`ls $rootdir/weekly/|grep -P "BioLiP_\\w+\\.bsr\\.gz"|cut -f
         my $affman =""; # [14] binding affinity from manual survey of pubmed
            $affman =$affman_dict{$chain} if (exists $affman_dict{$chain});
         my $moad   =""; # [15] binding affinity from Binding MOAD
+        if (exists  $moad_dict{$chain."\t".$ccd})
+        {
+            $moad  =$moad_dict{$chain."\t".$ccd};
+        }
         my $bindcn =""; # [16] binding affinity from PDBbind-CN
+        if (exists  $bindcn_dict{$chain."\t".$ccd})
+        {
+            $bindcn=$bindcn_dict{$chain."\t".$ccd};
+        }
+        elsif (exists $bindcn_dict{$pdbid."_\t".$ccd})
+        {
+            $bindcn=$bindcn_dict{$pdbid."_\t".$ccd};
+        }
         my $binddb =""; # [17] binding affinity from BindingDB
+        if (exists  $binddb_dict{$chain."\t".$ccd})
+        {
+            $binddb=$binddb_dict{$chain."\t".$ccd};
+        }
         my $uniprot=""; # [18] uniprot accession
            $uniprot=$uniprot_dict{$chain} if (exists $uniprot_dict{$chain});
         my $pubmed =""; # [19] pubmed id
@@ -230,6 +299,12 @@ foreach my $divided(`ls $rootdir/weekly/|grep -P "BioLiP_\\w+\\.bsr\\.gz"|cut -f
     open(FP,">$rootdir/weekly/BioLiP_${divided}_nr.txt");
     print FP $txt_nr;
     close(FP);
+
+    $lig_full_all.=`cut -f1,2,4-7,14-17 $rootdir/weekly/BioLiP_$divided.txt`;
+    $lig_nr_all.=`cut -f1,2,4-7,14-17 $rootdir/weekly/BioLiP_${divided}_nr.txt`;
+    $pdb_full_all.=`cut -f1-3,10-13,18-19 $rootdir/weekly/BioLiP_$divided.txt|uniq`;
+    $pdb_nr_all.=`cut -f1-3,10-13,18-19 $rootdir/weekly/BioLiP_${divided}_nr.txt|uniq`;
+
     system("mkdir -p $rootdir/weekly/$divided/receptor_nr");
     system("mkdir -p $rootdir/weekly/$divided/receptor_nr1");
     system("mkdir -p $rootdir/weekly/$divided/ligand_nr");
@@ -251,5 +326,44 @@ foreach my $divided(`ls $rootdir/weekly/|grep -P "BioLiP_\\w+\\.bsr\\.gz"|cut -f
     system("cd $rootdir/weekly/$divided/; tar -cjf $rootdir/weekly/ligand_${divided}_nr.tar.bz2 ligand_nr/");
 }
 
+open(FP,">$rootdir/data/pdb_all.tsv");
+print FP $pdb_full_all;
+close(FP);
+open(FP,">$rootdir/data/pdb_nr.tsv");
+print FP $pdb_nr_all;
+close(FP);
+open(FP,">$rootdir/data/lig_all.tsv");
+print FP $lig_full_all;
+close(FP);
+open(FP,">$rootdir/data/lig_nr.tsv");
+print FP $lig_nr_all;
+close(FP);
+foreach my $prefix(("pdb_all","pdb_nr","lig_all","lig_nr"))
+{
+    system("gzip -f $rootdir/data/$prefix.tsv");
+}
 
+my $today=`date '+%Y-%m-%d'`;
+chomp($today);
+my $txt=<<EOF
+#Please note that "peptide" is named III in old BioLiP; "rna" and "dna" are named "NUC" in old BioLiP
+#The following statistics is based on the version $today of BioLiP.
+
+Rank	Lig ID	Frequency
+EOF
+;
+my $r=0;
+foreach my $line(`zcat $rootdir/data/lig_all.tsv.gz |cut -f4|sort|uniq -c|sort -nr`)
+{
+    if ($line=~/(\d+)\s+(\S+)/)
+    {
+        my $freq    ="$1";
+        my $comp_id ="$2";
+        $r++;
+        $txt.="$r\t$comp_id\t$freq\n";
+    }
+}
+open(FP,">$rootdir/download/lig_frequency.txt");
+print FP $txt;
+close(FP);
 exit();

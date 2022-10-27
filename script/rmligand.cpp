@@ -3018,7 +3018,7 @@ int rmligand(const string &pdbid, map<string,vector<string> >&artifact_dict,
         if (find(chainID_vec.begin(),chainID_vec.end(),    recCha)==
                  chainID_vec.end())  chainID_vec.push_back(recCha);
         if ((bsr_mat[l][1]=="rna" || bsr_mat[l][1]=="peptide" || 
-             bsr_mat[l][1]=="rna") && find(chainID_vec.begin(),
+             bsr_mat[l][1]=="dna") && find(chainID_vec.begin(),
              chainID_vec.end(),ligCha)==   chainID_vec.end())  
              chainID_vec.push_back(ligCha);
     }
