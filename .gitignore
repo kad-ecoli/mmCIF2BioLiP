@@ -2,7 +2,8 @@
 *.swp
 *.pyc
 data/*.tsv.gz
-data/*.fasta.gz
+data/*.fasta*.gz
+data/*_nr.*
 taxonomy/
 sifts/
 interim/
