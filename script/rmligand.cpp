@@ -3050,7 +3050,7 @@ int rmligand(const string &pdbid, map<string,vector<string> >&artifact_dict,
     if (receptor_filename_vec.size() && ligand_filename_vec.size())
     {
         line=Join(" ",receptor_filename_vec)+" "+Join(" ",ligand_filename_vec);
-        cmd="tar -xzvf "+pdbid+".tar.gz "+line;
+        cmd="tar -xzf "+pdbid+".tar.gz "+line;
         i=system(cmd.c_str());
         for (l=0;l<ligand_filename_vec.size();l++)
         {
@@ -3065,6 +3065,12 @@ int rmligand(const string &pdbid, map<string,vector<string> >&artifact_dict,
     
         fout.open((pdbid+".bsr").c_str());
         fout<<summary_txt<<flush;
+        fout.close();
+    }
+    else
+    {
+        // make a place holder file if no ligand/receptor exist
+        fout.open((pdbid+".tar.bz2").c_str());
         fout.close();
     }
 

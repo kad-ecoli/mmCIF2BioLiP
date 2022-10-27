@@ -19,7 +19,7 @@ foreach my $pdb(@pdb_list)
     my $outdir="$rootdir/interim/$divided";
     next if (!-s "$outdir/$pdb.txt" ||  -s "$outdir/$pdb.ignore" ||
              !-s "$outdir/$pdb.tar.gz");
-    next if (-s "$outdir/$pdb.tar.bz2" && 
+    next if (-f "$outdir/$pdb.tar.bz2" && 
         `grep -F 'pmid:?' $outdir/$pdb.txt`=~/pmid:/);
     my $cmd="cd $outdir; $bindir/rmligand $pdb $rootdir/ligand_list $rootdir/pubmed";
     printf "$cmd\n";

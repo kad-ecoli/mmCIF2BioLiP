@@ -3473,7 +3473,7 @@ COLUMNS        DATA  TYPE    FIELD        DEFINITION
             metadata_txt+=buf.str();
             buf.str(string());
             
-            cout<<filename<<endl;
+            //cout<<filename<<endl;
             fout.open(filename.c_str());
             fout<<fout_buf.str()<<flush;
             fout.close();
@@ -3580,7 +3580,7 @@ COLUMNS        DATA  TYPE    FIELD        DEFINITION
                 buf<<filename<<'_'<<ligand_dup_map[filename]<<".pdb";
                 filename=buf.str();
                 buf.str(string());
-                cout<<filename<<endl;
+                //cout<<filename<<endl;
                 fout.open(filename.c_str());
                 fout<<fout_buf.str()<<flush;
                 fout.close();
@@ -3594,7 +3594,7 @@ COLUMNS        DATA  TYPE    FIELD        DEFINITION
     }
 
     filename=pdbid+".txt";
-    cout<<filename<<endl;
+    //cout<<filename<<endl;
     fout.open(filename.c_str());
     fout<<metadata_txt<<flush;
     fout.close();
