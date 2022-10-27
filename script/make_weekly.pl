@@ -22,13 +22,17 @@ foreach my $divided(`ls $rootdir/interim/`)
     foreach my $filename(`ls $rootdir/interim/$divided/|grep '.tar.bz2\$'`)
     {
         chomp($filename);
+        # skip place holder tarball
+        next if (!-s "$rootdir/interim/$divided/$filename");
         system("cd $rootdir/weekly/$divided; tar -xf $rootdir/interim/$divided/$filename; mv *_*_*.pdb $rootdir/weekly/$divided/ligand/; mv *.pdb $rootdir/weekly/$divided/receptor/");
     }
     system("ls $rootdir/weekly/$divided/receptor/ | $bindir/receptor1 $rootdir/weekly/$divided/receptor/ $rootdir/weekly/$divided/receptor1/ -");
     foreach my $moltype(("receptor","receptor1","ligand"))
     {
         print "$rootdir/weekly/${moltype}_$divided.tar.bz2\n";
-        system("cd $rootdir/weekly/$divided; tar -cjf $rootdir/weekly/${moltype}_$divided.tar.bz2 $moltype/");
+        my $cmd="cd $rootdir/weekly/$divided; tar -cjf $rootdir/weekly/${moltype}_$divided.tar.bz2 $moltype/";
+        print "$cmd\n";
+        system("$cmd");
     }
     my $bsr_txt="";
     foreach my $filename(`ls $rootdir/interim/$divided/|grep '.bsr\$'`)
