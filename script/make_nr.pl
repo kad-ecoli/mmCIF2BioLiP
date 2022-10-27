@@ -313,6 +313,10 @@ foreach my $divided(`ls $rootdir/weekly/|grep -P "BioLiP_\\w+\\.bsr\\.gz"|cut -f
     my @filename_list=keys %filename_dict;
     foreach my $filename(@filename_list)
     {
+        next if (-s "$rootdir/weekly/$divided/receptor_nr/$filename"  &&
+                 -s "$rootdir/weekly/$divided/receptor_nr1/$filename" &&
+                !-s "$rootdir/weekly/$divided/receptor/$filename"     &&
+                !-s "$rootdir/weekly/$divided/receptor1/$filename");
         system("mv $rootdir/weekly/$divided/receptor/$filename $rootdir/weekly/$divided/receptor_nr/$filename");
         system("mv $rootdir/weekly/$divided/receptor1/$filename $rootdir/weekly/$divided/receptor_nr1/$filename");
     }
@@ -320,6 +324,8 @@ foreach my $divided(`ls $rootdir/weekly/|grep -P "BioLiP_\\w+\\.bsr\\.gz"|cut -f
     @filename_list=keys %filename_dict;
     foreach my $filename(@filename_list)
     {
+        next if (-s "$rootdir/weekly/$divided/ligand_nr/$filename" &&
+                !-s "$rootdir/weekly/$divided/ligand/$filename");
         system("mv $rootdir/weekly/$divided/ligand/$filename $rootdir/weekly/$divided/ligand_nr/$filename");
     }
     system("cd $rootdir/weekly/$divided/; tar -cjf $rootdir/weekly/receptor1_${divided}_nr.tar.bz2 receptor_nr1/");
