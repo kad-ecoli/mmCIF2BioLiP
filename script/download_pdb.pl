@@ -7,11 +7,7 @@ my $rootdir = dirname($bindir);
 
 print "download PDB\n";
 system("mkdir -p $rootdir/pdb/derived_data/index/");
-system("wget --tries=3 https://files.wwpdb.org/pub/pdb/derived_data/index/resolu.idx -O $rootdir/pdb/derived_data/index/resolu.idx");
-if (!-s "$rootdir/pdb/derived_data/index/resolu.idx")
-{
-    system("wget --tries=3 ftp://files.wwpdb.org/pub/pdb/derived_data/index/resolu.idx -O $rootdir/pdb/derived_data/index/resolu.idx");
-}
+system("wget https://files.wwpdb.org/pub/pdb/derived_data/index/resolu.idx -O $rootdir/pdb/derived_data/index/resolu.idx");
 if (!-s "$rootdir/pdb/derived_data/index/resolu.idx")
 {
     print "ERROR! cannot download $rootdir/pdb/derived_data/index/resolu.idx\n";
@@ -29,21 +25,9 @@ foreach my $pdb(`grep ';' $rootdir/pdb/derived_data/index/resolu.idx|cut -f1 -d'
     my $outdir="$rootdir/interim/$divided";
     next if (-s "$outdir/$pdb.txt" &&  ( -s "$outdir/$pdb.ignore" ||
              -s "$outdir/$pdb.tar.gz" || -s "$outdir/$pdb.tar.bz2"));
-    my $cmd="wget -q --tries=3 https://files.wwpdb.org/pub/pdb/data/structures/all/mmCIF/$pdb.cif.gz -O $inputdir/$pdb.cif.gz";
+    my $cmd="wget -q https://files.wwpdb.org/pub/pdb/data/structures/all/mmCIF/$pdb.cif.gz -O $inputdir/$pdb.cif.gz";
     print "$cmd\n";
     system("$cmd");
-    if (!-s "$inputdir/$pdb.cif.gz")
-    {
-        $cmd="wget -q --tries=3 https://files.rcsb.org/download/$pdb.cif.gz -O $inputdir/$pdb.cif.gz";
-        print "$cmd\n";
-        system("$cmd");
-    }
-    if (!-s "$inputdir/$pdb.cif.gz")
-    {
-        $cmd="wget -q --tries=3 ftp://files.wwpdb.org/pub/pdb/data/structures/divided/mmCIF/$divided/$pdb.cif.gz -O $inputdir/$pdb.cif.gz";
-        print "$cmd\n";
-        system("$cmd");
-    }
     if (!-s "$inputdir/$pdb.cif.gz")
     {
         print "ERROR! cannot download $inputdir/$pdb.cif.gz\n";

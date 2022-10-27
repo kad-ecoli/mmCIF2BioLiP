@@ -33,7 +33,8 @@ This script downloads catalytic site to ``m-csa/api/residues.json`` and extract 
 ```bash
 ./script/download_bind.pl
 ```
-This script downloads BindingDB to ``bind/BindingDB*`` and extract the summary to ``data/BindingDB.tsv.gz``
+This script downloads BindingDB to ``bind/BindingDB*`` and extract the summary to ``data/BindingDB.tsv.gz``.
+This script may have the warning: "gzip: bind/BindingDB_All_tsv.zip: invalid compressed data--length error", which is caused by decompressing zip with zcat. This warning can be ignored.
 
 Optionally, run the following script to download MOAD. Since MOAD only updates every few years, it is not necessary to run it weekly.
 ```bash
@@ -41,6 +42,7 @@ Optionally, run the following script to download MOAD. Since MOAD only updates e
 ```
 This script downloads MOAD to ``bind/every.csv`` and extract the summary to ``data/moad.tsv``.
 
+Again optionally, follow instructions at [bind/README.md](bind/README.md) for how to semi-manually create PDBbind-CN summary at ``data/PDBbind.tsv``. This only need to be peformed annually.
 
 ### Step 3: Download missing PDB entries ###
 ```bash
