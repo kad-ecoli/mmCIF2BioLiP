@@ -260,7 +260,7 @@ foreach my $divided(`ls $rootdir/weekly/|grep -P "BioLiP_\\w+\\.bsr\\.gz"|cut -f
         my $uniprot=""; # [18] uniprot accession
            $uniprot=$uniprot_dict{$chain} if (exists $uniprot_dict{$chain});
         my $pubmed =""; # [19] pubmed id
-           $pubmed =$pubmed_dict{$pdbid} if (exists $uniprot_dict{$pdbid});
+           $pubmed =$pubmed_dict{$pdbid} if (exists $pubmed_dict{$pdbid});
         my $sequence=$fasta_dict{$chain};#[20] receptor sequence
         if (exists $csa_dict{$chain})
         {
