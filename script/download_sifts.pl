@@ -175,6 +175,12 @@ for (my $l=0;$l<scalar @lines;$l++)
     }
     elsif ($_pdbx_chem_comp_descriptor==1)
     {
+        if ($line=~/^$_chem_comp_id\s+/ && $lines[$l+1]=~/^"/)
+        {
+            $l++;
+            $line.=" $lines[$l]";
+        }
+
         if ($line=~/^$_chem_comp_id\s+InChI\s+/ &&
                $line=~/(\S+)\s*$/)
         {
