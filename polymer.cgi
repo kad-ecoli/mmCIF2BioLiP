@@ -52,6 +52,7 @@ if not lig3 in ["rna","dna","peptide"]:
         print(html_footer)
     else:
         print("</body> </html>")
+    exit()
 
 fasta_dict=dict()
 fp=gzip.open("%s/data/%s.fasta.gz"%(rootdir,lig3),'rt')
@@ -61,6 +62,15 @@ for block in fp.read().split('>')[1:]:
     chain=header.split()[0]
     fasta_dict[chain]=sequence
     chain_list.append(chain)
+fp.close()
+
+clust_dict=dict()
+fp=gzip.open("%s/data/%s_nr.fasta.clust.gz"%(rootdir,lig3),'rt')
+for line in fp.read().splitlines():
+    rep,mem=line.split('\t')
+    mem_list=[rep]+mem.split(',')
+    for mem in mem_list:
+        clust_dict[mem]=[m.replace('_%s_'%lig3,':') for m in mem_list if m!=mem]
 fp.close()
 
 cmd="zcat %s/data/lig_all.tsv.gz|grep -P '^\w+\\t\w+\\tBS\d+\\t%s\\t'"%(rootdir,lig3)
@@ -144,11 +154,10 @@ for l in range(pageLimit*(page-1),pageLimit*page):
         continue
     ligKey=chain_list[l]
     items =lig2rec_dict[ligKey][0]
-    seq_list=[]
-    for i in range(0,len(fasta_dict[ligKey]),50):
-        start=i
-        end  =start+50
-        seq_list.append(fasta_dict[ligKey][start:end])
+    sequence=fasta_dict[ligKey]
+    if ligKey in clust_dict and len(clust_dict[ligKey]):
+        sequence="(Identical to "+'; '.join(clust_dict[ligKey]
+            )+')<br>'+sequence
     pdb,ligCha=ligKey.split('_'+lig3+'_')
 
     bs_list=[]
@@ -195,7 +204,7 @@ for l in range(pageLimit*(page-1),pageLimit*page):
     l+1,
     pdb,ligCha,pdb,ligCha,reso,
     '<br>'.join(bs_list),
-    ''.join(seq_list),
+    sequence,
     pubmed,
     ))
 
