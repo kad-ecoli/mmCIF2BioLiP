@@ -31,7 +31,6 @@ This step can be performed in parallel to step 1.
 ./script/download_sifts.pl
 ```
 This script downloads taxonomy, uniprot accession, EC, GO and pubmed ID to ``sifts/flatfiles/tsv`` and extract the data to ``data/*.tsv.gz``.
-This script downloads CCD ligand to ``pdb/data/monomers/components.cif.gz`` and extract their summary to ``data/ligand.tsv.gz``.
 
 Optionally, run the following script to download csa. The manually curated dataset of csa is updated infrequently. Therefore, it is not necessary to run it every week.
 ```bash
@@ -105,3 +104,4 @@ This step can be performed independent of step 1 to 9.
 ```bash
 ./script/download_ligand.pl
 ```
+This script downloads CCD ligand to ``pdb/data/monomers/components.cif.gz`` and extract their summary to ``data/ligand.tsv.gz``.
