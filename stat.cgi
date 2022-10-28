@@ -42,7 +42,7 @@ stdout=stdout.decode()
 metal_list=stdout.splitlines()
 metal_set=set(metal_list)
 
-cmd="zcat %s/data/lig_all.tsv.gz|tail -n +2|cut -f1,2,4,7-10"%rootdir
+cmd="zcat %s/data/lig_all.tsv.gz|tail -n +2|cut -f1,2,4,9-12"%rootdir
 p=subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
 stdout,stderr=p.communicate()
 stdout=stdout.decode()
@@ -91,7 +91,7 @@ print('''
 </p>
 
 BioLiP is updated weekly and the current version (%s) contains:
-<li>Number of protein receptors: <a href=pdb.cgi>%d</a></li>
+<li>Number of protein receptors: <a href=browse.cgi>%d</a></li>
 <li>Number of entries: <a href=browse.cgi>%d</a></li>
 <li>Number of entries for regular ligands: <a href=qsearch.cgi?lig3=regular>%d</a></li>
 <li>Number of entries for metal ligands: <a href=qsearch.cgi?lig3=metal>%d</a></li>
