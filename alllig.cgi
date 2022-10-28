@@ -142,7 +142,7 @@ print('''
     <th width=80% ALIGN=left>  <strong> Ligand Name </strong> </th>           
 </tr><tr ALIGN=center>
 ''')
-for l in range(pageLimit*(page-1),pageLimit*page+1):
+for l in range(pageLimit*(page-1),pageLimit*page):
     if l>=totalNum:
         continue
     items=lines[l].split('\t')

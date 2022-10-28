@@ -125,13 +125,13 @@ print('''
 <tr BGCOLOR="#FF9900">
     <th width=5% ALIGN=center><strong> # </strong></th>
     <th width=10% ALIGN=center><strong> PDB<br>(Resolution &#8491;) </strong></th>
-    <th width=5% ALIGN=center><strong> Site # </strong></th>
+    <th width=5%  ALIGN=center><strong> Site # </strong></th>
     <th width=10% ALIGN=center><strong> Ligand </strong> </th>           
     <th width=10% ALIGN=center><strong> EC number </strong> </th>           
     <th width=15% ALIGN=center><strong> GO terms </strong> </th>           
     <th width=10% ALIGN=center><strong> UniProt </strong> </th>           
     <th width=10% ALIGN=center><strong> PubMed </strong> </th>           
-    <th width=25% ALIGN=left> <strong>  Binding affinity</strong> </th>           
+    <th width=25% ALIGN=center><strong>  Binding affinity</strong> </th>           
 </tr><tr ALIGN=center>
 ''') 
 
@@ -155,7 +155,7 @@ for l,line in enumerate(lines):
         sort_line.append((chain,items))
 sort_line.sort()
 
-for l in range(pageLimit*(page-1),pageLimit*page+1):
+for l in range(pageLimit*(page-1),pageLimit*page):
     if l>=totalNum:
         continue
     items=sort_line[l][1]
