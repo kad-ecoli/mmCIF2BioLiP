@@ -14,7 +14,7 @@ The columns are (from left to right):
 02	Receptor chain
 03	Resolution. "-1.00" stands for lack of resolution information, e.g. for NMR
 04	Binding site number code
-05	Ligand ID
+05	Ligand ID in the Chemical Component Dictionary (CCD) used by the PDB database
 06	Ligand chain
 07	Ligand serial number
 08      Binding site residues (with PDB residue numbering)
