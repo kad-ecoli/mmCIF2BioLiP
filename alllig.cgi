@@ -30,6 +30,13 @@ else:
 <img src=images/BioLiP1.png ></br>
 <p><a href=.>[Back to Home]</a></p>
 ''')
+freq_dict=dict()
+fp=open(rootdir+"/download/lig_frequency.txt")
+for line in fp.read().splitlines()[4:]:
+    items=line.split('\t')
+    ccd=items[1]
+    freq=items[2]
+    freq_dict[ccd]=freq
 
 fp=gzip.open(rootdir+"/data/ligand.tsv.gz",'rt')
 lines=fp.read().splitlines()[1:]
@@ -40,6 +47,7 @@ totalNum=len(lines)
 print('''
 <strong> %d </strong> ligands in BioLiP.<br>
 Click the corresponding <strong> Ligand ID</strong> to search BioLiP. The ligand ID follows the <a href="https://www.wwpdb.org/data/ccd" target=_blank>Chemical Component Dictionary (CCD)</a> used by the PDB database.<br>
+<strong>Count</strong> refers to the number of BioLiP entries associated with the ligand. The full statistics is available at <a href=download/lig_frequency.txt>lig_frequency.txt</a><br>
 Click the corresponding <strong> Ligand Name</strong> to visualize the ligand and display its names/synonyms.<br>
 <p></p>
 '''%totalNum)
@@ -83,9 +91,10 @@ print("</select></form></center><br>")
 print('''  
 <table border="0" align=center width=100%>    
 <tr BGCOLOR="#FF9900">
-    <th width=5%  ALIGN=center><strong> # </srong></th>
-    <th width=10% ALIGN=center><strong> Ligand ID </srong></th>
-    <th width=85% ALIGN=left>  <strong> Ligand Name </srong> </th>           
+    <th width=5% ALIGN=center><strong> # </srong></th>
+    <th width=8% ALIGN=center><strong> Ligand ID </srong></th>
+    <th width=7% ALIGN=center><strong> Count </srong></th>
+    <th width=80% ALIGN=left>  <strong> Ligand Name </srong> </th>           
 </tr><tr ALIGN=center>
 ''')
 for l in range(pageLimit*(page-1),pageLimit*page+1):
@@ -93,6 +102,9 @@ for l in range(pageLimit*(page-1),pageLimit*page+1):
         continue
     items=lines[l].split('\t')
     ccd  =items[0]
+    freq ='0'
+    if ccd in freq_dict:
+        freq = freq_dict[ccd]
     name =items[-1]
     name =';<br>'.join(name.split(';'))
     bgcolor=''
@@ -102,9 +114,10 @@ for l in range(pageLimit*(page-1),pageLimit*page+1):
 <tr %s ALIGN=center>
     <td>%d</td>
     <td><a href="qsearch.cgi?lig3=%s" target="_blank">%s</td>
+    <td>%s</td>
     <td ALIGN=left><a href="sym.cgi?code=%s" target="_blank">%s</td>
 </tr>
-'''%(bgcolor,l+1,ccd,ccd,ccd,name))
+'''%(bgcolor,l+1,ccd,ccd,freq,ccd,name))
 
 
 print("</table>")
