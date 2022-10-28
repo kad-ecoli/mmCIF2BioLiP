@@ -99,3 +99,9 @@ This step must be run after step 8, and is recommended before the next time to u
 ```bash
 ./script/clean_up.pl
 ```
+
+### Step 10: download auxilary data ###
+This step can be performed independent of step 1 to 9.
+```bash
+./script/download_ligand.pl
+```
