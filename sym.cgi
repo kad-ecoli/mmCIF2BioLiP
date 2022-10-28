@@ -92,9 +92,11 @@ else:
     import random
     code=random.choice(ligand_list)
     
-    print("No ligand code provided. You may <a href=%s?code=%s>[browse a random ligand]</a>"%(
-        os.path.basename(__file__),code
-    ))
+    print('''No ligand code provided. You may <a href="%s?code=%s">[browse a random ligand]</a>
+<meta http-equiv="refresh" content="3; url='%s?code=%s'" /><br>
+This page will be redicted in 3 seconds.
+'''%(os.path.basename(__file__),code,
+     os.path.basename(__file__),code))
 print("</table>")
 
 if len(html_footer):

@@ -35,7 +35,7 @@ mtime=os.path.getmtime(os.path.join(rootdir,"download","lig_frequency.txt"))
 mtime=datetime.fromtimestamp(mtime)
 mtime="%d-%d-%d"%(mtime.year,mtime.month,mtime.day)
 
-cmd="zcat %s/data/ligand.tsv.gz|cut -f1,2|grep -P '^\w+\\t[A-Z][a-z]{0,1}$'|cut -f1"%rootdir
+cmd="zcat %s/data/metal.tsv.gz|cut -f1"%rootdir
 p=subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
 stdout,stderr=p.communicate()
 stdout=stdout.decode()
