@@ -136,10 +136,10 @@ print("</select></form></center><br>")
 print('''  
 <table border="0" align=center width=100%>    
 <tr BGCOLOR="#FF9900">
-    <th width=5% ALIGN=center><strong> # </srong></th>
-    <th width=8% ALIGN=center><strong> Ligand ID </srong></th>
-    <th width=7% ALIGN=center><strong> Count </srong></th>
-    <th width=80% ALIGN=left>  <strong> Ligand Name </srong> </th>           
+    <th width=5% ALIGN=center><strong> # </strong></th>
+    <th width=8% ALIGN=center><strong> Ligand ID </strong></th>
+    <th width=7% ALIGN=center><strong> Count </strong></th>
+    <th width=80% ALIGN=left>  <strong> Ligand Name </strong> </th>           
 </tr><tr ALIGN=center>
 ''')
 for l in range(pageLimit*(page-1),pageLimit*page+1):

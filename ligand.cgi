@@ -95,13 +95,13 @@ If multiple SMILES strings exists for the same ligand, different SMILES are sepa
 <p></p>
 <table border="0" align=center width=100%>    
 <tr BGCOLOR="#FF9900">
-    <th width=4% ALIGN=center><strong> # </srong></th>
-    <th width=6% ALIGN=center><strong> Ligand ID </srong></th>
-    <th width=10% ALIGN=center><strong> Formula </srong></th>
-    <th width=10% ALIGN=center><strong> InChI </srong></th>
-    <th width=10% ALIGN=center><strong> InChIKey </srong></th>
-    <th width=10% ALIGN=center><strong> SMILES </srong></th>
-    <th width=50% ALIGN=left>  <strong> Ligand Name </srong> </th>           
+    <th width=4%  ALIGN=center><strong> # </strong></th>
+    <th width=6%  ALIGN=center><strong> Ligand ID </strong></th>
+    <th width=10% ALIGN=center><strong> Formula </strong></th>
+    <th width=10% ALIGN=center><strong> InChI </strong></th>
+    <th width=10% ALIGN=center><strong> InChIKey </strong></th>
+    <th width=10% ALIGN=center><strong> SMILES </strong></th>
+    <th width=50% ALIGN=left>  <strong> Ligand Name </strong> </th>           
 </tr><tr ALIGN=center>
 ''')
 
