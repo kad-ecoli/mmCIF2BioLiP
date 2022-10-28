@@ -63,6 +63,7 @@ for block in fp.read().split('>')[1:]:
     fasta_dict[chain]=sequence
     chain_list.append(chain)
 fp.close()
+chain_list.sort()
 
 clust_dict=dict()
 fp=gzip.open("%s/data/%s_nr.fasta.clust.gz"%(rootdir,lig3),'rt')
@@ -93,8 +94,9 @@ Download all <a href=data/%s.fasta.gz>%d %s sequences</a>.<br>
 Resolution -1.00 means the resolution is unavailable, e.g., for NMR structures.
 Click <strong>Receptor chain</strong> to view the binding site structure.
 Hover over <strong>Receptor chain</strong> to view the binding residues.
+The sequence is converted from residues with experimentally determined coordinates in the structure; residues not observed in the 3D structure are excluded.
 <p></p>
-'''%(lig3,totalNum,lig3))
+'''%(lig3,totalNum,lig3  if lig3=="peptide" else lig3.upper()))
 
 pageLimit=100
 totalPage=1+int(totalNum/pageLimit)
