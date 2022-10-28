@@ -12,7 +12,7 @@ print "download CCD ligand\n";
 
 system("mkdir -p $rootdir/pdb/data/monomers/");
 my $infile ="$rootdir/pdb/data/monomers/components.cif.gz";
-#system("wget https://files.wwpdb.org/pub/pdb/data/monomers/components.cif.gz -O $infile");
+system("wget https://files.wwpdb.org/pub/pdb/data/monomers/components.cif.gz -O $infile");
 if (!-s "$infile")
 {
     print "ERROR! cannot download $infile\n";
@@ -137,6 +137,7 @@ if (length $_chem_comp_id)
 open(FP,">$outfile");
 print FP $txt;
 close(FP);
+system("cat $outfile |grep -P '^\\w+\\t[A-Z][a-z]{0,1}\\tInChI=1S\\/[A-Z][a-z]{0,1}/q\\+\\d' |gzip - > $rootdir/data/metal.tsv.gz");
 system("gzip -f $outfile");
 exit(0);
 
