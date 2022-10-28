@@ -46,30 +46,41 @@ totalNum=len(lines)
 
 print('''
 <h4>Search Ligand</h4>
-
 <FORM id="form1" name="form1" METHOD="POST" ENCTYPE="MULTIPART/FORM-DATA" ACTION="ligand.cgi">
+    <span title="Example: 5GP">
     Ligand ID
-    <input type="text" name="code" value="" placeholder="5GP" size=3>
+    <input type="text" name="code" value="" size=3>
+    </span>
     &nbsp;&nbsp;
     
+    <span title="Example: C10 H14 N5 O8 P">
     Formula
-    <input type="text" name="formula" value="" placeholder="C10 H14 N5 O8 P" size=10>
+    <input type="text" name="formula" value="" size=10>
+    </span>
     &nbsp;&nbsp;
     
+    <span title="Example: InChI=1S/C10H14N5O8P/c11-10-13-7-4(8(18)14-10)12-2-15(7)9-6(17)5(16)3(23-9)1-22-24(19,20)21/h2-3,5-6,9,16-17H,1H2,(H2,19,20,21)(H3,11,13,14,18)/t3-,5-,6-,9-/m1/s1">
     InChI
-    <input type="text" name="inchi" value="" placeholder="InChI=1S/C10H14N5O8P/c11-10-13-7-4(8(18)14-10)12-2-15(7)9-6(17)5(16)3(23-9)1-22-24(19,20)21/h2-3,5-6,9,16-17H,1H2,(H2,19,20,21)(H3,11,13,14,18)/t3-,5-,6-,9-/m1/s1" size=10>
+    <input type="text" name="inchi" value="" size=10>
+    </span>
     &nbsp;&nbsp;
     
+    <span title="Example: RQFCJASXJCIDSX-UUOKFMHZSA-N">
     InChIKey
-    <input type="text" name="inchikey" value="" placeholder="RQFCJASXJCIDSX-UUOKFMHZSA-N" size=10>
+    <input type="text" name="inchikey" value="" size=10>
+    </span>
     &nbsp;&nbsp;
     
+    <span title="Example: c1nc2c(n1[C@H]3[C@@H]([C@@H]([C@H](O3)COP(=O)(O)O)O)O)N=C(NC2=O)N">
     SMILES
-    <input type="text" name="smiles" value="" placeholder="c1nc2c(n1[C@H]3[C@@H]([C@@H]([C@H](O3)COP(=O)(O)O)O)O)N=C(NC2=O)N" size=10>
+    <input type="text" name="smiles" value="" size=10>
+    </span>
     &nbsp;&nbsp;
     
+    <span title="Example: GUANOSINE-5'-MONOPHOSPHATE">
     Ligand name
-    <input type="text" name="ligname" value="" placeholder="GUANOSINE-5'-MONOPHOSPHATE" size=20>
+    <input type="text" name="ligname" value="" size=20>
+    </span>
     &nbsp;&nbsp;
     
     <INPUT TYPE="submit" VALUE="Submit">
