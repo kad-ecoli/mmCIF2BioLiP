@@ -196,6 +196,11 @@ for (my $l=0;$l<scalar @lines;$l++)
         {
             push(@SMILES_list,&strip("$1"));
         }
+        elsif ($line=~/^$_chem_comp_id\s+SMILES_CANONICAL\s+/ &&
+               $line=~/(\S+)\s*$/)
+        {
+            push(@SMILES_list,&strip("$1"));
+        }
     }
 }
 
