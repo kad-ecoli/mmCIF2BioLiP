@@ -16,9 +16,11 @@ if os.path.isfile(rootdir+"/index.html"):
     html_footer=txt.split('<!-- CONTENT END -->')[-1]
 
 form    = cgi.FieldStorage()
-lig3    = form.getfirst("code",'').upper()
+lig3    = form.getfirst("code",'')
 if not lig3:
-    lig3= form.getfirst("lig3",'').upper()
+    lig3= form.getfirst("lig3",'')
+if not lig3 in ["metal","regular"]:
+    lig3=lig3.upper()
 formula = form.getfirst("formula",'').upper()
 inchi   = form.getfirst("inchi",'').upper()
 if inchi and not inchi.startswith("INCHI="):
@@ -105,13 +107,25 @@ If multiple SMILES strings exists for the same ligand, different SMILES are sepa
 </tr><tr ALIGN=center>
 ''')
 
+fp=gzip.open(rootdir+"/data/metal.tsv.gz",'rt')
+metal_list=[]
+for line in fp.read().splitlines():
+    metal_list.append(line.split('\t')[0])
+fp.close()
+metal_set=set(metal_list)
+
 count=0
 fp=gzip.open(rootdir+"/data/ligand.tsv.gz",'rt')
 formula_query_set=set(formula.split())
 for line in fp.read().splitlines()[1:]:
     items=line.split('\t')
-    if lig3 and items[0]!=lig3:
-        continue
+    if lig3:
+        if lig3=="metal" and not items[0] in metal_set:
+            continue
+        elif lig3=="regular" and items[0] in metal_set:
+            continue
+        elif not lig3 in ["metal","regular"] and items[0]!=lig3:
+            continue
     if formula:
         formula_template_set=set(items[1].split())
         if len(formula_query_set)!=len(formula_template_set):
