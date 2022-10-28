@@ -45,6 +45,40 @@ fp.close()
 totalNum=len(lines)
 
 print('''
+<h4>Search Ligand</h4>
+
+<FORM id="form1" name="form1" METHOD="POST" ENCTYPE="MULTIPART/FORM-DATA" ACTION="ligand.cgi">
+    Ligand ID
+    <input type="text" name="code" value="" placeholder="5GP" size=3>
+    &nbsp;&nbsp;
+    
+    Formula
+    <input type="text" name="formula" value="" placeholder="C10 H14 N5 O8 P" size=10>
+    &nbsp;&nbsp;
+    
+    InChI
+    <input type="text" name="inchi" value="" placeholder="InChI=1S/C10H14N5O8P/c11-10-13-7-4(8(18)14-10)12-2-15(7)9-6(17)5(16)3(23-9)1-22-24(19,20)21/h2-3,5-6,9,16-17H,1H2,(H2,19,20,21)(H3,11,13,14,18)/t3-,5-,6-,9-/m1/s1" size=10>
+    &nbsp;&nbsp;
+    
+    InChIKey
+    <input type="text" name="inchikey" value="" placeholder="RQFCJASXJCIDSX-UUOKFMHZSA-N" size=10>
+    &nbsp;&nbsp;
+    
+    SMILES
+    <input type="text" name="smiles" value="" placeholder="c1nc2c(n1[C@H]3[C@@H]([C@@H]([C@H](O3)COP(=O)(O)O)O)O)N=C(NC2=O)N" size=10>
+    &nbsp;&nbsp;
+    
+    Ligand name
+    <input type="text" name="ligname" value="" placeholder="GUANOSINE-5'-MONOPHOSPHATE" size=20>
+    &nbsp;&nbsp;
+    
+    <INPUT TYPE="submit" VALUE="Submit">
+    &nbsp;
+    <INPUT TYPE="reset" VALUE="Clear">
+</FORM>
+<p></p>
+
+<h4>Browse Ligand</h4>
 <strong> %d </strong> ligands in BioLiP.<br>
 Click the corresponding <strong> Ligand ID</strong> to search BioLiP. The ligand ID follows the <a href="https://www.wwpdb.org/data/ccd" target=_blank>Chemical Component Dictionary (CCD)</a> used by the PDB database.<br>
 <strong>Count</strong> refers to the number of BioLiP entries associated with the ligand. The full statistics is available at <a href=download/lig_frequency.txt>lig_frequency.txt</a><br>
