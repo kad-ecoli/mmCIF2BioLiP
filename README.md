@@ -93,3 +93,9 @@ This step must be performed after step 3 and 7.
 ```
 This script converts ``weekly/BioLiP_*.bsr.gz`` to ``weekly/BioLiP_*.txt`` and ``weekly/BioLiP_*_nr.txt``.
 It also creates ``weekly/receptor_*_nr.tar.bz2``, ``weekly/receptor1_*_nr.tar.bz2`` and ``weekly/ligand_*_nr.tar.bz2`` from intermediate files of the previous step.
+
+### Step 9: clean up intermediate files ###
+This step must be run after step 8, and is recommended before the next time to update the database.
+```bash
+./script/clean_up.pl
+```
