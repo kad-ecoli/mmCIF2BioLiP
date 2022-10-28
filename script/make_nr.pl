@@ -198,11 +198,11 @@ $size=keys %csa_dict;
 print "$size csa site\n";
 
 
-my $lig_full_all="#pdb\trecCha\tBS\tCCD\tligCha\tligIdx\t".
+my $lig_full_all="#pdb\tchain\tBS\tCCD\tligandChain\tligIdx\tresidue\tresidueRenumbered\t".
                  "affinity(manual)\tMOAD\tPDBbind-CN\tBindingDB\n";
 my $lig_nr_all  ="$lig_full_all";
-my $pdb_full_all="#pdb\trecCha\tresolution\tcsa(Original)\tcsa(Renumbered)\t". 
-                 "ec\tgo\tuniprot\tpubmed\tsequence\n";
+my $pdb_full_all="#pdb\tchain\tresolution\tcsa\tcsa(Renumbered)\t". 
+                 "ec\tgo\tuniprot\tpubmed\n";
 my $pdb_nr_all  ="$pdb_full_all";
 foreach my $divided(`ls $rootdir/weekly/|grep -P "BioLiP_\\w+\\.bsr\\.gz"|cut -f1 -d.|cut -f2 -d_`)
 {
@@ -301,10 +301,10 @@ foreach my $divided(`ls $rootdir/weekly/|grep -P "BioLiP_\\w+\\.bsr\\.gz"|cut -f
     print FP $txt_nr;
     close(FP);
 
-    $lig_full_all.=`cut -f1,2,4-7,14-17 $rootdir/weekly/BioLiP_$divided.txt`;
-    $lig_nr_all.=`cut -f1,2,4-7,14-17 $rootdir/weekly/BioLiP_${divided}_nr.txt`;
-    $pdb_full_all.=`cut -f1-3,10-13,18-20 $rootdir/weekly/BioLiP_$divided.txt|uniq`;
-    $pdb_nr_all.=`cut -f1-3,10-13,18-20 $rootdir/weekly/BioLiP_${divided}_nr.txt|uniq`;
+    $lig_full_all.=`cut -f1,2,4-9,14-17 $rootdir/weekly/BioLiP_$divided.txt`;
+    $lig_nr_all.=`cut -f1,2,4-9,14-17 $rootdir/weekly/BioLiP_${divided}_nr.txt`;
+    $pdb_full_all.=`cut -f1-3,10-13,18-19 $rootdir/weekly/BioLiP_$divided.txt|uniq`;
+    $pdb_nr_all.=`cut -f1-3,10-13,18-19 $rootdir/weekly/BioLiP_${divided}_nr.txt|uniq`;
 
     system("mkdir -p $rootdir/weekly/$divided/receptor_nr");
     system("mkdir -p $rootdir/weekly/$divided/receptor_nr1");
