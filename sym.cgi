@@ -23,7 +23,7 @@ else:
     print('''<html>
 <head>
 <link rel="stylesheet" type="text/css" href="page.css" />
-<title>BioLiP:Ligand Information</title>
+<title>BioLiP</title>
 </head>
 <body bgcolor="#F0FFF0">
 <img src=images/BioLiP1.png ></br>
