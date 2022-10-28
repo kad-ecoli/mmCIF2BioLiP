@@ -61,6 +61,21 @@ elif code:
         for i in range(len(items)):
             if "; " in items[i]:
                 items[i]=items[i].replace("; ",";<br>")
+            elif i==2:
+                inchi_list=[]
+                for j in range(0,len(items[2]),20):
+                    start=j
+                    end  =j+20
+                    inchi_list.append(items[2][start:end])
+                items[2]='<br>'.join(inchi_list)
+            elif i==4:
+                smiles_list=[]
+                for j in range(0,len(items[4]),20):
+                    start=j
+                    end  =j+20
+                    smiles_list.append(items[4][start:end])
+                items[4]='<br>'.join(smiles_list)
+                items[4].replace('; ',';<br>')
         txt_table+="<tr><td>"+"</td><td>".join(items)+"</td></tr>"
         res=items[0]
         svg="https://cdn.rcsb.org/images/ccd/labeled/%s/%s.svg"%(res[0],res)
