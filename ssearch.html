@@ -247,7 +247,8 @@
 <h3>Search BioLiP by sequence</h3>  
 <hr color="#FF9900"><br>
 
-<strong>Paste your sequence here:</strong><br>
+<strong>Paste your sequence here:</strong>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="javascript:example()">Sample input</a><br>
 <textarea name="sequence" rows=6 cols=80 placeholder="ATPHINAEMGDFADVVLMPGDPLRAKYIAETFLEDAREVNNVRGMLGFTGTYKGRKISVMGHGMGIPSCSIYTKELITDFGVKKIIRVGSCGAVLPHVKLRDVVIGMGACTDSKVNRIRFKDHDFAAIADFDMVRNAVDAAKALGIDARVGNLFSADLFYSPDGEMFDVMEKYGILGVEMEAAGIYGVAAEFGAKALTICTVSDHIRTHEQTTAAERQTTFNDMIKIALESVLLGDKE"></textarea>
 <p> Or upload sequence from your computer: <br>
 <input type="file" name="seq_file" size="50">
@@ -301,3 +302,19 @@ Jianyi Yang, Ambrish Roy, and Yang Zhang.
 </html>
 <!-- ==DDD== =======ending of tail====== -->
 
+<script type="text/JavaScript">
+function IO(U, V)
+{
+    var X = !window.XMLHttpRequest ? new ActiveXObject('Microsoft.XMLHTTP') : new XMLHttpRequest();
+    X.open(V ? 'PUT' : 'GET', U, false );
+    X.setRequestHeader('Content-Type', 'text/html')
+    X.send(V ? V : '');
+return X.responseText;
+}
+
+function example()
+{
+    var STR=IO("example/seq.fasta");
+    document.searchForm.sequence.value = STR;
+}
+</script>
