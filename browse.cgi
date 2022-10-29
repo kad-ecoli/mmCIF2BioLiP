@@ -48,7 +48,7 @@ fp=gzip.open(rootdir+"/data/ligand.tsv.gz",'rt')
 for line in fp.read().splitlines()[1:]:
     items=line.split('\t')
     ccd  =items[0]
-    name =items[1]
+    name =items[-1]
     ligand_dict[ccd]=name
 fp.close()
 
@@ -165,7 +165,7 @@ for l in range(pageLimit*(page-1),pageLimit*page):
     ccd       =items[3]
     name      =""
     if ccd in ligand_dict:
-        name=';<br>'.join(ligand_dict[ccd].split(';'))
+        name=';\n'.join(ligand_dict[ccd].split(';'))
     ligCha    =items[4]
     ligIdx    =items[5]
     resOrig   =items[6]
@@ -202,7 +202,7 @@ for l in range(pageLimit*(page-1),pageLimit*page):
         uniprot   =items[3]
         pubmed    =items[4]
         if ec:
-            ec="<a href=https://enzyme.expasy.org/EC/%s target=_blank>%s</a>"%(ec,ec)
+            ec=','.join(["<a href=https://enzyme.expasy.org/EC/%s target=_blank>%s</a>"%(e,e) for e in ec.split(',')])
         else:
             ec="N/A"
         if go:
@@ -210,11 +210,11 @@ for l in range(pageLimit*(page-1),pageLimit*page):
             go='<span title="%s">%s ...</span>'%(
                 '\n'.join(go_list),go_list[0])
             if uniprot:
-                go='<a href="https://ebi.ac.uk/QuickGO/annotations?geneProductId=%s" target=_blank>%s</a>'%(uniprot,go)
+                go='<a href="https://ebi.ac.uk/QuickGO/annotations?geneProductId=%s" target=_blank>%s</a>'%(uniprot.split(',')[0],go)
         else:
             go="N/A"
         if uniprot:
-            uniprot="<a href=https://uniprot.org/uniprot/%s target=_blank>%s</a>"%(uniprot,uniprot)
+            uniprot=','.join(["<a href=https://uniprot.org/uniprot/%s target=_blank>%s</a>"%(u,u) for u in uniprot.split(',')])
         else:
             uniprot="N/A"
         if pubmed:
@@ -225,6 +225,9 @@ for l in range(pageLimit*(page-1),pageLimit*page):
     bgcolor=''
     if l%2:
         bgcolor='BGCOLOR="#DEDEDE"'
+    ccd_http=ccd
+    if name:
+        ccd_http='<span title="%s">%s</span>'%(name,ccd)
     print('''
 <tr %s ALIGN=center>
     <td>%d</td>
@@ -241,7 +244,7 @@ for l in range(pageLimit*(page-1),pageLimit*page):
     l+1,
     pdb,recCha,pdb,recCha,reso,
     resOrig,pdb,recCha,bs,bs,
-    ccd,ccd,
+    ccd,ccd_http,
     ec,
     go,
     uniprot,
