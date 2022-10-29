@@ -236,7 +236,7 @@ for l in range(pageLimit*(page-1),pageLimit*page):
     <td><a href="pdb.cgi?pdb=%s&chain=%s" target=_blank>%s:%s</a> (%s)</td>
     <td><span title="%s"><a href="getaid.cgi?pdb=%s&chain=%s&bs=%s" target=_blank>%s</span></td>
     <td><a href="sym.cgi?code=%s" target=_blank>%s</a></td>
-    <td><a href="pdb.cgi?pdb=%s&chain=%s&idx=%s" target=_blank>%s</a></td>
+    <td><a href="pdb.cgi?pdb=%s&chain=%s&idx=%s&lig3=%s" target=_blank>%s</a></td>
     <td>%s</td>
     <td>%s</td>
     <td>%s</td>
@@ -248,7 +248,7 @@ for l in range(pageLimit*(page-1),pageLimit*page):
     pdb,recCha,pdb,recCha,reso,
     resOrig,pdb,recCha,bs,bs,
     ccd,ccd_http,
-    pdb,ligCha,ligIdx,ligCha,
+    pdb,ligCha,ligIdx,ccd,ligCha,
     ec,
     go,
     uniprot,

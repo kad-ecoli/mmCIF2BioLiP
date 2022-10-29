@@ -197,14 +197,14 @@ for l in range(pageLimit*(page-1),pageLimit*page):
     print('''
 <tr %s ALIGN=center>
     <td>%d</td>
-    <td><a href="pdb.cgi?pdb=%s&chain=%s&idx=0" target=_blank>%s:%s</a> (%s)</td>
+    <td><a href="pdb.cgi?pdb=%s&chain=%s&idx=0&lig3=%s" target=_blank>%s:%s</a> (%s)</td>
     <td>%s</td>
     <td style="word-wrap: break-word">%s</td>
     <td>%s</td>
 </tr>
 '''%(bgcolor,
     l+1,
-    pdb,ligCha,pdb,ligCha,reso,
+    pdb,ligCha,lig3,pdb,ligCha,reso,
     '<br>'.join(bs_list),
     sequence,
     pubmed,

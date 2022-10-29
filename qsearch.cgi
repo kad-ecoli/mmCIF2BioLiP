@@ -3,6 +3,7 @@ import cgi
 import cgitb; cgitb.enable()  # for troubleshooting
 import os
 import gzip
+import subprocess
 
 rootdir=os.path.dirname(os.path.abspath(__file__))
 
@@ -117,8 +118,12 @@ else:
 pageLimit=200
 totalNum=0
 html_txt=''
+#cmd="zcat %s/data/lig_all.tsv.gz|tail -n +2|sort -k1,3"%(rootdir)
+#p=subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
+#stdout,stderr=p.communicate()
 fp=gzip.open(rootdir+"/data/lig_all.tsv.gz",'rt')
 for line in fp.read().splitlines()[1:]:
+#for line in stdout.decode().splitlines():
     items=line.split('\t')
     if pdbid and items[0]!=pdbid:
         continue
@@ -255,7 +260,7 @@ for line in fp.read().splitlines()[1:]:
     <td><a href="pdb.cgi?pdb=%s&chain=%s" target=_blank>%s:%s</a> (%s)</td>
     <td><span title="%s"><a href="getaid.cgi?pdb=%s&chain=%s&bs=%s" target=_blank>%s</span></td>
     <td><a href="sym.cgi?code=%s" target=_blank>%s</a></td>
-    <td><a href="pdb.cgi?pdb=%s&chain=%s&idx=%s" target=_blank>%s</a></td>
+    <td><a href="pdb.cgi?pdb=%s&chain=%s&idx=%s&lig3=%s" target=_blank>%s</a></td>
     <td>%s</td>
     <td>%s</td>
     <td>%s</td>
@@ -267,7 +272,7 @@ for line in fp.read().splitlines()[1:]:
     pdb,recCha,pdb,recCha,reso,
     resOrig,pdb,recCha,bs,bs,
     ccd,ccd_http,
-    pdb,ligCha,ligIdx,ligCha,
+    pdb,ligCha,ligIdx,ccd,ligCha,
     ec,
     go,
     accession,
@@ -289,6 +294,7 @@ Resolution -1.00 means the resolution is unavailable, e.g., for NMR structures.
 Click <strong>Site #</strong> to view the binding site structure.
 Hover over <strong>Site #</strong> to view the binding residues.
 Hover over <strong>Ligand</strong> to view ligand details.
+Click <strong>Ligand chain</strong> to view the ligand structure.
 Hover over <strong>GO terms</strong> to view all GO terms.
 <p></p>
 '''%(para,totalNum))
