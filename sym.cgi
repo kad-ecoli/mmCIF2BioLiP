@@ -77,11 +77,11 @@ elif code:
                 items[4]='<br>'.join(smiles_list)
                 items[4].replace('; ',';<br>')
         txt_table+="<tr><td>"+"</td><td>".join(items)+"</td></tr>"
-        res=items[0]
-        svg="https://cdn.rcsb.org/images/ccd/labeled/%s/%s.svg"%(res[0],res)
+        lig3=items[0]
+        svg="https://cdn.rcsb.org/images/ccd/labeled/%s/%s.svg"%(lig3[0],lig3)
         print("<p><ul><a href=%s target=_blank><img src=%s alt='' width=300></a><br>"%(svg,svg))
-        print("View <a href=https://rcsb.org/ligand/%s target=_blank>%s</a> at the PDB database</ul></p>"%(
-        res,res))
+        print("View %s at the <a href=https://rcsb.org/ligand/%s target=_blank>PDB</a> and <a href=qsearch.cgi?lig3=%s>BioLiP</a> database</ul></p>"%(
+            lig3,lig3,lig3))
     print(txt_table)
 else:
     fp=gzip.open(rootdir+"/data/ligand.tsv.gz",'rt')
