@@ -333,8 +333,9 @@ Hover over <strong>Site #</strong> to view the binding residues.
 Hover over <strong>Ligand</strong> to view ligand details.
 Click <strong>Ligand chain</strong> to view the ligand structure.
 Hover over <strong>GO terms</strong> to view all GO terms.
-<p></p>
 '''%(para,totalNum))
+if lig3 in ["peptide","rna","dna"]:
+    print("<br>The sequence is converted from residues with experimentally determined coordinates in the structure; residues not observed in the 3D structure are excluded.")
 
 totalPage=1+int(totalNum/pageLimit)
 if not page:
@@ -348,7 +349,8 @@ if page<1:
 elif page>totalPage:
     page=totalPage
 
-print('''<center> 
+print('''<p></p>
+<center> 
 <a class="hover" href="?&page=1&%s">&lt&lt</a>
 <a class="hover" href="?&page=%d&%s">&lt</a>
 '''%(para,page-1,para))
