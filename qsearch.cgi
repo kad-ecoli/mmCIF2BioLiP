@@ -4,6 +4,7 @@ import cgitb; cgitb.enable()  # for troubleshooting
 import os
 import gzip
 import subprocess
+import textwrap
 
 rootdir=os.path.dirname(os.path.abspath(__file__))
 
@@ -43,23 +44,23 @@ outfmt =form.getfirst("outfmt",'').strip().strip("'")
 
 para_list=[]
 if pdbid:
-    para_list.append("pdbid='%s'"%pdbid)
+    para_list.append("pdbid=%s"%pdbid)
 if chain:
-    para_list.append("chain='%s'"%chain)
+    para_list.append("chain=%s"%chain)
 if lig3:
-    para_list.append("lig3='%s'"%lig3)
+    para_list.append("lig3=%s"%lig3)
 elif ligname:
     para_list.append("ligname='%s'"%ligname)
 if uniprot:
-    para_list.append("uniprot='%s'"%uniprot)
+    para_list.append("uniprot=%s"%uniprot)
 if ecn:
-    para_list.append("ecn='%s'"%ecn)
+    para_list.append("ecn=%s"%ecn)
 if got:
     para_list.append("got='%s'"%got)
 if baff:
-    para_list.append("baff='baff'")
+    para_list.append("baff=%s"%baff)
 if pubmed:
-    para_list.append("pubmed='%s'"%pubmed)
+    para_list.append("pubmed=%s"%pubmed)
 para='&'.join(para_list)
 
 #### read database data ####
@@ -72,13 +73,14 @@ for line in fp.read().splitlines()[1:]:
 fp.close()
 
 ligand_dict=dict()
-fp=gzip.open(rootdir+"/data/ligand.tsv.gz",'rt')
-for line in fp.read().splitlines()[1:]:
-    items=line.split('\t')
-    ccd  =items[0]
-    name =items[-1]
-    ligand_dict[ccd]=name
-fp.close()
+if not lig3 or not lig3 in ["rna","dna","peptide"]:
+    fp=gzip.open(rootdir+"/data/ligand.tsv.gz",'rt')
+    for line in fp.read().splitlines()[1:]:
+        items=line.split('\t')
+        ccd  =items[0]
+        name =items[-1]
+        ligand_dict[ccd]=name
+    fp.close()
 lig_set=set()
 if lig3:
     lig_set=set([lig3])
@@ -94,12 +96,26 @@ elif ligname:
         if ligname in ligand_dict[ccd].upper()])
 
 fasta_dict=dict()
+clust_dict=dict()
 if outfmt=='txt':
     fp=gzip.open(rootdir+"/data/protein.fasta.gz",'rt')
     for block in fp.read().split('>')[1:]:
         header,sequence=block.splitlines()
         fasta_dict[header.split()[0][1:]]=sequence
 else:
+    if lig3 in ["rna","dna","peptide"]:
+        fp=gzip.open("%s/data/%s.fasta.gz"%(rootdir,lig3),'rt')
+        for block in fp.read().split('>')[1:]:
+            header,sequence=block.splitlines()
+            fasta_dict[header.split()[0]]=sequence
+        fp.close()
+        fp=gzip.open("%s/data/%s_nr.fasta.clust.gz"%(rootdir,lig3),'rt')
+        for line in fp.read().splitlines():
+            rep,mem=line.split('\t')
+            mem_list=[rep]+mem.split(',')
+            for mem in mem_list:
+                clust_dict[mem]=[m.replace('_%s_'%lig3,':') for m in mem_list if m!=mem]
+        fp.close()
     print("Content-type: text/html\n")
     if len(html_header):
         print(html_header)
@@ -116,6 +132,8 @@ else:
 
 #### parse page ####
 pageLimit=200
+if lig3 in ["peptide","rna","dna"]:
+    pageLimit=100
 totalNum=0
 html_txt=''
 #cmd="zcat %s/data/lig_all.tsv.gz|tail -n +2|sort -k1,3"%(rootdir)
@@ -139,10 +157,10 @@ for line in fp.read().splitlines()[1:]:
     ligIdx    =items[5]
     resOrig   =items[6]
     resRenu   =items[7]
-    manual    =items[8]
-    moad      =items[9]
-    pdbbind   =items[10]
-    bindingdb =items[11]
+    manual    =items[8].replace(',',', ')
+    moad      =items[9].replace(',',', ')
+    pdbbind   =items[10].replace(',',', ')
+    bindingdb =items[11].replace(',',', ')
     if baff:
         if not manual and not moad and not pdbbind and not bindingdb:
             continue
@@ -204,7 +222,7 @@ for line in fp.read().splitlines()[1:]:
             elif totalNum<=pageLimit*(int(page)-1) or pageLimit*int(page)<totalNum:
                 continue
             if ec:
-                ec=','.join(["<a href=https://enzyme.expasy.org/EC/%s target=_blank>%s</a>"%(e,e) for e in ec.split(',')])
+                ec='<br>'.join(["<a href=https://enzyme.expasy.org/EC/%s target=_blank>%s</a>"%(e,e) for e in ec.split(',')])
             else:
                 ec="N/A"
             if go:
@@ -216,7 +234,7 @@ for line in fp.read().splitlines()[1:]:
             else:
                 go="N/A"
             if accession:
-                accession=','.join(["<a href=https://uniprot.org/uniprot/%s target=_blank>%s</a>"%(a,a) for a in accession.split(',')])
+                accession='<br>'.join(["<a href=https://uniprot.org/uniprot/%s target=_blank>%s</a>"%(a,a) for a in accession.split(',')])
             else:
                 accession="N/A"
             if pmid:
@@ -235,9 +253,28 @@ for line in fp.read().splitlines()[1:]:
 
     name      =""
     ccd_http  =ccd
-    if ccd in ligand_dict:
-        name=';\n'.join(ligand_dict[ccd].split(';'))
-        ccd_http='<span title="%s">%s</span>'%(name,ccd)
+    reso="("+reso+")"
+    if lig3 in ["peptide","rna","dna"]:
+        ligKey='_'.join((pdb,lig3,ligCha))
+        ccd_http=ccd
+        if ligKey in fasta_dict:
+            sequence=fasta_dict[ligKey]
+            ccd_http='<br>'.join(textwrap.wrap(sequence,50))
+            #ccd_http=fasta_dict[ligKey]
+            if ligKey in clust_dict:
+                ccd_http="(identical to "+', '.join(
+                    ['<a href=qsearch.cgi?lig3=%s&pdbid=%s&chain=%s target=_blank>%s</a>'%(
+                    lig3,m.split(':')[0],m.split(':')[1],m
+                    ) for m in clust_dict[ligKey]])+")<br>"+ccd_http
+            ccd_http='<span title="%s length=%d">%s</span>'%(
+                lig3,len(sequence),ccd_http)
+        reso="<br>"+reso
+    else:
+        if ccd in ligand_dict:
+            name=';\n'.join(ligand_dict[ccd].split(';'))
+            ccd_http='<span title="%s">%s</span>'%(name,ccd)
+        ccd_http='<a href="sym.cgi?code=%s" target=_blank>%s</a>'%(
+            ccd,ccd_http)
     
     affinity  =''
     if outfmt!='txt':
@@ -257,9 +294,9 @@ for line in fp.read().splitlines()[1:]:
     html_txt+='''
 <tr %s ALIGN=center>
     <td>%d</td>
-    <td><a href="pdb.cgi?pdb=%s&chain=%s" target=_blank>%s:%s</a> (%s)</td>
+    <td><a href="pdb.cgi?pdb=%s&chain=%s" target=_blank>%s:%s</a> %s</td>
     <td><span title="%s"><a href="getaid.cgi?pdb=%s&chain=%s&bs=%s" target=_blank>%s</span></td>
-    <td><a href="sym.cgi?code=%s" target=_blank>%s</a></td>
+    <td style="word-wrap: break-word">%s</td>
     <td><a href="pdb.cgi?pdb=%s&chain=%s&idx=%s&lig3=%s" target=_blank>%s</a></td>
     <td>%s</td>
     <td>%s</td>
@@ -271,7 +308,7 @@ for line in fp.read().splitlines()[1:]:
     totalNum,
     pdb,recCha,pdb,recCha,reso,
     resOrig,pdb,recCha,bs,bs,
-    ccd,ccd_http,
+    ccd_http,
     pdb,ligCha,ligIdx,ccd,ligCha,
     ec,
     go,
@@ -341,8 +378,34 @@ print('''</select>
 <input type=hidden name=ligname value='%s'>
 <input type=hidden name=pubmed  value='%s'>
 </form></center><br>'''%(pdbid,lig3,uniprot,ecn,got,ligname,pubmed))
-     
-print('''  
+
+
+if lig3 in ["peptide","rna","dna"]:
+    print('''
+<style>
+div.w {
+  word-wrap: break-word;
+}
+</style>
+
+<table border="0" align=center width=100%>    
+<tr BGCOLOR="#FF9900">
+    <th width=4% ALIGN=center><strong> # </strong></th>
+    <th width=4% ALIGN=center><strong> PDB<br>(resolution) </strong></th>
+    <th width=4% ALIGN=center><strong> Site<br># </strong></th>
+    <th width=42% ALIGN=center><strong>''')
+    print(lig3.upper() if lig3!="peptide" else "Peptide")
+    print('''<br>sequence</strong> </th>           
+    <th width=4% ALIGN=center><strong> Ligand chain</strong> </th>           
+    <th width=8% ALIGN=center><strong> EC<br>number </strong> </th>           
+    <th width=10% ALIGN=center><strong> GO<br>terms </strong> </th>           
+    <th width=8% ALIGN=center><strong> UniProt </strong> </th>           
+    <th width=8% ALIGN=center><strong> PubMed </strong> </th>           
+    <th width=8% ALIGN=center><strong> Binding<br>affinity</strong> </th>           
+</tr><tr ALIGN=center>
+''')
+else:
+    print('''  
 <table border="0" align=center width=100%>    
 <tr BGCOLOR="#FF9900">
     <th width=5% ALIGN=center><strong> # </strong></th>
@@ -354,7 +417,7 @@ print('''
     <th width=15% ALIGN=center><strong> GO terms </strong> </th>           
     <th width=10% ALIGN=center><strong> UniProt </strong> </th>           
     <th width=10% ALIGN=center><strong> PubMed </strong> </th>           
-    <th width=20% ALIGN=center><strong> Binding affinity</strong> </th>           
+    <th width=20% ALIGN=center><strong> Binding<br>affinity</strong> </th>           
 </tr><tr ALIGN=center>
 ''')
 print(html_txt)
