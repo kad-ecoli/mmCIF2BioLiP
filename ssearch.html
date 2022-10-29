@@ -248,7 +248,8 @@
 <hr color="#FF9900"><br>
 
 <strong>Paste your sequence here:</strong>&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="javascript:example()">Sample input</a><br>
+[<a href="javascript:example_protein()">Sample protein input</a>]
+[<a href="javascript:example_rna()">Sample rna input</a>]<br>
 <textarea name="sequence" rows=6 cols=80 placeholder="ATPHINAEMGDFADVVLMPGDPLRAKYIAETFLEDAREVNNVRGMLGFTGTYKGRKISVMGHGMGIPSCSIYTKELITDFGVKKIIRVGSCGAVLPHVKLRDVVIGMGACTDSKVNRIRFKDHDFAAIADFDMVRNAVDAAKALGIDARVGNLFSADLFYSPDGEMFDVMEKYGILGVEMEAAGIYGVAAEFGAKALTICTVSDHIRTHEQTTAAERQTTFNDMIKIALESVLLGDKE"></textarea>
 <p> Or upload sequence from your computer: <br>
 <input type="file" name="seq_file" size="50">
@@ -269,6 +270,7 @@ Select Sequence type:&nbsp;&nbsp;&nbsp;&nbsp;
 <p></p>
 <h3>Note:</h3>
 <li>Sequences &ge;30 residues will be searched by <a href="https://blast.ncbi.nlm.nih.gov" target=_blank>BLAST</a>. Sequences &lt;30 residues will be searched by <a href="/NW-align">Needleman-Wunsch alignment</a>.</li>
+<li>The sequence will be searched through a <a href=download.html>non-redundant sequence database</a> (identity cutoff 90% for protein and 100% for other sequence types)</li>
 <li>PDB ID, ligand, UniProt ID, PubMed ID, EC number and GO term can be <a href=qsearch.html>searched here</a>. 
 <p></p>
 
@@ -312,9 +314,16 @@ function IO(U, V)
 return X.responseText;
 }
 
-function example()
+function example_protein()
 {
-    var STR=IO("example/seq.fasta");
+    var STR=IO("example/protein.fasta");
     document.searchForm.sequence.value = STR;
+    document.searchForm.seq_type.value = "protein";
+}
+function example_rna()
+{
+    var STR=IO("example/rna.fasta");
+    document.searchForm.sequence.value = STR;
+    document.searchForm.seq_type.value = "rna";
 }
 </script>
