@@ -44,9 +44,9 @@ code=form.getfirst("code",'')
 if code in ["peptide","rna","dna"]:
     print('''
 <tr><th>New BioLiP code for polymer</th><th>Old BioLiP code for Polymer</th></tr>
-<tr><td>peptide</td><td>III</td></tr>
-<tr><td>rna</td><td>NUC</td></tr>
-<tr><td>dna</td><td>NUC</td></tr>
+<tr><td><a href=qsearch.cgi?lig3=peptide>peptide</a></td><td>III</td></tr>
+<tr><td><a href=qsearch.cgi?lig3=rna>rna</a></td><td>NUC</td></tr>
+<tr><td><a href=qsearch.cgi?lig3=dna>dna</a></td><td>NUC</td></tr>
 ''')
 elif code:
     fp=gzip.open(rootdir+"/data/ligand.tsv.gz",'rt')
