@@ -250,7 +250,8 @@
 <strong>Paste your sequence here:</strong>&nbsp;&nbsp;&nbsp;&nbsp;
 [<a href="javascript:example_protein()">Sample protein input</a>]
 [<a href="javascript:example_peptide()">Sample peptide input</a>]
-[<a href="javascript:example_rna()">Sample rna input</a>]<br>
+[<a href="javascript:example_rna()">Sample rna input</a>]
+[<a href="javascript:example_dna()">Sample dna input</a>]<br>
 <textarea name="sequence" rows=6 cols=80 placeholder="ATPHINAEMGDFADVVLMPGDPLRAKYIAETFLEDAREVNNVRGMLGFTGTYKGRKISVMGHGMGIPSCSIYTKELITDFGVKKIIRVGSCGAVLPHVKLRDVVIGMGACTDSKVNRIRFKDHDFAAIADFDMVRNAVDAAKALGIDARVGNLFSADLFYSPDGEMFDVMEKYGILGVEMEAAGIYGVAAEFGAKALTICTVSDHIRTHEQTTAAERQTTFNDMIKIALESVLLGDKE"></textarea>
 <p> Or upload sequence from your computer: <br>
 <input type="file" name="seq_file" size="50">
@@ -334,5 +335,11 @@ function example_rna()
     var STR=IO("example/rna.fasta");
     document.searchForm.sequence.value = STR;
     document.searchForm.seq_type.value = "rna";
+}
+function example_dna()
+{
+    var STR=IO("example/dna.fasta");
+    document.searchForm.sequence.value = STR;
+    document.searchForm.seq_type.value = "dna";
 }
 </script>
