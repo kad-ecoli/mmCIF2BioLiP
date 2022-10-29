@@ -64,7 +64,10 @@ for line in sequence.splitlines():
         txt+=line.upper()
 if header[0]=='>':
     header=header[1:]
-sequence=txt
+if seq_type in ["rna","dna"]:
+    sequence=txt.lower()
+else:
+    sequence=txt.upper()
 if len(set(txt).difference(set("ABCDEFGHIJKLMNOPQRSTUVWXYZ"))):
     ExitWithError("Unknown residue type "+' '.join(set(txt
         ).difference(set("ABCDEFGHIJKLMNOPQRSTUVWXYZ"))),html_footer)
@@ -78,6 +81,10 @@ blast="blastp"
 if seq_type.endswith("na"):
     blast="blastn"
 cmd="echo %s|%s/script/%s -db %s/data/%s_nr -max_target_seqs 1000 -outfmt '6 sacc slen evalue nident length' "%(sequence,rootdir,blast,rootdir,seq_type)
+score_name="E-value"
+if len(sequence)<30:
+    cmd="echo %s | %s/script/NWalign - %s/data/%s_nr.fasta.gz|sort -k3nr|head -1000"%(sequence,rootdir,rootdir,seq_type)
+    score_name="Alignment<br>score"
 p=subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
 stdout,stderr=p.communicate()
 lines=stdout.decode().splitlines()
@@ -91,7 +98,7 @@ print('''
     <th width=10% ALIGN=center><strong> Identity<br>(normalized by query)</strong> </th>           
     <th width=10% ALIGN=center><strong> Identity<br>(normalized by hit)</strong> </th>           
     <th width=10% ALIGN=center><strong> Identity (normalized<br>by aligned length)</strong> </th>           
-    <th width=10% ALIGN=center><strong> E-value</strong> </th>           
+    <th width=10% ALIGN=center><strong> '''+score_name+ '''</strong> </th>           
     <th width=25% ALIGN=center><strong> Homologs<br>to hit</strong> </th>           
 </tr><tr ALIGN=center>
 ''')
@@ -131,7 +138,7 @@ for line in lines:
         pdbid,chainID=hit2chain_dict[sacc]
     else:
         pdbid,chainID=sacc.split('_%s_'%seq_type)
-    hit="<a href=qsearch.cgi?pdbid=%s&chain=%s>%s:%s</a>"%(
+    hit="<a href=qsearch.cgi?pdbid=%s&chain=%s target=_blank>%s:%s</a>"%(
         pdbid,chainID,pdbid,chainID)
     homolog_list=[]
     if sacc in hit2clust_dict:
@@ -140,7 +147,7 @@ for line in lines:
                 pdbid,chainID=hit2chain_dict[mem]
             else:
                 pdbid,chainID=mem.split('_%s_'%seq_type)
-            homolog_list.append("<a href=qsearch.cgi?pdbid=%s&chain=%s>%s:%s</a>"%(
+            homolog_list.append("<a href=qsearch.cgi?pdbid=%s&chain=%s target=_blank>%s:%s</a>"%(
                 pdbid,chainID,pdbid,chainID))
     print('''
 <tr %s ALIGN=center>
