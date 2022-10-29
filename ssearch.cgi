@@ -77,14 +77,98 @@ print('<br>'.join(textwrap.wrap(sequence,80))+'<p></p>')
 blast="blastp"
 if seq_type.endswith("na"):
     blast="blastn"
-cmd="echo %s|%s/script/%s -db %s/data/%s_nr -outfmt '6 sacc slen evalue nident' "%(sequence,rootdir,blast,rootdir,seq_type)
+cmd="echo %s|%s/script/%s -db %s/data/%s_nr -max_target_seqs 1000 -outfmt '6 sacc slen evalue nident length' "%(sequence,rootdir,blast,rootdir,seq_type)
 p=subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
 stdout,stderr=p.communicate()
-stdout=stdout.decode()
-print('<br>'.join(stdout.splitlines()))
-    
+lines=stdout.decode().splitlines()
+print('''
+<table border="0" align=center width=100%>    
+<tr BGCOLOR="#FF9900">
+    <th width=5% ALIGN=center><strong> # </strong></th>
+    <th width=10% ALIGN=center><strong> Hit </strong></th>
+    <th width=10% ALIGN=center><strong> Hit<br>length </strong></th>
+    <th width=10% ALIGN=center><strong> Aligned<br>length </strong></th>
+    <th width=10% ALIGN=center><strong> Identity<br>(normalized by query)</strong> </th>           
+    <th width=10% ALIGN=center><strong> Identity<br>(normalized by hit)</strong> </th>           
+    <th width=10% ALIGN=center><strong> Identity (normalized<br>by aligned length)</strong> </th>           
+    <th width=10% ALIGN=center><strong> E-value</strong> </th>           
+    <th width=25% ALIGN=center><strong> Homologs<br>to hit</strong> </th>           
+</tr><tr ALIGN=center>
+''')
+hit2chain_dict=dict()
+hit2clust_dict=dict()
+if len(lines):
+    if seq_type=="protein":
+        cmd="zcat %s/data/%s.fasta.gz|grep '>'|cut -f1,2|sed 's/^>//g'"%(rootdir,seq_type)
+        p=subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
+        stdout,stderr=p.communicate()
+        for line in stdout.decode().splitlines():
+            hit,chainID=line.split('\t')
+            pdbid=hit[:-len(chainID)]
+            hit2chain_dict[hit]=(pdbid,chainID)
+    fp=gzip.open("%s/data/%s_nr.fasta.clust.gz"%(rootdir,seq_type),'rt')
+    for line in fp.read().splitlines():
+        rep,mem=line.split('\t')
+        hit2clust_dict[rep]=mem.split(',')
+    fp.close()
 
-print("<p></p><a href=ssearch.html>[Back to search]</a>")
+totalNum=0
+sacc_list=[]
+for line in lines:
+    sacc,slen,evalue,nident,Lali=line.split('\t')
+    if sacc in sacc_list:
+        continue
+    totalNum+=1
+    bgcolor=''
+    if totalNum%2==0:
+        bgcolor='BGCOLOR="#DEDEDE"'
+    slen=int(slen)
+    nident=float(nident)
+    Lali=int(Lali)
+
+    
+    if seq_type=="protein":
+        pdbid,chainID=hit2chain_dict[sacc]
+        hit="<a href=qsearch.cgi?pdbid=%s&chain=%s>%s:%s</a>"%(
+            pdbid,chainID,pdbid,chainID)
+    else:
+        pdbid,chainID=sacc.split('_%s_'%seq_type)
+        hit="<a href=polymer.cgi?pdbid=%s&chain=%s>%s:%s</a>"%(
+            pdbid,chainID,pdbid,chainID)
+    homolog_list=[]
+    if sacc in hit2clust_dict:
+        for mem in hit2clust_dict[sacc]:
+            if seq_type=="protein":
+                pdbid,chainID=hit2chain_dict[mem]
+                homolog_list.append("<a href=qsearch.cgi?pdbid=%s&chain=%s>%s:%s</a>"%(
+                    pdbid,chainID,pdbid,chainID))
+            else:
+                pdbid,chainID=sacc.split('_%s_'%seq_type)
+                homolog_list.append("<a href=polymer.cgi?pdbid=%s&chain=%s>%s:%s</a>"%(
+                    pdbid,chainID,pdbid,chainID))
+    print('''
+<tr %s ALIGN=center>
+    <td>%d</td>
+    <td>%s</td>
+    <td>%d</td>
+    <td>%d</td>
+    <td>%.4f</td>
+    <td>%.4f</td>
+    <td>%.4f</td>
+    <td>%s</td>
+    <td>%s</td>
+</tr>
+'''%(bgcolor,
+    totalNum,
+    hit,
+    slen,
+    Lali,
+    nident/len(sequence),
+    nident/slen, 
+    nident/Lali,
+    evalue, 
+    ', '.join(homolog_list)))
+print("</table><p></p><a href=ssearch.html>[Back to search]</a>")
 if len(html_footer):
     print(html_footer)
 else:
