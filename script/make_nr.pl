@@ -347,7 +347,12 @@ print FP $lig_nr_all;
 close(FP);
 foreach my $prefix(("pdb_all","pdb_nr","lig_all","lig_nr"))
 {
-    system("gzip -f $rootdir/data/$prefix.tsv");
+    #system("gzip -f $rootdir/data/$prefix.tsv");
+    system("sort $rootdir/data/$prefix.tsv|gzip - > $rootdir/data/$prefix.tsv.gz");
+    if (-s "$rootdir/data/$prefix.tsv.gz")
+    {
+        system("rm $rootdir/data/$prefix.tsv");
+    }
 }
 
 my $today=`date '+%Y-%m-%d'`;
