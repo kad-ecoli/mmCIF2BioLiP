@@ -123,8 +123,6 @@ for line in fp.read().splitlines()[1:]:
         continue
     if len(lig_set) and not items[3] in lig_set:
         continue
-    if baff and not ''.join(items[8:]):
-        continue
     pdb       =items[0]
     recCha    =items[1]
     bs        =items[2]
@@ -137,6 +135,17 @@ for line in fp.read().splitlines()[1:]:
     moad      =items[9]
     pdbbind   =items[10]
     bindingdb =items[11]
+    if baff:
+        if not manual and not moad and not pdbbind and not bindingdb:
+            continue
+        elif baff=="manual" and not manual:
+            continue
+        elif baff=="moad" and not moad:
+            continue
+        elif baff=="pdbbind" and not pdbbind:
+            continue
+        elif baff=="bindingdb" and not bindingdb:
+            continue            
     
     reso      =''
     csaOrig   =''

@@ -98,8 +98,8 @@ BioLiP is updated weekly and the current version (%s) contains:
 <li>Number of entries for peptide ligands: <a href=polymer.cgi?lig3=peptide>%d</a></li>
 <li>Number of entries for DNA ligands: <a href=polymer.cgi?lig3=dna>%d</a></li>
 <li>Number of entries for RNA ligands: <a href=polymer.cgi?lig3=rna>%d</a></li>
-<li>Number of entries with binding affinity data: <a href=qsearch.cgi?bind=any>%d</a>
-(<a href=qsearch.cgi?bind=moad>%d</a> from Binding MOAD, <a href=qsearch.cgi?bind=pdbbind>%d</a> from PDBbind-CN, <a href=qsearch.cgi?bind=bindingdb>%d</a> from BindingDB, and <a href=qsearch.cgi?bind=manual>%d</a> from manual survey of the original literature)
+<li>Number of entries with binding affinity data: <a href=qsearch.cgi?baff=baff>%d</a>
+(<a href=qsearch.cgi?baff=moad>%d</a> from Binding MOAD, <a href=qsearch.cgi?baff=pdbbind>%d</a> from PDBbind-CN, <a href=qsearch.cgi?baff=bindingdb>%d</a> from BindingDB, and <a href=qsearch.cgi?baff=manual>%d</a> from manual survey of the original literature)
 '''%(mtime, len(set(chain_list)), regulars+metals+peptides+dnas+rnas,
     regulars,metals,peptides,dnas,rnas,
     affinities,moads,pdbbinds,bindingdbs,manuals
