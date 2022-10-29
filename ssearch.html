@@ -243,43 +243,20 @@
 
 <!-- CONTENT START -->
 <div>
-<FORM name="searchForm" METHOD=POST ACTION="qsearch.cgi"  onsubmit="return checkform(this);">
-<table cellspacing="6">
-<h3>Search BioLiP by</h3>  
+<FORM name="searchForm" METHOD=POST ACTION="ssearch.cgi"  onsubmit="return checkform(this);">
+<h3>Search BioLiP by sequence</h3>  
 <hr color="#FF9900"><br>
-    <tr>
-        <td width=20%><strong> PDB ID  </td>
-        <td width=80% ><input type="text" name="pdbid" value="" class="form-left" placeholder="Example: 1a69" size=60></td>
-    </tr>
-    <tr>
-        <td><strong> Ligand ID  </td>
-        <td><input type="text" name="lig3" value="" class="form-left" placeholder="Example: C2E, or one of the following: metal, regular, rna, dna, peptide" size=60></td>
-    </tr>
-    <tr>
-        <td><strong> UniProt accession  </td>
-        <td><input type="text" name="uniprot" value="" class="form-left" placeholder="Example: P0ABP8" size=60></td>
-    </tr>
-    <tr>
-        <td><strong> EC number  </td>
-        <td><input type="text" name="ecn" value="" class="form-left" placeholder="Example: 2.4.2.1" size=60></td>
-    </tr>
-    <tr>
-        <td> <strong> GO term  </td>
-        <td><input type="text" name="got" value="" class="form-left" placeholder="Example: GO:0042802, or just 0042802" size=60></td>
-    </tr>
-    <tr>
-        <td> <strong> Ligand name </td>
-        <td><input type="text" name="ligname" value="" class="form-left" placeholder="Example: CYCLIC DI-GMP" size=60></td>
-    </tr>
-    <tr>
-        <td> <strong> PubMed ID </td>
-        <td><input type="text" name="pubmed" value="" class="form-left" placeholder="Example: 9653038" size=60></td>
-    </tr>
-    <tr>
-        <td> <strong> With binding affinity data</strong> </td>
-        <td><input type="checkbox" name="baff" value="baff">Check this box to restrict search to entries with binding affinity from <a href=https://bindingmoad.org target=_blank>MOAD</a>, <a href=http://pdbbind.org.cn target=_blank>PDBbind-CN</a>, <a href=http://www.bindingdb.org target=_blank>BindingDB</a> or manual survey of original literature.</td>
-    </tr>
-</table>
+
+<strong>Paste your sequence here:</strong><br>
+<textarea name="sequence" rows=6 cols=80 placeholder="ATPHINAEMGDFADVVLMPGDPLRAKYIAETFLEDAREVNNVRGMLGFTGTYKGRKISVMGHGMGIPSCSIYTKELITDFGVKKIIRVGSCGAVLPHVKLRDVVIGMGACTDSKVNRIRFKDHDFAAIADFDMVRNAVDAAKALGIDARVGNLFSADLFYSPDGEMFDVMEKYGILGVEMEAAGIYGVAAEFGAKALTICTVSDHIRTHEQTTAAERQTTFNDMIKIALESVLLGDKE"></textarea>
+<p> Or upload sequence from your computer: <br>
+<input type="file" name="seq_file" size="50">
+<br><br>
+Select Sequence type:&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="radio" name="seq_type" value="protein" checked>Protein receptor&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="radio" name="seq_type" value="peptide">Peptide ligand&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="radio" name="seq_type" value="rna">RNA ligand&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="radio" name="seq_type" value="dna">DNA ligand
 <br>
 <hr color="#FF9900">
 <p></p>
@@ -290,8 +267,8 @@
 
 <p></p>
 <h3>Note:</h3>
-<li ><b>Ligand ID</b> can either be the upper case 3-letter <a href="https://www.wwpdb.org/data/ccd">Chemical Component Dictionary (CCD)</a> code used by the PDB database, or one of the followings: metal (<a href=ligand.cgi?lig3=metal>metal ion</a>), regular (<a href=ligand.cgi?lig3=regular>other small molecule ligands</a>), rna (<a href=polymer.cgi?lig3=rna>RNAs</a>), dna (<a href=polymer.cgi?lig3=dna>DNAs</a>), peptide (<a href=polymer.cgi?>peptides with &lt;30 amino acids</a>).</li>
-<li>Protein receptors and polymer ligands (RNA, DNA and peptide) can be <a href=ssearch.html>searched by sequence</a>. 
+<li>Sequences &ge;30 residues will be searched by <a href="https://blast.ncbi.nlm.nih.gov" target=_blank>BLAST</a>. Sequences &lt;30 residues will be searched by <a href="/NW-align">Needleman-Wunsch alignment</a>.</li>
+<li>PDB ID, ligand, UniProt ID, PubMed ID, EC number and GO term can be <a href=qsearch.html>searched here</a>. 
 <p></p>
 
 
