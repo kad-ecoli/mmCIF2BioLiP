@@ -179,7 +179,7 @@ for l in range(pageLimit*(page-1),pageLimit*page):
             uniprot   =items[3]
             pubmed    =items[4]
             if uniprot:
-                uniprot="<a href=https://uniprot.org/uniprot/%s target=_blank>%s</a>"%(uniprot,uniprot)
+                uniprot=','.join(["<a href=https://uniprot.org/uniprot/%s target=_blank>%s</a>"%(u,u) for u in uniprot.split(',')])
             else:
                 uniprot="N/A"
             if pubmed:
