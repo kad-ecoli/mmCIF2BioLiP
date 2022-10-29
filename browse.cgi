@@ -66,6 +66,7 @@ Download all results in tab-seperated text for
 Resolution -1.00 means the resolution is unavailable, e.g., for NMR structures.
 Click <strong>Site #</strong> to view the binding site structure.
 Hover over <strong>Site #</strong> to view the binding residues.
+Click <strong>Ligand chain</strong> to visualize the ligand conformation.
 Hover over <strong>Ligand</strong> to view ligand details.
 Hover over <strong>GO terms</strong> to view all GO terms.
 <p></p>
@@ -127,11 +128,12 @@ print('''
     <th width=10% ALIGN=center><strong> PDB<br>(Resolution &#8491;) </strong></th>
     <th width=5%  ALIGN=center><strong> Site # </strong></th>
     <th width=10% ALIGN=center><strong> Ligand </strong> </th>           
+    <th width=5% ALIGN=center><strong> Ligand chain</strong> </th>           
     <th width=10% ALIGN=center><strong> EC number </strong> </th>           
     <th width=15% ALIGN=center><strong> GO terms </strong> </th>           
     <th width=10% ALIGN=center><strong> UniProt </strong> </th>           
     <th width=10% ALIGN=center><strong> PubMed </strong> </th>           
-    <th width=25% ALIGN=center><strong>  Binding affinity</strong> </th>           
+    <th width=20% ALIGN=center><strong>  Binding affinity</strong> </th>           
 </tr><tr ALIGN=center>
 ''') 
 
@@ -234,6 +236,7 @@ for l in range(pageLimit*(page-1),pageLimit*page):
     <td><a href="pdb.cgi?pdb=%s&chain=%s" target=_blank>%s:%s</a> (%s)</td>
     <td><span title="%s"><a href="getaid.cgi?pdb=%s&chain=%s&bs=%s" target=_blank>%s</span></td>
     <td><a href="sym.cgi?code=%s" target=_blank>%s</a></td>
+    <td><a href="pdb.cgi?pdb=%s&chain=%s&idx=%s" target=_blank>%s</a></td>
     <td>%s</td>
     <td>%s</td>
     <td>%s</td>
@@ -245,6 +248,7 @@ for l in range(pageLimit*(page-1),pageLimit*page):
     pdb,recCha,pdb,recCha,reso,
     resOrig,pdb,recCha,bs,bs,
     ccd,ccd_http,
+    pdb,ligCha,ligIdx,ligCha,
     ec,
     go,
     uniprot,
