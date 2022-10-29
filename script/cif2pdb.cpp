@@ -3069,8 +3069,8 @@ int cif2pdb(const string &infile, string &pdbid,
             if (pdbx_db_accession!="?")
                 dbref_vec.push_back(make_pair(asym_id,pdbx_db_accession));
         }
-        else if (StartsWith(line,"_citation.") && 
-                _citation_pdbx_database_id_PubMed.size()<=2)
+        else if (StartsWith(line,"_citation.") && (_citation_title.size()==0 ||
+                _citation_pdbx_database_id_PubMed.size()<=2))
         {
             if (loop_)
             {
@@ -3093,7 +3093,8 @@ int cif2pdb(const string &infile, string &pdbid,
                     _citation_pdbx_database_id_PubMed=line_vec[1];
             }
         }
-        else if (_citation.size() && _citation_pdbx_database_id_PubMed.size()<=2)
+        else if (_citation.size() && (_citation_title.size()==0 ||
+                _citation_pdbx_database_id_PubMed.size()<=2))
         {
             l=read_semi_colon(line_vec, _citation.size(),
                 l, lines, line_append_vec, line,false,true);
