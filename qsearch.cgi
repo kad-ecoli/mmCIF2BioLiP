@@ -24,6 +24,7 @@ if not page:
 elif page=='0':
     page='1'
 pdbid=form.getfirst("pdbid",'').lower().strip().strip("'")
+chain=form.getfirst("chain",'').strip().strip("'")
 lig3 =form.getfirst("lig3",'').strip().strip("'")
 if not lig3:
     lig3=form.getfirst("code",'').strip().strip("'")
@@ -42,6 +43,8 @@ outfmt =form.getfirst("outfmt",'').strip().strip("'")
 para_list=[]
 if pdbid:
     para_list.append("pdbid='%s'"%pdbid)
+if chain:
+    para_list.append("chain='%s'"%chain)
 if lig3:
     para_list.append("lig3='%s'"%lig3)
 elif ligname:
@@ -64,8 +67,7 @@ fp=gzip.open(rootdir+"/data/pdb_all.tsv.gz",'rt')
 chain_dict=dict()
 for line in fp.read().splitlines()[1:]:
     items=line.split('\t')
-    chain=':'.join(items[:2])
-    chain_dict[chain]=items[2:]
+    chain_dict[':'.join(items[:2])]=items[2:]
 fp.close()
 
 ligand_dict=dict()
@@ -95,8 +97,7 @@ if outfmt=='txt':
     fp=gzip.open(rootdir+"/data/protein.fasta.gz",'rt')
     for block in fp.read().split('>')[1:]:
         header,sequence=block.splitlines()
-        chain=header.split()[0][1:]
-        fasta_dict[chain]=sequence
+        fasta_dict[header.split()[0][1:]]=sequence
 else:
     print("Content-type: text/html\n")
     if len(html_header):
@@ -120,6 +121,8 @@ fp=gzip.open(rootdir+"/data/lig_all.tsv.gz",'rt')
 for line in fp.read().splitlines()[1:]:
     items=line.split('\t')
     if pdbid and items[0]!=pdbid:
+        continue
+    if chain and items[1]!=chain and items[4]!=chain:
         continue
     if len(lig_set) and not items[3] in lig_set:
         continue
@@ -154,13 +157,12 @@ for line in fp.read().splitlines()[1:]:
     go        =''
     accession =''
     pmid      =''
-    chain     =pdb+':'+recCha
-    if not chain in chain_dict and (uniprot or ecn or got or pubmed):
-        continue
-    if not chain in chain_dict:
+    if not pdb+':'+recCha in chain_dict:
+        if (uniprot or ecn or got or pubmed):
+            continue
         totalNum+=1
     else:
-        items =chain_dict[chain]
+        items =chain_dict[pdb+':'+recCha]
         if uniprot and items[-2]!=uniprot:
             continue
         else:
@@ -197,7 +199,7 @@ for line in fp.read().splitlines()[1:]:
             elif totalNum<=pageLimit*(int(page)-1) or pageLimit*int(page)<totalNum:
                 continue
             if ec:
-                ec="<a href=https://enzyme.expasy.org/EC/%s target=_blank>%s</a>"%(ec,ec)
+                ec=','.join(["<a href=https://enzyme.expasy.org/EC/%s target=_blank>%s</a>"%(e,e) for e in ec.split(',')])
             else:
                 ec="N/A"
             if go:
@@ -205,11 +207,11 @@ for line in fp.read().splitlines()[1:]:
                 go='<span title="%s">%s ...</span>'%(
                     '\n'.join(go_list),go_list[0])
                 if accession:
-                    go='<a href="https://ebi.ac.uk/QuickGO/annotations?geneProductId=%s" target=_blank>%s</a>'%(accession,go)
+                    go='<a href="https://ebi.ac.uk/QuickGO/annotations?geneProductId=%s" target=_blank>%s</a>'%(accession.split(',')[0],go)
             else:
                 go="N/A"
             if accession:
-                accession="<a href=https://uniprot.org/uniprot/%s target=_blank>%s</a>"%(accession,accession)
+                accession=','.join(["<a href=https://uniprot.org/uniprot/%s target=_blank>%s</a>"%(a,a) for a in accession.split(',')])
             else:
                 accession="N/A"
             if pmid:
@@ -258,12 +260,14 @@ for line in fp.read().splitlines()[1:]:
     <td>%s</td>
     <td>%s</td>
     <td>%s</td>
+    <td>%s</td>
 </tr>
 '''%(bgcolor,
     totalNum,
     pdb,recCha,pdb,recCha,reso,
     resOrig,pdb,recCha,bs,bs,
     ccd,ccd_http,
+    ligCha,
     ec,
     go,
     accession,
@@ -339,11 +343,12 @@ print('''
     <th width=10% ALIGN=center><strong> PDB<br>(Resolution &#8491;) </strong></th>
     <th width=5%  ALIGN=center><strong> Site # </strong></th>
     <th width=10% ALIGN=center><strong> Ligand </strong> </th>           
+    <th width=5%  ALIGN=center><strong> Ligand chain</strong> </th>           
     <th width=10% ALIGN=center><strong> EC number </strong> </th>           
     <th width=15% ALIGN=center><strong> GO terms </strong> </th>           
     <th width=10% ALIGN=center><strong> UniProt </strong> </th>           
     <th width=10% ALIGN=center><strong> PubMed </strong> </th>           
-    <th width=25% ALIGN=center><strong> Binding affinity</strong> </th>           
+    <th width=20% ALIGN=center><strong> Binding affinity</strong> </th>           
 </tr><tr ALIGN=center>
 ''')
 print(html_txt)
