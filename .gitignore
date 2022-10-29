@@ -7,6 +7,8 @@ data/*_nr.*
 taxonomy/
 sifts/
 interim/
+weekly/
+weekly.html
 pubmed/
 m-csa/
 bind/index/INDEX_*
