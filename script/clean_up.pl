@@ -24,6 +24,15 @@ foreach my $divided(`ls $rootdir/weekly/|grep -F _nr.txt|cut -f2 -d_`)
     }
 }
 
+# remove files older than 1 hour
+foreach my $filename(`find $rootdir/output/*gz -mmin +60`)
+{
+    chomp($filename);
+    my $cmd="rm $filename";
+    print "$cmd\n";
+    system("$cmd");
+}
+
 my $mmCIF_folder="$rootdir/pdb/data/structures/divided/mmCIF";
 my $mmCIF_count =`ls $mmCIF_folder/|wc -l`+0;
 if ($mmCIF_count)
