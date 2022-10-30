@@ -198,12 +198,10 @@ $size=keys %csa_dict;
 print "$size csa site\n";
 
 
-my $lig_full_all="#pdb\tchain\tBS\tCCD\tligandChain\tligIdx\tresidue\tresidueRenumbered\t".
-                 "affinity(manual)\tMOAD\tPDBbind-CN\tBindingDB\n";
-my $lig_nr_all  ="$lig_full_all";
-my $pdb_full_all="#pdb\tchain\tresolution\tcsa\tcsa(Renumbered)\t". 
-                 "ec\tgo\tuniprot\tpubmed\n";
-my $pdb_nr_all  ="$pdb_full_all";
+my $lig_full_all="";
+my $lig_nr_all  ="";
+my $pdb_full_all="";
+my $pdb_nr_all  ="";
 foreach my $divided(`ls $rootdir/weekly/|grep -P "BioLiP_\\w+\\.bsr\\.gz"|cut -f1 -d.|cut -f2 -d_`)
 {
     chomp($divided);
@@ -348,11 +346,19 @@ close(FP);
 foreach my $prefix(("pdb_all","pdb_nr","lig_all","lig_nr"))
 {
     #system("gzip -f $rootdir/data/$prefix.tsv");
-    system("sort $rootdir/data/$prefix.tsv|gzip - > $rootdir/data/$prefix.tsv.gz");
-    if (-s "$rootdir/data/$prefix.tsv.gz")
+    my $txt=`sort $rootdir/data/$prefix.tsv|uniq`;
+    open(FP,">$rootdir/data/$prefix.tsv");
+    if ($prefix=~/lig/)
     {
-        system("rm $rootdir/data/$prefix.tsv");
+        print FP "#pdb\tchain\tBS\tCCD\tligandChain\tligIdx\tresidue\tresidueRenumbered\taffinity(manual)\tMOAD\tPDBbind-CN\tBindingDB\n";
     }
+    else
+    {
+        print FP "#pdb\tchain\tresolution\tcsa\tcsa(Renumbered)\tec\tgo\tuniprot\tpubmed\n";
+    }
+    print FP "$txt";
+    close(FP);
+    system("gzip -f $rootdir/data/$prefix.tsv");
 }
 
 my $today=`date '+%Y-%m-%d'`;
