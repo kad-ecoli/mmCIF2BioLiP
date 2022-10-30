@@ -28,7 +28,7 @@ foreach my $divided(`ls $rootdir/weekly/|grep -F _nr.txt|cut -f2 -d_`)
 foreach my $filename(`find $rootdir/output/*gz -mmin +60`)
 {
     chomp($filename);
-    my $cmd="rm $filename";
+    my $cmd="rm -f $filename";
     print "$cmd\n";
     system("$cmd");
 }
