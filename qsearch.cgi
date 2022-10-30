@@ -295,7 +295,7 @@ for line in fp.read().splitlines()[1:]:
 <tr %s ALIGN=center>
     <td>%d</td>
     <td><a href="pdb.cgi?pdb=%s&chain=%s" target=_blank>%s:%s</a> %s</td>
-    <td><span title="%s"><a href="getaid.cgi?pdb=%s&chain=%s&bs=%s" target=_blank>%s</span></td>
+    <td><span title="%s"><a href="pdb.cgi?pdb=%s&chain=%s&bs=%s" target=_blank>%s</span></td>
     <td style="word-wrap: break-word">%s</td>
     <td><a href="pdb.cgi?pdb=%s&chain=%s&idx=%s&lig3=%s" target=_blank>%s</a></td>
     <td>%s</td>
@@ -328,6 +328,7 @@ print('''
 Download all results in tab-seperated text for 
 <a href="?outfmt=txt&%s" download="BioLiP.txt">%d receptor-ligand interactions</a>, whose format is explained at <a href="download/readme.txt">readme.txt</a>.<br>
 Resolution -1.00 means the resolution is unavailable, e.g., for NMR structures.
+Click <strong>PDB</strong> to view the receptor structure.
 Click <strong>Site #</strong> to view the binding site structure.
 Hover over <strong>Site #</strong> to view the binding residues.
 Hover over <strong>Ligand</strong> to view ligand details.

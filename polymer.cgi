@@ -188,7 +188,7 @@ for l in range(pageLimit*(page-1),pageLimit*page):
                 pubmed="N/A"
 
         bs_list.append('''
-<span title="%s"><a href="getaid.cgi?pdb=%s&chain=%s&bs=%s" target=_blank>%s (%s)</a></span> %s
+<span title="%s"><a href="pdb.cgi?pdb=%s&chain=%s&bs=%s" target=_blank>%s (%s)</a></span> %s
 '''%(resOrig,pdb,recCha,bs,recCha,bs,uniprot))
     
     bgcolor=''

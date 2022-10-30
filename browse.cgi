@@ -234,7 +234,7 @@ for l in range(pageLimit*(page-1),pageLimit*page):
 <tr %s ALIGN=center>
     <td>%d</td>
     <td><a href="pdb.cgi?pdb=%s&chain=%s" target=_blank>%s:%s</a> (%s)</td>
-    <td><span title="%s"><a href="getaid.cgi?pdb=%s&chain=%s&bs=%s" target=_blank>%s</span></td>
+    <td><span title="%s"><a href="pdb.cgi?pdb=%s&chain=%s&bs=%s" target=_blank>%s</span></td>
     <td><a href="sym.cgi?code=%s" target=_blank>%s</a></td>
     <td><a href="pdb.cgi?pdb=%s&chain=%s&idx=%s&lig3=%s" target=_blank>%s</a></td>
     <td>%s</td>
