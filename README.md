@@ -10,6 +10,8 @@ The binary executable of [cd-hit](https://github.com/weizhongli/cdhit) is availa
 The binary executable of makeblastdb, blastn and blastp from the [NCBI BLAST+](ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/) are available at ``script/`` for 64 bit Linux.
 Reinstall cd-hit, makeblastdb, blastn and blastp if using other operating system.
 
+This repository contains a copy of [JSmol](https://wiki.jmol.org/index.php/JSmol). This is not needed for database update. It is solely for visualization through the web browser.
+
 ## Usage ##
 
 ### Step 1: Download PDB entries ###
