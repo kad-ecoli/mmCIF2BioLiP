@@ -19,6 +19,7 @@ bind/Download.jsp
 bind/*.zip
 bind/every.csv
 download/lig_frequency.txt
+output/*.pdb.gz
 
 # Prerequisites
 *.d
