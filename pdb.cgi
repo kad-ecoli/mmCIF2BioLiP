@@ -710,6 +710,9 @@ def display_interaction(pdbid,asym_id,bs):
         print('''
 <tr>
     <td>
+        <a href=$svg target=_blank><img src=$svg width=400></a>
+    </td>
+    <td>
     <table>
         <tr BGCOLOR="#DEDEDE"><td align=center><a href=https://wwpdb.org/data/ccd target=_blank>Ligand ID</a></td><td><span title="The ligand ID follows the
 Chemical Component Dictionary (CCD)
@@ -722,9 +725,6 @@ used by the PDB database."><a href=https://rcsb.org/ligand/$lig3>$lig3</a></span
         <tr BGCOLOR="#DEDEDE"><td align=center>Chain</td><td>$pdbid Chain $asym_id [<a href=output/$prefix.pdb.gz>Download ligand structure</a>] [<a href=?pdb=$pdbid&chain=$asym_id&lig3=$lig3&ligIdx=$ligIdx target=_blank>View ligand structure</a>]
         </td></tr>
     </table>
-    </td>
-    <td>
-        <a href=$svg target=_blank><img src=$svg width=400></a>
     </td>
 </tr>
       '''.replace("$pdbid",pdbid
