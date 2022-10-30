@@ -13,7 +13,7 @@ if os.path.isfile(rootdir+"/index.html"):
     fp=open(rootdir+"/index.html")
     txt=fp.read()
     fp.close()
-    html_header=txt.split('<!-- CONTENT START -->')[0]
+    html_header=txt.split('<!-- CONTENT REFRESH -->')[0]
     html_footer=txt.split('<!-- CONTENT END -->')[-1]
 
 form = cgi.FieldStorage()
