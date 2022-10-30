@@ -33,7 +33,9 @@ def display_ligand(pdbid,asym_id,lig3,ligIdx):
         fin.close()
         tar.close()
     script=''
-    if lig3 in ["peptide","rna","dna"]:
+    if lig3 in ["peptide"]:
+        script="cartoons; color group;"
+    elif lig3 in ["rna","dna"]:
         script="cartoons; color group; spacefill off; wireframe off;"
 
     print('''
@@ -45,8 +47,8 @@ def display_ligand(pdbid,asym_id,lig3,ligIdx):
 <div id="contentDiv">
     <div id="RContent" style="display: block;">
     <table width=100% border="0" style="font-family:Monospace;font-size:14px;background:#F2F2F2;" >
-    <tr><td align=center width=10%>PDB</td><td><a href=qsearch.cgi?pdbid=$pdbid>$pdbid</a></td></tr>
-    <tr BGCOLOR="#DEDEDE"><td align=center>Chain</td><td><a href=qsearch.cgi?pdbid=$pdbid&chain=$asym_id>$asym_id</a></td></tr>
+    <tr><td align=center width=10%>PDB</td><td><a href=qsearch.cgi?pdbid=$pdbid target=_blank>$pdbid</a></td></tr>
+    <tr BGCOLOR="#DEDEDE"><td align=center>Chain</td><td><a href=qsearch.cgi?pdbid=$pdbid&chain=$asym_id target=_blank>$asym_id</a></td></tr>
     <tr><td align=center>Resolution</td><td>$reso</a></td></tr>
     <tr BGCOLOR="#DEDEDE" align=center><td align=center>3D<br>structure</td><td>
     <table><tr><td>
@@ -124,9 +126,9 @@ $(document).ready(function()
             if manual:
                 baff_list.append("Manual survey: "+manual)
             if moad:
-                baff_list.append("<a href=http://bindingmoad.org/pdbrecords/index/%s>MOAD</a>: %s"%(pdbid,moad))
+                baff_list.append("<a href=http://bindingmoad.org/pdbrecords/index/%s target=_blank>MOAD</a>: %s"%(pdbid,moad))
             if pdbbind:
-                baff_list.append("<a href=http://pdbbind.org.cn/quickpdb.php?quickpdb=%s>PDBbind-CN</a>: %s"%(pdbid,pdbbind))
+                baff_list.append("<a href=http://pdbbind.org.cn/quickpdb.php?quickpdb=%s target=_blank>PDBbind-CN</a>: %s"%(pdbid,pdbbind))
             if bindingdb:
                 baff_list.append("BindingDB: "+bindingdb)
 
@@ -135,9 +137,9 @@ $(document).ready(function()
                 bgcolor=' BGCOLOR="#DEDEDE" '
             print('''
     <tr %s align=center>
-        <td><span title="Click to view binding site"><a href="getaid.cgi?pdb=%s&chain=%s&bs=%s">%s:%s</a></span></td>
-        <td><span title="Click to view binding site"><a href="getaid.cgi?pdb=%s&chain=%s&bs=%s">%s</a></span></td>
-        <td><span title="Click to view binding site"><a href="getaid.cgi?pdb=%s&chain=%s&bs=%s">%s</a></span></td>
+        <td><span title="Click to view binding site"><a href="getaid.cgi?pdb=%s&chain=%s&bs=%s" target=_blank>%s:%s</a></span></td>
+        <td><span title="Click to view binding site"><a href="getaid.cgi?pdb=%s&chain=%s&bs=%s" target=_blank>%s</a></span></td>
+        <td><span title="Click to view binding site"><a href="getaid.cgi?pdb=%s&chain=%s&bs=%s" target=_blank>%s</a></span></td>
         <td>%s</td>
     </tr>
             '''%(bgcolor,
@@ -176,7 +178,7 @@ def display_polymer_ligand(pdbid,asym_id,lig3):
         if homolog==prefix or not homolog.strip():
             continue
         homo_pdbid,homo_asym_id=homolog.split('_'+lig3+'_')
-        homolog_link+=", <a href=pdb.cgi?pdb=%s&chain=%s&lig3=%s&idx=0>%s:%s</a>"%(
+        homolog_link+=", <a href=pdb.cgi?pdb=%s&chain=%s&lig3=%s&idx=0 target=_blank>%s:%s</a>"%(
             homo_pdbid,homo_asym_id,lig3,homo_pdbid,homo_asym_id)
     if homolog_link:
         homolog_link='<tr BGCOLOR="#DEDEDE"><td>(Identical to '+ \
@@ -260,6 +262,111 @@ used by the PDB database."><a href=https://rcsb.org/ligand/$lig3>$lig3</a></span
   ))
     return display_ligand(pdbid,asym_id,lig3,ligIdx)
 
+def display_protein_receptor(pdbid,asym_id):
+    prefix="%s%s"%(pdbid,asym_id)
+    cmd="zcat %s/data/protein.fasta.gz|grep -PA1 '^>%s\\t'|tail -1"%(
+        rootdir,prefix)
+    p=subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
+    stdout,stderr=p.communicate()
+    sequence=stdout.decode().strip()
+    seq_txt='<br>'.join(textwrap.wrap(sequence,50))
+    print('''
+<tr><td><h1 align=center>Structure of PDB $pdbid Chain $asym_id</h1></td></tr>
+<tr><td>
+<div id="headerDiv">
+    <div id="titleText">Sequence</div>
+</div>
+<div style="clear:both;"></div>
+<div id="contentDiv">
+    <div id="RContent" style="display: block;">
+    <table width=100% border="0" style="font-family:Monospace;font-size:14px;background:#F2F2F2;" >
+    <tr><td>&gt;$prefix (length=$L) [<a href=ssearch.cgi?seq_type=protein&sequence=$sequence target=_blank>Search sequence</a>]</td></tr>
+    <tr><td><span title="Only residues with experimentally determined coordinates are included. Residues unobserved in the structure are excluded.">$seq_txt</span></td></tr>
+    </table>
+</div>
+</td></tr>
+'''.replace("$pdbid",pdbid
+  ).replace("$asym_id",asym_id
+  ).replace("$prefix",prefix
+  ).replace("$L",str(len(sequence))
+  ).replace("$sequence",sequence
+  ).replace("$seq_txt",seq_txt
+  ))
+
+    reso   =''
+    csaOrig=''
+    csaRenu=''
+    ec     =''
+    go     =''
+    uniprot=''
+    pubmed =''
+    cmd="zcat %s/data/pdb_all.tsv.gz |grep -P '^%s\\t%s\\t'"%(
+        rootdir,pdbid,asym_id)
+    p=subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
+    stdout,stderr=p.communicate()
+    items=stdout.decode().split('\t')
+    if len(items)>=9:
+        reso,csaOrig,csaRenu,ec,go,uniprot,pubmed=items[2:9]
+    filename="%s/output/%s.pdb.gz"%(rootdir,prefix)
+    if not os.path.isfile(filename):
+        divided=pdbid[-3:-1]
+        tar = tarfile.open("%s/weekly/receptor_%s.tar.bz2"%(rootdir,divided))
+        fin=tar.extractfile("receptor/%s.pdb"%prefix)
+        fout=gzip.open(filename,'wb')
+        fout.write(fin.read())
+        fout.close()
+        fin.close()
+        tar.close()
+
+    print('''
+<tr><td>
+<div id="headerDiv">
+    <div id="titleText">3D structure</div>
+</div>
+<div style="clear:both;"></div>
+<div id="contentDiv">
+    <div id="RContent" style="display: block;">
+    <table width=100% border="0" style="font-family:Monospace;font-size:14px;background:#F2F2F2;" >
+    <tr><td align=center width=10%>PDB</td><td><a href=qsearch.cgi?pdbid=$pdbid target=_blank>$pdbid</a></td></tr>
+    <tr BGCOLOR="#DEDEDE"><td align=center>Chain</td><td><a href=qsearch.cgi?pdbid=$pdbid&chain=$asym_id target=_blank>$asym_id</a></td></tr>
+    <tr><td align=center>Resolution</td><td>$reso</a></td></tr>
+    <tr BGCOLOR="#DEDEDE" align=center><td align=center>3D<br>structure</td><td>
+    <table><tr><td>
+
+<script type="text/javascript"> 
+$(document).ready(function()
+{
+    Info = {
+        width: 400,
+        height: 400,
+        j2sPath: "jsmol/j2s",
+        script: "load output/$prefix.pdb.gz; cartoons; color group; spacefill off; wireframe off;"
+    }
+    $("#mydiv").html(Jmol.getAppletHtml("jmolApplet0",Info))
+});
+</script>
+<span id=mydiv></span>
+    </td><td align=left>
+[<a href="javascript:Jmol.script(jmolApplet0, 'spin on')">Spin on</a>]<br>
+[<a href="javascript:Jmol.script(jmolApplet0, 'spin off')">Spin off</a>]<br>
+[<a href="javascript:Jmol.script(jmolApplet0, 'Reset')">Reset orientation</a>]<p></p>
+[<a href="javascript:Jmol.script(jmolApplet0, 'set antialiasDisplay true')">High quality</a>]<br>
+[<a href="javascript:Jmol.script(jmolApplet0, 'set antialiasDisplay false')">Low quality</a>]<p></p>
+[<a href="javascript:Jmol.script(jmolApplet0, 'color background white')">White quality</a>]<br>
+[<a href="javascript:Jmol.script(jmolApplet0, 'color background black')">Black quality</a>]<br>
+    </td></tr></table>
+
+
+    </td></tr>
+    </table>
+</div>
+</td></tr>
+'''.replace("$pdbid",pdbid
+  ).replace("$asym_id",asym_id
+  ).replace("$reso",reso
+  ).replace("$prefix",prefix
+  ))
+    return pubmed,uniprot
 
 if __name__=="__main__":
     form   =cgi.FieldStorage()
