@@ -25,7 +25,7 @@ Alternatively, run the following script to download only the missing mmcif files
 ```bash
 script/download_pdb.pl
 ```
-Both ``script/rsyncPDB.sh`` and ``script/download_pdb.pl`` have the same purpose of downloading mmcif files and resolu.idx. For the first time the database is setup, ``script/rsyncPDB.sh`` must be used instead of ``script/download_pdb.pl`` because the later is much slower when a large number of files need be downloaded. For subsequent weekly update, either one of the script can be used. If you do not want to clean up the pdb/ folder, the first script ``script/rsyncPDB.sh`` is preferred. If you do want to clean up the pdb/ folder after every update, which can save ~60GB of disk space, you must use the second script ``script/download_pdb.pl`` to avoid re-downloading the whole pdb database every week.
+Both ``script/rsyncPDB.sh`` and ``script/download_pdb.pl`` have the same purpose of downloading mmcif files and resolu.idx. For the first time the database is setup, ``script/rsyncPDB.sh`` must be used instead of ``script/download_pdb.pl`` because the later is much slower when a large number of files need be downloaded. For subsequent weekly update, either one of the script can be used. If you do not want to clean up the pdb/ folder, the first script ``script/rsyncPDB.sh`` is preferred. If you do want to clean up the pdb/ folder after every update, which can save ~60GB of disk space, you must use the second script ``script/download_pdb.pl`` to avoid re-downloading the whole pdb database every week. Hard disk space permitted, it is recommended to use ``script/rsyncPDB.sh``, which offers faster download speed and less file corruption.
 
 ### Step 2: Download SIFTS function annotation ###
 This step can be performed in parallel to step 1.

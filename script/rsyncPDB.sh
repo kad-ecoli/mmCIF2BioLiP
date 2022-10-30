@@ -28,3 +28,4 @@ ${RSYNC} -rlpt -v -z --delete --port=$PORT ${SERVER}/data/structures/divided/mmC
 
 mkdir -p $MIRRORDIR/derived_data/index
 ${RSYNC} -rlpt -v -z --delete --port=$PORT ${SERVER}/derived_data/index/resolu.idx $MIRRORDIR/derived_data/index/ >> $LOGFILE 2>/dev/null
+${RSYNC} -rlpt -v -z --delete --port=$PORT ${SERVER}/derived_data/index/compound.idx $MIRRORDIR/derived_data/index/ >> $LOGFILE 2>/dev/null
