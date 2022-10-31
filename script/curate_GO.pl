@@ -38,4 +38,8 @@ foreach my $filename(("go2name.tsv","is_a.tsv"))
     system("gzip -f $rootdir/data/$filename");
 }
 
+foreach my $filename(("go2name.tsv","is_a.tsv","alt_id.tsv","input.txt","output.txt"))
+{
+    system("rm $rootdir/obo/go/$filename");
+}
 exit(0);
