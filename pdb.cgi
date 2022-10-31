@@ -10,7 +10,7 @@ import gzip
 
 rootdir=os.path.dirname(os.path.abspath(__file__))
 
-def display_ligand(pdbid,asym_id,lig3,ligIdx):
+def display_ligand(pdbid,asym_id,lig3,ligIdx,title):
     reso  =''
     pubmed=''
     cmd="zcat %s/data/pdb_all.tsv.gz |cut -f1,3,9|uniq|grep -P '^%s\\t'"%(
@@ -58,7 +58,7 @@ def display_ligand(pdbid,asym_id,lig3,ligIdx):
 <div id="contentDiv">
     <div id="RContent" style="display: block;">
     <table width=100% border="0" style="font-family:Monospace;font-size:14px;background:#F2F2F2;" >
-    <tr><td align=center width=10%><strong>PDB</strong></td><td><a href=qsearch.cgi?pdbid=$pdbid target=_blank>$pdbid</a></td></tr>
+    <tr><td align=center width=10%><strong>PDB</strong></td><td><a href=qsearch.cgi?pdbid=$pdbid target=_blank>$pdbid</a> $title</td></tr>
     <tr BGCOLOR="#DEDEDE"><td align=center><strong>Chain</strong></td><td><a href=qsearch.cgi?pdbid=$pdbid&chain=$asym_id target=_blank>$asym_id</a></td></tr>
     <tr><td align=center><strong>Resolution</strong></td><td>$reso</a></td></tr>
     <tr BGCOLOR="#DEDEDE" align=center><td align=center><strong>3D<br>structure</strong></td><td>
@@ -94,6 +94,7 @@ $(document).ready(function()
 </div>
 </td></tr>
 '''.replace("$pdbid",pdbid
+  ).replace("$title",title
   ).replace("$asym_id",asym_id
   ).replace("$reso",reso
   ).replace("$prefix",prefix
@@ -171,7 +172,7 @@ $(document).ready(function()
 
     
 
-def display_polymer_ligand(pdbid,asym_id,lig3):
+def display_polymer_ligand(pdbid,asym_id,lig3,title):
     code=lig3.upper()
     if lig3=="peptide":
         code="peptide"
@@ -224,9 +225,9 @@ def display_polymer_ligand(pdbid,asym_id,lig3):
   ).replace("$seq_txt",seq_txt
   ).replace("$homolog_link",homolog_link
   ))
-    return display_ligand(pdbid,asym_id,lig3,'0')
+    return display_ligand(pdbid,asym_id,lig3,'0',title)
 
-def display_regular_ligand(pdbid,asym_id,lig3,ligIdx):
+def display_regular_ligand(pdbid,asym_id,lig3,ligIdx,title):
     if not ligIdx:
         ligIdx='1'
     lig3=lig3.upper()
@@ -275,7 +276,7 @@ used by the PDB database."><a href=https://rcsb.org/ligand/$lig3>$lig3</a></span
   ).replace("$formula",formula
   ).replace("$name",name.replace(';',';<br>')
   ))
-    return display_ligand(pdbid,asym_id,lig3,ligIdx)
+    return display_ligand(pdbid,asym_id,lig3,ligIdx,title)
 
 def display_ec(ec,csaOrig,csaRenu):
     print('''
@@ -325,7 +326,7 @@ def display_ec(ec,csaOrig,csaRenu):
 </td></tr>
 ''')
 
-def display_go(go):
+def display_go(go,uniprot):
     print('''
 <tr><td>
 <div id="headerDiv">
@@ -357,6 +358,12 @@ def display_go(go):
                              ('C',"Cellular Component")]:
         if not Aspect in go2aspect:
             continue
+        namespace_link=namespace
+        if uniprot:
+            namespace_link='<a href="https://www.ebi.ac.uk/QuickGO/annotations?geneProductId=%s&aspect=%s" target=_blank>%s</a>'%(
+                uniprot.split(',')[0],
+                namespace.lower().replace(' ','_'),
+                namespace)
         print('''
 <tr>
     <table width=100%>
@@ -364,7 +371,7 @@ def display_go(go):
         <th width=10% align=right><strong></strong></th>
         <th width=90% align=left><strong>$namespace</strong></th>
     </tr>
-        '''.replace("$namespace",namespace))
+        '''.replace("$namespace",namespace_link))
         for l,(term,name) in enumerate(go2aspect[Aspect]):
             bgcolor=' BGCOLOR="#F2F2F2"'
             #if l%2==1:
@@ -386,7 +393,7 @@ def display_go(go):
 </td></tr>
 ''')
 
-def display_protein_receptor(pdbid,asym_id):
+def display_protein_receptor(pdbid,asym_id,title):
     prefix="%s%s"%(pdbid,asym_id)
     cmd="zcat %s/data/protein.fasta.gz|grep -PA1 '^>%s\\t'|tail -1"%(
         rootdir,prefix)
@@ -470,10 +477,10 @@ def display_protein_receptor(pdbid,asym_id):
 <div id="contentDiv">
     <div id="RContent" style="display: block;">
     <table width=100% border="0" style="font-family:Monospace;font-size:14px;background:#F2F2F2;" >
-    <tr><td align=center width=10%>PDB</td><td><a href=qsearch.cgi?pdbid=$pdbid target=_blank>$pdbid</a></td></tr>
-    <tr BGCOLOR="#DEDEDE"><td align=center>Chain</td><td><a href=qsearch.cgi?pdbid=$pdbid&chain=$asym_id target=_blank>$asym_id</a></td></tr>
-    <tr><td align=center>Resolution</td><td>$reso</a></td></tr>
-    <tr BGCOLOR="#DEDEDE" align=center><td align=center>3D<br>structure</td><td>
+    <tr><td align=center width=10%><strong>PDB</strong></td><td><a href=qsearch.cgi?pdbid=$pdbid target=_blank>$pdbid</a> $title</td></tr>
+    <tr BGCOLOR="#DEDEDE"><td align=center><strong>Chain</strong></td><td><a href=qsearch.cgi?pdbid=$pdbid&chain=$asym_id target=_blank>$asym_id</a></td></tr>
+    <tr><td align=center><strong>Resolution</strong></td><td>$reso</a></td></tr>
+    <tr BGCOLOR="#DEDEDE" align=center><td align=center><strong>3D<br>structure</strong></td><td>
     <table><tr><td>
 
 <script type="text/javascript"> 
@@ -507,6 +514,7 @@ $explainLabel
 </div>
 </td></tr>
 '''.replace("$pdbid",pdbid
+  ).replace("$title",title
   ).replace("$asym_id",asym_id
   ).replace("$reso",reso
   ).replace("$prefix",prefix
@@ -593,10 +601,10 @@ $explainLabel
 ''')
 
     if go:
-        display_go(go)
+        display_go(go,uniprot)
     return pubmed,uniprot
 
-def display_interaction(pdbid,asym_id,bs):    
+def display_interaction(pdbid,asym_id,bs,title):    
     prefix="%s%s"%(pdbid,asym_id)
     cmd="zcat %s/data/protein.fasta.gz|grep -PA1 '^>%s\\t'|tail -1"%(
         rootdir,prefix)
@@ -888,6 +896,7 @@ $(document).ready(function()
         </td>
         <td>
         <table>
+            <tr BGCOLOR="#DEDEDE"><td align=center><strong>PDB</strong><td><a href=qsearch.cgi?pdbid=$pdbid target=_blank>$pdbid</a> $title</td></tr>
             <tr><td align=center><strong>Resolution</strong><td>$reso</td></tr>
             <tr BGCOLOR="#DEDEDE"><td align=center><strong>Binding residue<br>(original residue number in PDB)</strong><td>$resOrig</td></tr>
             <tr><td align=center><strong>Binding residue<br>(residue number reindexed from 1)</strong><td>$resRenu</td></tr>
@@ -899,6 +908,7 @@ $(document).ready(function()
 </div>
 </td></tr>
     '''.replace("$pdbid",pdbid
+    ).replace("$title",title
     ).replace("$asym_id",asym_id
     ).replace("$reso",reso
     ).replace("$lig_prefix",lig_prefix
@@ -916,8 +926,17 @@ $(document).ready(function()
     if ec:
         display_ec(ec,csaOrig,csaRenu)
     if go:
-        display_go(go)
+        display_go(go,uniprot)
     return pubmed,uniprot
+
+def pdb2title(pdbid):
+    title=''
+    fp=gzip.open(rootdir+"/data/title.tsv.gz",'rt')
+    for line in fp.read().splitlines():
+        if line.startswith(pdbid+'\t'):
+            title=line.split('\t')[-1]
+    fp.close()
+    return title
 
 if __name__=="__main__":
     form   =cgi.FieldStorage()
@@ -944,16 +963,17 @@ if __name__=="__main__":
 ''')
     pubmed=''
     uniprot=''
+    title=pdb2title(pdbid)
     if bs.startswith("BS"):
-        pubmed,uniprot=display_interaction(pdbid,asym_id,bs)
+        pubmed,uniprot=display_interaction(pdbid,asym_id,bs,title)
     else:
         if lig3:
             if lig3 in ["rna","dna","peptide"]:
-                pubmed=display_polymer_ligand(pdbid,asym_id,lig3)
+                pubmed=display_polymer_ligand(pdbid,asym_id,lig3,title)
             else:
-                pubmed=display_regular_ligand(pdbid,asym_id,lig3,ligIdx)
+                pubmed=display_regular_ligand(pdbid,asym_id,lig3,ligIdx,title)
         else:
-            pubmed,uniprot=display_protein_receptor(pdbid,asym_id)
+            pubmed,uniprot=display_protein_receptor(pdbid,asym_id,title)
     
     uniprot_line=''
     if uniprot:
