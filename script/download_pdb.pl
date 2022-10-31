@@ -13,7 +13,7 @@ if (!-s "$rootdir/pdb/derived_data/index/resolu.idx")
     print "ERROR! cannot download $rootdir/pdb/derived_data/index/resolu.idx\n";
     exit(1);
 }
-system("wget https://ftp.wwpdb.org/pub/pdb/derived_data/index/compound.idx -O $rootdir/pdb/derived_data/index/compound.idx");
+#system("wget https://ftp.wwpdb.org/pub/pdb/derived_data/index/compound.idx -O $rootdir/pdb/derived_data/index/compound.idx");
 
 foreach my $pdb(`grep ';' $rootdir/pdb/derived_data/index/resolu.idx|cut -f1 -d';'|grep -ohP '^\\S+'`)
 {
