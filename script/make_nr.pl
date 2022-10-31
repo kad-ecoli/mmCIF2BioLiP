@@ -361,6 +361,22 @@ foreach my $prefix(("pdb_all","pdb_nr","lig_all","lig_nr"))
     system("gzip -f $rootdir/data/$prefix.tsv");
 }
 
+my $txt="";
+foreach my $pdbid(`zcat $rootdir/data/pdb_all.tsv.gz |tail -n +2|cut -f1|sort|uniq`)
+{
+    chomp($pdbid);
+    my $divided=substr($pdbid,(length $pdbid)-3,2);
+    my $title=`head -1 $rootdir/interim/$divided/$pdbid.txt`;
+    chomp($title);
+    next if (length $title==0);
+    $txt.="$pdbid\t$title\n";
+}
+open(FP,">$rootdir/data/title.tsv");
+print FP $txt;
+close(FP);
+system("gzip -f $rootdir/data/title.tsv");
+
+
 my $today=`date '+%Y-%m-%d'`;
 chomp($today);
 my $txt=<<EOF
