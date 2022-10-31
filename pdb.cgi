@@ -315,6 +315,15 @@ def display_ec(ec,csaOrig,csaRenu):
 </td></tr>
 ''')
 
+def readGOname():
+    go2name_dict=dict()
+    fp=gzip.open("%s/data/go2name.tsv.gz"%rootdir,'rt')
+    for line in fp.read().splitlines():
+        GOterm,Aspect,name=line.split('\t')
+        go2name_dict[GOterm]=(Aspect,name)
+    fp.close()
+    return go2name_dict
+
 def display_go(go):
     print('''
 <tr><td>
@@ -325,25 +334,46 @@ def display_go(go):
 <div id="contentDiv">
     <div id="RContent" style="display: block;">
     <table width=100% border="0" style="font-family:Monospace;font-size:14px;background:#F2F2F2;" >
-    <tr BGCOLOR="#DEDEDE" align=center>
-        <th width=10%><strong>GO term</strong></th>
-        <th width=80%><strong>Name</strong></th>
-        <th width=10%><strong>Aspect<br>chain</strong></th>
-    </tr>
 ''')
-    for l,term in enumerate(go.split(',')):
+    go2name_dict=readGOname()
+    go2aspect=dict()
+    for term in go.split(','):
         term="GO:"+term.strip()
-        bgcolor=''
-        if l%2==1:
-            bgcolor=' BGCOLOR="#DEDEDE" '
+        if not term in go2name_dict:
+            continue
+        Aspect,name=go2name_dict[term]
+        if not Aspect in go2aspect:
+            go2aspect[Aspect]=[]
+        go2aspect[Aspect].append((term,name))
+
+    for Aspect,namespace in [('F',"Molecular Function"),
+                             ('P',"Biological Process"),
+                             ('C',"Cellular Component")]:
+        if not Aspect in go2aspect:
+            continue
         print('''
-    <tr $bgcolor align=center>
-        <td><a href="https://ebi.ac.uk/QuickGO/term/$term" target=_blank>$term</td>
-        <td>$name</td>
-        <td>$aspect</td>
+<tr>
+    <table width=100%>
+    <tr BGCOLOR="#DEDEDE" align=center>
+        <th width=10% align=right><strong></strong></th>
+        <th width=90% align=left><strong>$namespace</strong></th>
     </tr>
-        '''.replace("$bgcolor",bgcolor
-          ).replace("$term",term))
+        '''.replace("$namespace",namespace))
+        for l,(term,name) in enumerate(go2aspect[Aspect]):
+            bgcolor=' BGCOLOR="#F2F2F2"'
+            #if l%2==1:
+            #    bgcolor=' BGCOLOR="#DEDEDE" '
+            print('''
+    <tr $bgcolor>
+        <td align=center width=10%><a href="https://ebi.ac.uk/QuickGO/term/$term" target=_blank>$term</td>
+        <td align=left width=90%>$name</td>
+    </tr>
+            '''.replace("$bgcolor",bgcolor
+              ).replace("$term",term
+              ).replace("$name",name))
+        print('''
+    </table>
+</tr>''')
 
     print('''   </table>
 </div>
@@ -904,7 +934,7 @@ if __name__=="__main__":
 
 <script type="text/javascript" src="jsmol/JSmol.min.js"></script>
 <table style="table-layout:fixed;" width="100%" cellpadding="2" cellspacing="0">
-<table>
+<table width=100%>
 ''')
     pubmed=''
     uniprot=''
