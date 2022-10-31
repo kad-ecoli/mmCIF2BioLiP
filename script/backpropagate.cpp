@@ -57,6 +57,19 @@ void Split(const string &line, vector<string> &line_vec,
     }
 }
 
+void clear_line_vec(vector<string> &line_vec)
+{
+    int i;
+    for (i=0;i<line_vec.size();i++) line_vec[i].clear();
+    line_vec.clear();
+}
+
+inline bool StartsWith(const string &longString, const string &shortString)
+{
+    return (longString.size()>=shortString.size() &&
+            longString.substr(0,shortString.size())==shortString);
+}
+
 /* strip white space at the begining or end of string */
 string Trim(const string &inputString)
 {
@@ -162,6 +175,7 @@ void backpropagate(const string &inputfilename,
     ofstream fout;
     int i,j;
     bool fromStdin=(inputfilename=="-");
+    string pdbid,asym_id;
     if (!fromStdin) fin.open(inputfilename.c_str());
     while((fromStdin)?cin.good():fin.good())
     {
@@ -170,10 +184,22 @@ void backpropagate(const string &inputfilename,
         if (line.size()==0) continue;
         Trim(line);
         if (line.size()==0) continue;
+        Split(line, line_vec, '\t');
+        if (line_vec.size()<3)
+        {
+            clear_line_vec(line_vec);
+            continue;
+        }
+        pdbid=line_vec[0];
+        asym_id=line_vec[1];
+        line=line_vec[2];
+        clear_line_vec(line_vec);
+
         Split(line, line_vec, ',');
         for (i=0;i<line_vec.size();i++)
         {
             GOterm=line_vec[i];
+            if (!StartsWith(GOterm,"GO:")) GOterm="GO:"+GOterm;
             if (alt_id_dict.count(GOterm)==0)
             {
                 if (find(unknown_list.begin(),unknown_list.end(),GOterm
@@ -195,13 +221,10 @@ void backpropagate(const string &inputfilename,
                     )!=GOterm_list.end()) continue;
                 GOterm_list.push_back(parent);
             }
-            line_vec[i].clear();
         }
-        line_vec.clear();
-        line.clear();
-        txt+=Join(",",GOterm_list)+'\n';
-        for (i=0;i<GOterm_list.size();i++) GOterm_list[i].clear();
-        GOterm_list.clear();
+        clear_line_vec(line_vec);
+        txt+=pdbid+'\t'+asym_id+'\t'+Join(",",GOterm_list)+'\n';
+        clear_line_vec(GOterm_list);
     }
     if (fromStdin) fin.close();
     

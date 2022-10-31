@@ -107,3 +107,13 @@ This step can be performed independent of step 1 to 9.
 ./script/download_ligand.pl
 ```
 This script downloads CCD ligand to ``pdb/data/monomers/components.cif.gz`` and extract their summary to ``data/ligand.tsv.gz``.
+This script downloads gene ontology to ``obo/go/go-basic.obo``.
+This script downloads enzyme to ``enzyme/enzyme.dat`` and extract their summary to ``data/enzyme.tsv.gz``.
+
+## Step 11: curate GO anntation ##
+This step must be performed after step 8 and 10.
+```bash
+./script/curate_GO.pl
+```
+This script reads GO from ``obo/go/go-basic.obo`` and ``data/pdb_all.tsv.gz``.
+and extract the summary to ``data/go2name.tsv.gz``, ``data/is_a.tsv.gz`` and ``data/pdb_go.tsv.gz``.
