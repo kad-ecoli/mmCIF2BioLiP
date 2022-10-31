@@ -302,27 +302,28 @@ def display_ec(ec,csaOrig,csaRenu):
           ).replace("$csaRenu",csaRenu
           ).replace("$pdbid",pdbid))
     if ec:
-        ec_list=["<a href=https://enzyme.expasy.org/EC/%s target=_blank>%s</a>"%(
-            e,e) for e in ec.replace(' ','').split(',')]
+        ec2name_dict=dict()
+        fp=gzip.open("%s/data/enzyme.tsv.gz"%rootdir,'rt')
+        for line in fp.read().splitlines():
+            e,name=line.split('\t')
+            ec2name_dict[e]=name
+        fp.close()
+        ec_list=[]
+        for e in ec.replace(' ','').split(','):
+            name=''
+            if e in ec2name_dict:
+                name=': '+ec2name_dict[e]
+            ec_list.append("<a href=https://enzyme.expasy.org/EC/%s target=_blank>%s</a>"%(e,e)+name)
         print('''
     <tr align=center>
         <td width=10%><strong>Enzyme Commision number</strong></td>
         <td width=90%>$ec</td>
     </tr>
-        '''.replace("$ec",'; '.join(ec_list)))
+        '''.replace("$ec",'<br>'.join(ec_list)))
     print('''   </table>
 </div>
 </td></tr>
 ''')
-
-def readGOname():
-    go2name_dict=dict()
-    fp=gzip.open("%s/data/go2name.tsv.gz"%rootdir,'rt')
-    for line in fp.read().splitlines():
-        GOterm,Aspect,name=line.split('\t')
-        go2name_dict[GOterm]=(Aspect,name)
-    fp.close()
-    return go2name_dict
 
 def display_go(go):
     print('''
@@ -335,7 +336,12 @@ def display_go(go):
     <div id="RContent" style="display: block;">
     <table width=100% border="0" style="font-family:Monospace;font-size:14px;background:#F2F2F2;" >
 ''')
-    go2name_dict=readGOname()
+    go2name_dict=dict()
+    fp=gzip.open("%s/data/go2name.tsv.gz"%rootdir,'rt')
+    for line in fp.read().splitlines():
+        GOterm,Aspect,name=line.split('\t')
+        go2name_dict[GOterm]=(Aspect,name)
+    fp.close()
     go2aspect=dict()
     for term in go.split(','):
         term="GO:"+term.strip()
