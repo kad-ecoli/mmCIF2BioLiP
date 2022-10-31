@@ -801,7 +801,7 @@ used by the PDB database."><a href=https://rcsb.org/ligand/$lig3>$lig3</a></span
     <div id="RContent" style="display: block;">
     <table width=100% border="0" style="font-family:Monospace;font-size:14px;background:#F2F2F2;" >
     <tr BGCOLOR="#DEDEDE" align=center>
-        <th>Global view</th><th>Local view</th><th>Binding site information</th>
+        <th>Global view</th><th>Local view</th><th>Structure summary</th>
     </tr>
     <tr>
         <td align=center>
