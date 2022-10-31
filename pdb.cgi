@@ -71,7 +71,7 @@ $(document).ready(function()
         width: 400,
         height: 400,
         j2sPath: "jsmol/j2s",
-        script: "load output/$prefix.pdb.gz; $script"
+        script: "load output/$prefix.pdb.gz; color background black; $script"
     }
     $("#mydiv").html(Jmol.getAppletHtml("jmolApplet0",Info))
 });
@@ -447,7 +447,7 @@ $(document).ready(function()
         width: 400,
         height: 400,
         j2sPath: "jsmol/j2s",
-        script: "load output/$prefix.pdb.gz; cartoons; color group; spacefill off; wireframe off; $script;"
+        script: "load output/$prefix.pdb.gz; color background black; cartoons; color group; spacefill off; wireframe off; $script;"
     }
     $("#mydiv").html(Jmol.getAppletHtml("jmolApplet0",Info))
 });
@@ -812,7 +812,7 @@ $(document).ready(function()
         width: 400,
         height: 400,
         j2sPath: "jsmol/j2s",
-        script: "load output/$prefix.pdb.gz; cartoons; color group; spacefill off; wireframe off; $script; load append output/$lig_prefix.pdb.gz; select hetero; $script_ligand; frame all;"
+        script: "load output/$prefix.pdb.gz; color background black; cartoons; color group; spacefill off; wireframe off; $script; load append output/$lig_prefix.pdb.gz; select hetero; $script_ligand; frame all;"
     }
     $("#mydiv0").html(Jmol.getAppletHtml("jmolApplet0",Info))
 });
@@ -835,7 +835,7 @@ $(document).ready(function()
         width: 400,
         height: 400,
         j2sPath: "jsmol/j2s",
-        script: "load output/$prefix.pdb.gz; color group; spacefill off; wireframe off; $script; load append output/$lig_prefix.pdb.gz; select hetero; $script_ligand; zoomto 0 {$xcen $ycen $zcen}; frame all;"
+        script: "load output/$prefix.pdb.gz; color background black; color group; spacefill off; wireframe off; $script; load append output/$lig_prefix.pdb.gz; select hetero; $script_ligand; zoomto 0 {$xcen $ycen $zcen}; frame all;"
     }
     $("#mydiv1").html(Jmol.getAppletHtml("jmolApplet1",Info))
 });
