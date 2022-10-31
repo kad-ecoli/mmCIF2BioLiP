@@ -130,15 +130,24 @@ else:
 <p><a href=.>[Back to Home]</a></p>
 ''')
 
+got2chain_set=set()
+if got:
+    got2chain_list=[]
+    fp=gzip.open(rootdir+"/data/pdb_go.tsv.gz",'rt')
+    for line in fp.read().splitlines():
+        pdb,recCha,go_line=line.split('\t')
+        if got in go_line.split(','):
+            got2chain_list.append(pdb+':'+recCha)
+    fp.close()
+    got2chain_set=set(got2chain_list)
+
+
 #### parse page ####
 pageLimit=200
 if lig3 in ["peptide","rna","dna"]:
     pageLimit=100
 totalNum=0
 html_txt=''
-#cmd="zcat %s/data/lig_all.tsv.gz|tail -n +2|sort -k1,3"%(rootdir)
-#p=subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
-#stdout,stderr=p.communicate()
 fp=gzip.open(rootdir+"/data/lig_all.tsv.gz",'rt')
 for line in fp.read().splitlines()[1:]:
 #for line in stdout.decode().splitlines():
@@ -172,6 +181,8 @@ for line in fp.read().splitlines()[1:]:
             continue
         elif baff=="bindingdb" and not bindingdb:
             continue            
+    if got and not pdb+':'+recCha in got2chain_set:
+        continue
     
     reso      =''
     csaOrig   =''
@@ -181,7 +192,7 @@ for line in fp.read().splitlines()[1:]:
     accession =''
     pmid      =''
     if not pdb+':'+recCha in chain_dict:
-        if (uniprot or ecn or got or pubmed):
+        if (uniprot or ecn or pubmed):
             continue
         totalNum+=1
     else:
@@ -190,22 +201,11 @@ for line in fp.read().splitlines()[1:]:
             continue
         else:
             accession=items[-2]
-        if go:
-            go_list=["GO:"+g for g in go.split(',')]
-            go='<span title="%s">%s ...</span>'%(
-                '\n'.join(go_list),go_list[0])
-            if uniprot:
-                go='<a href="https://ebi.ac.uk/QuickGO/annotations?geneProductId=%s" target=_blank>%s</a>'%(uniprot,go)
-        else:
-            go="N/A"
         if ecn and items[-4]!=ecn:
             continue
         else:
             ec=items[-4]
-        if got and not go in items[-3].split(','):
-            continue
-        else:
-            go=items[-3]
+        go=items[-3]
         if pubmed and items[-1]!=pubmed:
             continue
         else:
