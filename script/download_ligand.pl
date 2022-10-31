@@ -1,12 +1,47 @@
 #!/usr/bin/perl
-# download uniprot accession, taxonomy, EC, GO and pubmed from sifts
-# download ncbi taxonomy and scientific name from ncbi
+# download enzyme and GO definition
 # download ccd definition to ligand from pdb
 use strict;
 use File::Basename;
 use Cwd 'abs_path';
 my $bindir = dirname(abs_path(__FILE__));
 my $rootdir = dirname($bindir);
+
+print "download enzyme\n";
+system("mkdir -p $rootdir/enzyme/") if (!-d "$rootdir/enzyme/");
+system("wget https://ftp.expasy.org/databases/enzyme/enzyme.dat -O $rootdir/enzyme/enzyme.dat");
+my $ID;
+my $DE;
+my $txt;
+foreach my $line(`cat $rootdir/enzyme/enzyme.dat |grep -P "(^//)|(^ID)|(^DE)"`)
+{
+    chomp($line);
+    if ($line=~/^\/\//)
+    {
+        $txt.="$ID\t$DE\n" if (length $ID);
+        $ID="";
+        $DE="";
+    }
+    elsif ($line=~/^ID/)
+    {
+        $ID=substr($line,5);
+    }
+    elsif ($line=~/^DE/)
+    {
+        if (length $DE==0) { $DE=substr($line,5); }
+        else          { $DE.=" ".substr($line,5); }
+    }
+}
+open(FP,">$rootdir/data/enzyme.tsv");
+print FP $txt;
+close(FP);
+system("gzip -f $rootdir/data/enzyme.tsv");
+
+
+print "download go\n";
+system("mkdir -p $rootdir/obo/go/") if (!-d "$rootdir/obo/go/");
+system("wget http://purl.obolibrary.org/obo/go/go-basic.obo -O $rootdir/obo/go/go-basic.obo");
+
 
 print "download CCD ligand\n";
 
