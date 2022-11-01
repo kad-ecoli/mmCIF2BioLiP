@@ -24,6 +24,9 @@ if not page:
     page='1'
 elif page=='0':
     page='1'
+order=form.getfirst("order",'').lower().strip().strip("'")
+if not order:
+    order="pdbid"
 pdbid=form.getfirst("pdbid",'').lower().strip().strip("'")
 chain=form.getfirst("chain",'').strip().strip("'")
 lig3 =form.getfirst("lig3",'').strip().strip("'")
@@ -42,6 +45,8 @@ baff   =form.getfirst("baff",'').strip().strip("'")
 outfmt =form.getfirst("outfmt",'').strip().strip("'")
 
 para_list=[]
+if order:
+    para_list.append("order=%s"%order)
 if pdbid:
     para_list.append("pdbid=%s"%pdbid)
 if chain:
@@ -165,8 +170,8 @@ fp.close()
 pageLimit=200
 if lig3 in ["peptide","rna","dna"]:
     pageLimit=100
-totalNum=0
 html_txt=''
+sort_line=[]
 fp=gzip.open(rootdir+"/data/lig_all.tsv.gz",'rt')
 for line in fp.read().splitlines()[1:]:
 #for line in stdout.decode().splitlines():
@@ -216,11 +221,11 @@ for line in fp.read().splitlines()[1:]:
         totalNum+=1
     else:
         items =chain_dict[pdb+':'+recCha]
-        if uniprot and items[-2]!=uniprot:
+        if uniprot and not uniprot in items[-2].split(','):
             continue
         else:
             accession=items[-2]
-        if ecn and items[-4]!=ecn:
+        if ecn and not ecn in items[-4].split(','):
             continue
         else:
             ec=items[-4]
@@ -229,60 +234,107 @@ for line in fp.read().splitlines()[1:]:
             continue
         else:
             pmid=items[-1]
-        totalNum+=1
         reso   =items[0]
-        if outfmt=="txt":
-            csaOrig=items[1]
-            csaRenu=items[2]
-        else:
-            if page=="last":
-                if totalNum%pageLimit==1:
-                    html_txt=''
-            elif totalNum<=pageLimit*(int(page)-1) or pageLimit*int(page)<totalNum:
-                continue
-            if ec:
-                ec_list=ec.split(',')
-                ec=''
-                for e in ec_list:
-                    if ec:
-                        ec+='<br>'
-                    if not e in enzyme_dict:
-                        ec+="<a href=https://enzyme.expasy.org/EC/%s target=_blank>%s</a>"%(e,e)
-                    else:
-                        ec+='<a href=https://enzyme.expasy.org/EC/%s target=_blank><span title="%s">%s</span></a>'%(e,enzyme_dict[e],e)
-            else:
-                ec="N/A"
-            if go:
-                go_list=["GO:"+g for g in go.split(',')]
+        csaOrig=items[1]
+        csaRenu=items[2]
 
-                go='<span title="'
-                for g in go_list:
-                    if g in go2name_dict:
-                        go+=g+' '+go2name_dict[g]+'\n'
-                    else:
-                        go+=g+'\n'
-                go=go[:-1]+'">'+go_list[0]+" ...</span>"
-                if accession:
-                    go='<a href="https://ebi.ac.uk/QuickGO/annotations?geneProductId=%s" target=_blank>%s</a>'%(accession.split(',')[0],go)
-            else:
-                go="N/A"
-            if accession:
-                accession='<br>'.join(["<a href=https://uniprot.org/uniprot/%s target=_blank>%s</a>"%(a,a) for a in accession.split(',')])
-            else:
-                accession="N/A"
-            if pmid:
-                pmid="<a href=https://pubmed.ncbi.nlm.nih.gov/%s target=_blank>%s</a>"%(pmid,pmid)
-            else:
-                pmid="N/A"
-
+    sequence  =''
+    if pdb+recCha in fasta_dict:
+        sequence=fasta_dict[pdb+recCha]
+    items=(pdb,recCha,reso,bs,ccd,ligCha,ligIdx,resOrig,
+        resRenu,csaOrig,csaRenu,ec,go,manual,moad,pdbbind,bindingdb,
+        accession,pmid,sequence)
     if outfmt=='txt':
-        sequence  =''
-        if pdb+recCha in fasta_dict:
-            sequence=fasta_dict[pdb+recCha]
-        html_txt+='\t'.join((pdb,recCha,reso,bs,ccd,ligCha,ligIdx,resOrig,
-            resRenu,csaOrig,csaRenu,ec,go,manual,moad,pdbbind,bindingdb,
-            accession,pmid,sequence))+'\n'
+        html_txt+='\t'.join(items)+'\n'
+    else:
+        if order=="reso":
+            sort_line.append((reso,items))
+        elif order=="uniprot":
+            sort_line.append((accession,items))
+        elif order=="lig3":
+            sort_line.append((ccd,items))
+        else:
+            sort_line.append((pdb+recCha,items))
+
+if outfmt=="txt":
+    print("Content-type: text/plain\n")
+    print(html_txt)
+    exit()
+
+sort_line.sort()
+totalNum=len(sort_line)
+totalPage=1+int(totalNum/pageLimit)
+if not page:
+    page=1
+elif page=="last":
+    page=totalPage
+else:
+    page=int(page)
+if page<1:
+    page=1
+elif page>totalPage:
+    page=totalPage
+
+for l in range(totalNum):
+    if l<pageLimit*(int(page)-1) or l>=pageLimit*(int(page)):
         continue
+    items    =sort_line[l][1]
+    
+    pdb      =items[0]
+    recCha   =items[1]
+    reso     =items[2]
+    bs       =items[3]
+    ccd      =items[4]
+    ligCha   =items[5]
+    ligIdx   =items[6]
+    resOrig  =items[7]
+    resRenu  =items[8]
+    csaOrig  =items[9]
+    csaRenu  =items[10]
+    ec       =items[11]
+    go       =items[12]
+    manual   =items[13]
+    moad     =items[14]
+    pdbbind  =items[15]
+    bindingdb=items[16]
+    accession=items[17]
+    pmid     =items[18]
+    sequence =items[19]
+    
+    if ec:
+        ec_list=ec.split(',')
+        ec=''
+        for e in ec_list:
+            if ec:
+                ec+='<br>'
+            if not e in enzyme_dict:
+                ec+="<a href=https://enzyme.expasy.org/EC/%s target=_blank>%s</a>"%(e,e)
+            else:
+                ec+='<a href=https://enzyme.expasy.org/EC/%s target=_blank><span title="%s">%s</span></a>'%(e,enzyme_dict[e],e)
+    else:
+        ec="N/A"
+    if go:
+        go_list=["GO:"+g for g in go.split(',')]
+
+        go='<span title="'
+        for g in go_list:
+            if g in go2name_dict:
+                go+=g+' '+go2name_dict[g]+'\n'
+            else:
+                go+=g+'\n'
+        go=go[:-1]+'">'+go_list[0]+" ...</span>"
+        if accession:
+            go='<a href="https://ebi.ac.uk/QuickGO/annotations?geneProductId=%s" target=_blank>%s</a>'%(accession.split(',')[0],go)
+    else:
+        go="N/A"
+    if accession:
+        accession='<br>'.join(["<a href=https://uniprot.org/uniprot/%s target=_blank>%s</a>"%(a,a) for a in accession.split(',')])
+    else:
+        accession="N/A"
+    if pmid:
+        pmid="<a href=https://pubmed.ncbi.nlm.nih.gov/%s target=_blank>%s</a>"%(pmid,pmid)
+    else:
+        pmid="N/A"
 
     name      =""
     ccd_http  =ccd
@@ -312,22 +364,21 @@ for line in fp.read().splitlines()[1:]:
             ccd,ccd_http)
     
     affinity  =''
-    if outfmt!='txt':
-        if manual:
-            affinity="Manual survey: "+manual.replace(',',', ')+"<br>"
-        if moad:
-            affinity+="<a href=http://bindingmoad.org/pdbrecords/index/%s target=_blank>MOAD</a>: %s<br>"%(pdb,moad.replace(',',', '))
-        if pdbbind:
-            affinity+='<a href="http://pdbbind.org.cn/quickpdb.php?quickpdb=%s" target=_blank>PDBbind:</a> %s<br>'%(pdb,pdbbind.replace(',',', '))
-        if bindingdb:
-            affinity+="BindingDB: "+bindingdb.replace(',',', ')+"<br>"
-        if affinity:
-            affinity=affinity[:-4]
+    if manual:
+        affinity="Manual survey: "+manual.replace(',',', ')+"<br>"
+    if moad:
+        affinity+="<a href=http://bindingmoad.org/pdbrecords/index/%s target=_blank>MOAD</a>: %s<br>"%(pdb,moad.replace(',',', '))
+    if pdbbind:
+        affinity+='<a href="http://pdbbind.org.cn/quickpdb.php?quickpdb=%s" target=_blank>PDBbind:</a> %s<br>'%(pdb,pdbbind.replace(',',', '))
+    if bindingdb:
+        affinity+="BindingDB: "+bindingdb.replace(',',', ')+"<br>"
+    if affinity:
+        affinity=affinity[:-4]
     title=''
     if pdb in pdb2name_dict:
         title=pdb2name_dict[pdb]
     bgcolor=''
-    if totalNum%2:
+    if l%2:
         bgcolor='BGCOLOR="#DEDEDE"'
     html_txt+='''
 <tr %s ALIGN=center>
@@ -342,7 +393,7 @@ for line in fp.read().splitlines()[1:]:
     <td>%s</td>
 </tr>
 '''%(bgcolor,
-    totalNum,
+    l+1,
     title,pdb,pdb,recCha,reso,
     resOrig,pdb,recCha,bs,bs,
     ccd_http,
@@ -353,12 +404,6 @@ for line in fp.read().splitlines()[1:]:
     affinity,
     )
 fp.close()
-
-if outfmt=="txt":
-    print("Content-type: text/plain\n")
-    print(html_txt)
-    exit()
-
 
 print('''
 Download all results in tab-seperated text for 
@@ -379,20 +424,28 @@ print('''
 Click <strong>GO terms</strong> to view the GO annotations for the UniProt protein associated with the PDB chain</li>
 ''')
 
-totalPage=1+int(totalNum/pageLimit)
-if not page:
-    page=1
-elif page=="last":
-    page=totalPage
-else:
-    page=int(page)
-if page<1:
-    page=1
-elif page>totalPage:
-    page=totalPage
 
-print('''<p></p>
-<center> 
+print(('''<p></p>
+<form name="sform" action="qsearch.cgi">
+Sort results by
+<select name="order" onchange="this.form.submit()">
+    <option value="pdbid">PDB ID</option>
+    <option value="lig3">Ligand ID</option>
+    <option value="uniprot">UniProt ID</option>
+    <option value="reso">Resolution</option>
+<input type=hidden name=pdbid   value='%s'>
+<input type=hidden name=lig3    value='%s'>
+<input type=hidden name=uniprot value='%s'>
+<input type=hidden name=ecn     value='%s'>
+<input type=hidden name=got     value='%s'>
+<input type=hidden name=ligname value='%s'>
+<input type=hidden name=pubmed  value='%s'>
+</form>'''%(pdbid,lig3,uniprot,ecn,got,ligname,pubmed)
+).replace('value="%s"'%order,
+          'value="%s" selected="selected"'%order))
+
+
+print('''<center> 
 <a class='hover' href='?&page=1&%s'>&lt&lt</a>
 <a class='hover' href='?&page=%d&%s'>&lt</a>
 '''%(para,page-1,para))
