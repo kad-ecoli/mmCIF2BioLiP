@@ -15,11 +15,32 @@ if os.path.isfile(rootdir+"/index.html"):
     html_header=txt.split('<!-- CONTENT START -->')[0]
     html_footer=txt.split('<!-- CONTENT END -->')[-1]
 
+#### read cgi parameters ####
+
 form = cgi.FieldStorage()
 page =form.getfirst("page",'')
 order=form.getfirst("order",'').lower()
 if not order:
     order="pdbid"
+#### read database data ####
+# pdb:recCha => resolution ec go uniprot pubmed
+fp=gzip.open(rootdir+"/data/pdb_all.tsv.gz",'rt')
+chain_dict=dict()
+for line in fp.read().splitlines()[1:]:
+    items=line.split('\t')
+    chain_dict[':'.join(items[:2])]=items[2:3]+items[5:]
+fp.close()
+
+ligand_dict=dict()
+fp=gzip.open(rootdir+"/data/ligand.tsv.gz",'rt')
+for line in fp.read().splitlines()[1:]:
+    items=line.split('\t')
+    ccd  =items[0]
+    name =items[-1]
+    ligand_dict[ccd]=name
+fp.close()
+
+
 print("Content-type: text/html\n")
 if len(html_header):
     print(html_header)
@@ -34,23 +55,22 @@ else:
 <p><a href=.>[Back to Home]</a></p>
 ''')
 
-# pdb recCha => resolution (csa csa_renumbered) ec go uniprot pubmed
-fp=gzip.open(rootdir+"/data/pdb_all.tsv.gz",'rt')
-chain_dict=dict()
-for line in fp.read().splitlines()[1:]:
-    items=line.split('\t')
-    chain=':'.join(items[:2])
-    chain_dict[chain]=items[2:3]+items[5:]
+enzyme_dict=dict()
+fp=gzip.open(rootdir+"/data/enzyme.tsv.gz",'rt')
+for line in fp.read().splitlines():
+    e,name=line.split('\t')
+    enzyme_dict[e]=name
 fp.close()
 
-ligand_dict=dict()
-fp=gzip.open(rootdir+"/data/ligand.tsv.gz",'rt')
-for line in fp.read().splitlines()[1:]:
-    items=line.split('\t')
-    ccd  =items[0]
-    name =items[-1]
-    ligand_dict[ccd]=name
+go2name_dict=dict()
+fp=gzip.open(rootdir+"/data/go2name.tsv.gz",'rt')
+for line in fp.read().splitlines():
+    g,a,name=line.split('\t')
+    go2name_dict[g]='('+a+') '+name
 fp.close()
+
+#### parse page ####
+pageLimit=200
 
 
 fp=gzip.open(rootdir+"/data/lig_all.tsv.gz",'rt')
@@ -63,12 +83,15 @@ print('''
 Download all results in tab-seperated text for 
 <a href=data/pdb_all.tsv.gz>%d receptors</a> and
 <a href=data/lig_all.tsv.gz>%d receptor-ligand interactions</a>.<br>
-Resolution -1.00 means the resolution is unavailable, e.g., for NMR structures.
-Click <strong>Site #</strong> to view the binding site structure.
-Hover over <strong>Site #</strong> to view the binding residues.
-Click <strong>Ligand chain</strong> to visualize the ligand conformation.
-Hover over <strong>Ligand</strong> to view ligand details.
-Hover over <strong>GO terms</strong> to view all GO terms.
+<li> Click <strong>PDB</strong> to view the receptor structure.
+Resolution -1.00 means the resolution is unavailable, e.g., for NMR structures.</li>
+<li>Click <strong>Site #</strong> to view the binding site structure.
+Hover over <strong>Site #</strong> to view the binding residues.</li>
+<li>Hover over <strong>Ligand</strong> to view the full ligand name.</li>
+<li>Click <strong>Ligand chain</strong> to view the ligand structure.</li>
+<li>Hover over <strong>EC number</strong> to view the full name of enzymatic activity.</li>
+<li>Hover over <strong>GO terms</strong> to view all GO terms.
+Click <strong>GO terms</strong> to view the GO annotations for the UniProt protein associated with the PDB chain</li>
 <p></p>
 '''%(len(chain_dict),totalNum))
 
@@ -85,7 +108,6 @@ Sort results by
 '''.replace('value="%s"'%order,
             'value="%s" selected="selected"'%order))
 
-pageLimit=200
 totalPage=1+int(totalNum/pageLimit)
 if not page:
     page=1
@@ -128,14 +150,14 @@ print('''
     <th width=10% ALIGN=center><strong> PDB<br>(Resolution &#8491;) </strong></th>
     <th width=5%  ALIGN=center><strong> Site # </strong></th>
     <th width=10% ALIGN=center><strong> Ligand </strong> </th>           
-    <th width=5% ALIGN=center><strong> Ligand chain</strong> </th>           
+    <th width=5%  ALIGN=center><strong> Ligand chain</strong> </th>           
     <th width=10% ALIGN=center><strong> EC number </strong> </th>           
     <th width=15% ALIGN=center><strong> GO terms </strong> </th>           
     <th width=10% ALIGN=center><strong> UniProt </strong> </th>           
     <th width=10% ALIGN=center><strong> PubMed </strong> </th>           
-    <th width=20% ALIGN=center><strong>  Binding affinity</strong> </th>           
+    <th width=20% ALIGN=center><strong> Binding<br>affinity</strong> </th>           
 </tr><tr ALIGN=center>
-''') 
+''')
 
 sort_line=[]
 for l,line in enumerate(lines):
@@ -204,13 +226,27 @@ for l in range(pageLimit*(page-1),pageLimit*page):
         uniprot   =items[3]
         pubmed    =items[4]
         if ec:
-            ec=','.join(["<a href=https://enzyme.expasy.org/EC/%s target=_blank>%s</a>"%(e,e) for e in ec.split(',')])
+            ec_list=ec.split(',')
+            ec=''
+            for e in ec_list:
+                if ec:
+                    ec+='<br>'
+                if not e in enzyme_dict:
+                    ec+="<a href=https://enzyme.expasy.org/EC/%s target=_blank>%s</a>"%(e,e)
+                else:
+                    ec+='<a href=https://enzyme.expasy.org/EC/%s target=_blank><span title="%s">%s</span></a>'%(e,enzyme_dict[e],e)
         else:
             ec="N/A"
         if go:
             go_list=["GO:"+g for g in go.split(',')]
-            go='<span title="%s">%s ...</span>'%(
-                '\n'.join(go_list),go_list[0])
+
+            go='<span title="'
+            for g in go_list:
+                if g in go2name_dict:
+                    go+=g+' '+go2name_dict[g]+'\n'
+                else:
+                    go+=g+'\n'
+            go=go[:-1]+'">'+go_list[0]+" ...</span>"
             if uniprot:
                 go='<a href="https://ebi.ac.uk/QuickGO/annotations?geneProductId=%s" target=_blank>%s</a>'%(uniprot.split(',')[0],go)
         else:

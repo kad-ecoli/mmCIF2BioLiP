@@ -141,6 +141,19 @@ if got:
     fp.close()
     got2chain_set=set(got2chain_list)
 
+enzyme_dict=dict()
+fp=gzip.open(rootdir+"/data/enzyme.tsv.gz",'rt')
+for line in fp.read().splitlines():
+    e,name=line.split('\t')
+    enzyme_dict[e]=name
+fp.close()
+
+go2name_dict=dict()
+fp=gzip.open(rootdir+"/data/go2name.tsv.gz",'rt')
+for line in fp.read().splitlines():
+    g,a,name=line.split('\t')
+    go2name_dict[g]='('+a+') '+name
+fp.close()
 
 #### parse page ####
 pageLimit=200
@@ -222,13 +235,27 @@ for line in fp.read().splitlines()[1:]:
             elif totalNum<=pageLimit*(int(page)-1) or pageLimit*int(page)<totalNum:
                 continue
             if ec:
-                ec='<br>'.join(["<a href=https://enzyme.expasy.org/EC/%s target=_blank>%s</a>"%(e,e) for e in ec.split(',')])
+                ec_list=ec.split(',')
+                ec=''
+                for e in ec_list:
+                    if ec:
+                        ec+='<br>'
+                    if not e in enzyme_dict:
+                        ec+="<a href=https://enzyme.expasy.org/EC/%s target=_blank>%s</a>"%(e,e)
+                    else:
+                        ec+='<a href=https://enzyme.expasy.org/EC/%s target=_blank><span title="%s">%s</span></a>'%(e,enzyme_dict[e],e)
             else:
                 ec="N/A"
             if go:
                 go_list=["GO:"+g for g in go.split(',')]
-                go='<span title="%s">%s ...</span>'%(
-                    '\n'.join(go_list),go_list[0])
+
+                go='<span title="'
+                for g in go_list:
+                    if g in go2name_dict:
+                        go+=g+' '+go2name_dict[g]+'\n'
+                    else:
+                        go+=g+'\n'
+                go=go[:-1]+'">'+go_list[0]+" ...</span>"
                 if accession:
                     go='<a href="https://ebi.ac.uk/QuickGO/annotations?geneProductId=%s" target=_blank>%s</a>'%(accession.split(',')[0],go)
             else:
@@ -327,13 +354,15 @@ if outfmt=="txt":
 print('''
 Download all results in tab-seperated text for 
 <a href="?outfmt=txt&%s" download="BioLiP.txt">%d receptor-ligand interactions</a>, whose format is explained at <a href="download/readme.txt">readme.txt</a>.<br>
-Resolution -1.00 means the resolution is unavailable, e.g., for NMR structures.
-Click <strong>PDB</strong> to view the receptor structure.
-Click <strong>Site #</strong> to view the binding site structure.
-Hover over <strong>Site #</strong> to view the binding residues.
-Hover over <strong>Ligand</strong> to view ligand details.
-Click <strong>Ligand chain</strong> to view the ligand structure.
-Hover over <strong>GO terms</strong> to view all GO terms.
+<li>Click <strong>PDB</strong> to view the receptor structure.
+Resolution -1.00 means the resolution is unavailable, e.g., for NMR structures.</li>
+<li>Click <strong>Site #</strong> to view the binding site structure.
+Hover over <strong>Site #</strong> to view the binding residues.</li>
+<li>Hover over <strong>Ligand</strong> to view the full ligand name.</li>
+<li>Click <strong>Ligand chain</strong> to view the ligand structure.</li>
+<li>Hover over <strong>EC number</strong> to view the full name of enzymatic activity.</li>
+<li>Hover over <strong>GO terms</strong> to view all GO terms.
+Click <strong>GO terms</strong> to view the GO annotations for the UniProt protein associated with the PDB chain</li>
 '''%(para,totalNum))
 if lig3 in ["peptide","rna","dna"]:
     print("<br>The sequence is converted from residues with experimentally determined coordinates in the structure; residues not observed in the 3D structure are excluded.")
