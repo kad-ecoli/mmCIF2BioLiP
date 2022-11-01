@@ -11,6 +11,9 @@ weekly/
 weekly.html
 pubmed/
 m-csa/
+enzyme/
+obo/
+pdb/
 bind/index/INDEX_*
 bind/pocket/*.pdb
 bind/ligand/*.mol2

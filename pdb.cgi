@@ -1038,7 +1038,9 @@ if __name__=="__main__":
         fp=gzip.open(rootdir+"/data/uniprot_sprot.tsv.gz",'rt')
         for line in fp.read().splitlines():
             u,name,gn=line.split('\t')
-            sprot_dict[u]=name+" (Gene Name="+gn+")"
+            if gn:
+                name+=" (Gene Name="+gn+")"
+            sprot_dict[u]=name
         fp.close()
         uniprot_line='    <tr BGCOLOR="#DEDEDE"><td align=center><strong>UniProt</strong></td><td>'
         for u in uniprot.split(','):

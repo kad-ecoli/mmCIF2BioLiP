@@ -166,6 +166,15 @@ for line in fp.read().splitlines():
     pdb2name_dict[p]=name
 fp.close()
 
+sprot_dict=dict()
+fp=gzip.open(rootdir+"/data/uniprot_sprot.tsv.gz",'rt')
+for line in fp.read().splitlines():
+    u,name,gn=line.split('\t')
+    if gn:
+        name+=" (Gene Name="+gn+")"
+    sprot_dict[u]=name
+fp.close()
+
 #### parse page ####
 pageLimit=200
 if lig3 in ["peptide","rna","dna"]:
@@ -328,7 +337,17 @@ for l in range(totalNum):
     else:
         go="N/A"
     if accession:
-        accession='<br>'.join(["<a href=https://uniprot.org/uniprot/%s target=_blank>%s</a>"%(a,a) for a in accession.split(',')])
+        #accession='<br>'.join(["<a href=https://uniprot.org/uniprot/%s target=_blank>%s</a>"%(a,a) for a in accession.split(',')])
+        accession_list=[]
+        for a in accession.split(','):
+            name=''
+            if a in sprot_dict:
+                name=sprot_dict[a].replace('"','')
+            a="<a href=https://uniprot.org/uniprot/%s target=_blank>%s</a>"%(a,a)
+            if name:
+                a='<span title="%s">%s</span>'%(name,a)
+            accession_list.append(a)
+        accession='<br>'.join(accession_list)
     else:
         accession="N/A"
     if pmid:
