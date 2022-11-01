@@ -226,12 +226,6 @@
         </ul>
     </li>
     <li><a href="alllig.cgi">LIGAND</a></li>
-    <li><a href="qsearch.html">SEARCH</a>
-        <ul>
-        <li><a href="qsearch.html">Search by name</a></li>
-        <li><a href="ssearch.html">Search by sequence</a></li>
-        </ul>
-    </li>
     <li><a href="download.html">DOWNLOAD</a></li>
     <li><a href="about.html">ABOUT</a></li>
 </ul>
@@ -241,8 +235,6 @@
 <div class="post">
 
 <!-- CONTENT START -->
-<br>
-
 
 BioLiP is a semi-manually curated database for high-quality, biologically 
 relevant ligand-protein binding interactions. 
@@ -276,6 +268,84 @@ Each entry in BioLiP contains a comprehensive list of annotations on:
 and <a href="http://www.ncbi.nlm.nih.gov/pubmed/" target=_blank>PubMed</a> databases.
 </p>
 
+<p>
+<h1><u>Search BioLiP by sequence</u></h1>
+</p>
+<FORM name="searchForm" METHOD=POST ACTION="ssearch.cgi"  onsubmit="return checkform(this);">
+Paste your sequence here:&nbsp;&nbsp;&nbsp;&nbsp;
+[<a href="javascript:example_protein()">Sample protein input</a>]
+[<a href="javascript:example_peptide()">Sample peptide input</a>]
+[<a href="javascript:example_rna()">Sample rna input</a>]
+[<a href="javascript:example_dna()">Sample dna input</a>]<br>
+<textarea name="sequence" rows=6 cols=80 placeholder="Example:
+ATPHINAEMGDFADVVLMPGDPLRAKYIAETFLEDAREVNNVRGMLGFTGTYKGRKISVMGHGMGIPSCSIYTKELITDFGVKKIIRVGSCGAVLPHVKLRDVVIGMGACTDSKVNRIRFKDHDFAAIADFDMVRNAVDAAKALGIDARVGNLFSADLFYSPDGEMFDVMEKYGILGVEMEAAGIYGVAAEFGAKALTICTVSDHIRTHEQTTAAERQTTFNDMIKIALESVLLGDKE"></textarea>
+<p> Or upload sequence from your computer:
+<input type="file" name="seq_file" size="50">
+<br>
+Select Sequence type:&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="radio" name="seq_type" value="protein" checked>Protein receptor&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="radio" name="seq_type" value="peptide">Peptide ligand&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="radio" name="seq_type" value="rna">RNA ligand&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="radio" name="seq_type" value="dna">DNA ligand
+<br>
+<span title="Sequences &ge; and &lt;30 residues will be searched by BLAST and
+Needleman-Wunsch alignment (NW-align), respectively.">
+<INPUT TYPE=SUBMIT VALUE="Search">
+&nbsp;&nbsp;
+<INPUT TYPE=RESET VALUE="Clear All">                                     
+</span>
+</FORM>
+<p></p>
+
+<p>
+<h1><u>Search BioLiP by name</u></h1>
+</p>
+<FORM name="searchForm" METHOD=POST ACTION="qsearch.cgi"  onsubmit="return checkform(this);">
+<table width=100%>
+    <tr>
+        <td>PDB ID</td>
+        <td><input type="text" name="pdbid" value="" class="form-left" placeholder="Example: 1a69" size=60></td>
+    </tr>
+    <tr>
+        <td>PDB Chain ID</td>
+        <td><input type="text" name="chain" value="" class="form-left" placeholder="Example: A" size=60></td>
+    </tr>
+    <tr>
+        <td><span title="Ligand ID can either be the upper case 3-letter Chemical Component Dictionary (CCD)</a> code used by the PDB database, or one of the followings: metal, regular, rna, dna, peptide">Ligand ID</span></td>
+	<td><span title="Ligand ID can either be the upper case 3-letter Chemical Component Dictionary (CCD)</a> code used by the PDB database, or one of the followings: metal, regular, rna, dna, peptide"><input type="text" name="lig3" value="" class="form-left" placeholder="Example: C2E, or one of the following: metal, regular, rna, dna, peptide" size=60> </span></td>
+    </tr>
+    <tr>
+        <td>UniProt accession</td>
+        <td><input type="text" name="uniprot" value="" class="form-left" placeholder="Example: P0ABP8" size=60></td>
+    </tr>
+    <tr>
+        <td>EC number</td>
+        <td><input type="text" name="ecn" value="" class="form-left" placeholder="Example: 2.4.2.1" size=60></td>
+    </tr>
+    <tr>
+        <td><span title="To search proteins with GO terms in the Molecular Function, Biological Process and Cellular Component aspects, use terms GO:0003674, GO:0008150 and GO:0005575, respectively.">GO term</span></td>
+        <td><span title="To search proteins with GO terms in the Molecular Function, Biological Process and Cellular Component aspects, use terms GO:0003674, GO:0008150 and GO:0005575, respectively."><input type="text" name="got" value="" class="form-left" placeholder="Example: GO:0042802, or just 0042802" size=60></span></td>
+    </tr>
+    <tr>
+        <td>Ligand name </td>
+        <td><input type="text" name="ligname" value="" class="form-left" placeholder="Example: CYCLIC DI-GMP" size=60></td>
+    </tr>
+    <tr>
+        <td>PubMed ID </td>
+        <td><input type="text" name="pubmed" value="" class="form-left" placeholder="Example: 9653038" size=60></td>
+    </tr>
+    <tr>
+        <td>With binding affinity data&nbsp;</td>
+        <td><input type="checkbox" name="baff" value="baff">Check this box to restrict search to entries with binding affinity from <a href=https://bindingmoad.org target=_blank>MOAD</a>, <a href=http://pdbbind.org.cn target=_blank>PDBbind-CN</a>, <a href=http://www.bindingdb.org target=_blank>BindingDB</a> or manual survey of original literature.</td>
+    </tr>
+</table>
+<INPUT TYPE=SUBMIT VALUE="Search">
+&nbsp;&nbsp;
+<INPUT TYPE=RESET VALUE="Clear All">                                     
+</FORM>
+
+<p></p>
+
 <!-- CONTENT REFRESH -->
 <meta http-equiv="refresh" content="0; url='index.cgi'"/>
 <!-- CONTENT END -->
@@ -307,3 +377,40 @@ Jianyi Yang, Ambrish Roy, and Yang Zhang.
 </html>
 <!-- ==DDD== =======ending of tail====== -->
 
+<script type="text/JavaScript">
+function IO(U, V)
+{
+    var X = !window.XMLHttpRequest ? new ActiveXObject('Microsoft.XMLHTTP') : new XMLHttpRequest();
+    X.open(V ? 'PUT' : 'GET', U, false );
+    X.setRequestHeader('Content-Type', 'text/html')
+    X.send(V ? V : '');
+return X.responseText;
+}
+
+function example_protein()
+{
+    var STR=IO("example/protein.fasta");
+    document.searchForm.sequence.value = STR;
+    document.searchForm.seq_type.value = "protein";
+}
+
+function example_peptide()
+{
+    var STR=IO("example/peptide.fasta");
+    document.searchForm.sequence.value = STR;
+    document.searchForm.seq_type.value = "peptide";
+}
+
+function example_rna()
+{
+    var STR=IO("example/rna.fasta");
+    document.searchForm.sequence.value = STR;
+    document.searchForm.seq_type.value = "rna";
+}
+function example_dna()
+{
+    var STR=IO("example/dna.fasta");
+    document.searchForm.sequence.value = STR;
+    document.searchForm.seq_type.value = "dna";
+}
+</script>
