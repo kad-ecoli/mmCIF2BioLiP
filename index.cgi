@@ -16,7 +16,6 @@ if os.path.isfile(rootdir+"/index.html"):
     html_header=txt.split('<!-- CONTENT REFRESH -->')[0]
     html_footer=txt.split('<!-- CONTENT END -->')[-1]
 
-form = cgi.FieldStorage()
 print("Content-type: text/html\n")
 if len(html_header):
    print(html_header)
@@ -95,9 +94,9 @@ BioLiP is updated weekly and the current version (%s) contains:
 <li>Number of entries: <a href=browse.cgi>%d</a></li>
 <li>Number of entries for regular ligands: <a href=qsearch.cgi?lig3=regular>%d</a></li>
 <li>Number of entries for metal ligands: <a href=qsearch.cgi?lig3=metal>%d</a></li>
-<li>Number of entries for peptide ligands: <a href=polymer.cgi?lig3=peptide>%d</a></li>
-<li>Number of entries for DNA ligands: <a href=polymer.cgi?lig3=dna>%d</a></li>
-<li>Number of entries for RNA ligands: <a href=polymer.cgi?lig3=rna>%d</a></li>
+<li>Number of entries for peptide ligands: <a href=qsearch.cgi?lig3=peptide>%d</a></li>
+<li>Number of entries for DNA ligands: <a href=qsearch.cgi?lig3=dna>%d</a></li>
+<li>Number of entries for RNA ligands: <a href=qsearch.cgi?lig3=rna>%d</a></li>
 <li>Number of entries with binding affinity data: <a href=qsearch.cgi?baff=baff>%d</a>
 (<a href=qsearch.cgi?baff=moad>%d</a> from Binding MOAD, <a href=qsearch.cgi?baff=pdbbind>%d</a> from PDBbind-CN, <a href=qsearch.cgi?baff=bindingdb>%d</a> from BindingDB, and <a href=qsearch.cgi?baff=manual>%d</a> from manual survey of the original literature)
 '''%(mtime, len(set(chain_list)), regulars+metals+peptides+dnas+rnas,
