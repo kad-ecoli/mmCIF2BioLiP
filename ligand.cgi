@@ -16,18 +16,38 @@ if os.path.isfile(rootdir+"/index.html"):
     html_footer=txt.split('<!-- CONTENT END -->')[-1]
 
 form    = cgi.FieldStorage()
+page    =form.getfirst("page",'')
+if not page or page=='0':
+    page='1'
 lig3    = form.getfirst("code",'')
 if not lig3:
     lig3= form.getfirst("lig3",'')
 if not lig3 in ["metal","regular"]:
     lig3=lig3.upper()
 formula = form.getfirst("formula",'').upper()
-inchi   = form.getfirst("inchi",'').upper()
+inchi   = form.getfirst("inchi",'').upper().replace('"','').replace(' ','')
 if inchi and not inchi.startswith("INCHI="):
     inchi="INCHI="+inchi
-inchikey= form.getfirst("inchikey",'').upper()
-smiles  = form.getfirst("smiles",'').upper()
-ligname = form.getfirst("ligname",'').upper()
+inchikey= form.getfirst("inchikey",'').upper().replace(' ','')
+smiles  = form.getfirst("smiles",'').upper().replace(' ','').rstrip(';')
+ligname = form.getfirst("ligname",'').upper().replace('"','').replace("'",'')
+
+para_list=[]
+if lig3:
+    para_list.append("lig3=%s"%lig3)
+if formula:
+    para_list.append("formula=%s"%formula)
+if inchi:
+    para_list.append('inchi="%s"'%inchi)
+if inchikey:
+    para_list.append('inchikey=%s'%inchikey)
+if smiles:
+    para_list.append("smiles=%s"%smiles)
+if ligname:
+    para_list.append('ligname="%s"'%ligname)
+para='&'.join(para_list)
+
+
 
 print("Content-type: text/html\n")
 if len(html_header):
@@ -42,6 +62,14 @@ else:
 <img src=images/BioLiP1.png ></br>
 <p><a href=.>[Back to Home]</a></p>
 ''')
+freq_dict=dict()
+fp=open(rootdir+"/download/lig_frequency.txt")
+for line in fp.read().splitlines()[4:]:
+    items=line.split('\t')
+    ccd=items[1]
+    freq=items[2]
+    freq_dict[ccd]=freq
+fp.close()
 
 print('''
 <h4>Search Ligand</h4>
@@ -91,20 +119,10 @@ print('''
 
 print('''
 <h4>Search Ligand Result</h4>
-Click the corresponding <strong> Ligand ID</strong> to search BioLiP. The ligand ID follows the <a href="https://www.wwpdb.org/data/ccd" target=_blank>Chemical Component Dictionary (CCD)</a> used by the PDB database.<br>
+Click the corresponding Ligand <strong>ID</strong> to search BioLiP. The ligand ID follows the <a href="https://www.wwpdb.org/data/ccd" target=_blank>Chemical Component Dictionary (CCD)</a> used by the PDB database.<br>
 Click the corresponding <strong> Ligand Name</strong> to visualize the ligand and display its names/synonyms.<br>
 If multiple SMILES strings exists for the same ligand, different SMILES are separated by semicolon ";".
 <p></p>
-<table border="0" align=center width=100%>    
-<tr BGCOLOR="#FF9900">
-    <th width=4%  ALIGN=center><strong> # </strong></th>
-    <th width=6%  ALIGN=center><strong> Ligand ID </strong></th>
-    <th width=10% ALIGN=center><strong> Formula </strong></th>
-    <th width=10% ALIGN=center><strong> InChI </strong></th>
-    <th width=10% ALIGN=center><strong> InChIKey </strong></th>
-    <th width=10% ALIGN=center><strong> SMILES </strong></th>
-    <th width=50% ALIGN=left>  <strong> Ligand Name </strong> </th>           
-</tr><tr ALIGN=center>
 ''')
 
 fp=gzip.open(rootdir+"/data/metal.tsv.gz",'rt')
@@ -114,9 +132,10 @@ for line in fp.read().splitlines():
 fp.close()
 metal_set=set(metal_list)
 
-count=0
 fp=gzip.open(rootdir+"/data/ligand.tsv.gz",'rt')
 formula_query_set=set(formula.split())
+lines=[]
+pageLimit=200
 for line in fp.read().splitlines()[1:]:
     items=line.split('\t')
     if lig3:
@@ -141,9 +160,8 @@ for line in fp.read().splitlines()[1:]:
         smiles_list=items[4].split(';')
         if sum([s.strip().upper()==smiles for s in smiles_list])==0:
             continue
-    if ligname and not ligname in items[5].upper():
+    if ligname and not ligname in items[5].replace("'",'').upper():
         continue
-    count+=1
     
     inchi_list=[]
     for i in range(0,len(items[2]),25):
@@ -159,10 +177,79 @@ for line in fp.read().splitlines()[1:]:
         smiles_list.append(items[4][start:end])
     items[4]='<br>'.join(smiles_list)
     items[4].replace('; ',';<br>')
-    
+    lines.append(items)
+    if page!="last" and len(lines)>pageLimit*int(page):
+        continue
+
+totalNum=len(lines)
+totalPage=1+int(totalNum/pageLimit)
+if page=="last":
+    page=totalPage
+else:
+    page=int(page)
+if page<1:
+    page=1
+elif page>totalPage:
+    page=totalPage
+
+
+if not inchi and not inchikey: # inchi only has unique hit
+    print('''<p></p>
+<center> 
+<a class='hover' href='?&page=1&%s'>&lt&lt</a>
+<a class='hover' href='?&page=%d&%s'>&lt</a>
+'''%(para,page-1,para))
+    for p in range(page-10,page+11):
+        if p<1 or p>totalPage:
+            continue
+        elif p==page:
+            print(' %d '%(p))
+        else:
+            print('''<a class='hover' href='?&page=%d&%s'>%d</a>'''%(p,para,p))
+    print('''
+<a class='hover' href='?&page=%d&%s'>&gt</a>
+<a class='hover' href='?&page=last&%s'>&gt&gt</a>
+<form name="pform" action="ligand.cgi">Go to page <select name="page" onchange="this.form.submit()">
+'''%(page+1,para,para))
+    for p in range(1,totalPage+1):
+        if p==page:
+            print('<option value="%d" selected="selected">%d</option>'%(p,p))
+        else:
+            print('<option value="%d">%d</option>'%(p,p))
+    print('''</select>
+<input type=hidden name=lig3     value='%s'>
+<input type=hidden name=formula  value='%s'>
+<input type=hidden name=inchi    value='%s'>
+<input type=hidden name=inchikey value='%s'>
+<input type=hidden name=smiles   value='%s'>
+<input type=hidden name=ligname  value='%s'>
+</form></center><br>'''%(lig3,formula,inchi,inchikey,smiles,ligname))
+
+
+
+print('''<table border="0" align=center width=100%>    
+<tr BGCOLOR="#FF9900">
+    <th width=4%  ALIGN=center><strong> # </strong></th>
+    <th width=4%  ALIGN=center><strong> ID </strong></th>
+    <th width=5%  ALIGN=center><strong> Count </strong></th>
+    <th width=10% ALIGN=center><strong> Chemical<br>formula </strong></th>
+    <th width=10% ALIGN=center><strong> InChI </strong></th>
+    <th width=12% ALIGN=center><strong> InChIKey </strong></th>
+    <th width=10% ALIGN=center><strong> SMILES </strong></th>
+    <th width=45% ALIGN=left>  <strong> Ligand<br>Name </strong> </th>           
+</tr><tr ALIGN=center>
+''')
+
+for l,items in enumerate(lines):
+    if l<pageLimit*(int(page)-1) or l>=pageLimit*int(page):
+        continue
     bgcolor=''
-    if count%2==0:
+    if l%2==0:
         bgcolor='BGCOLOR="#DEDEDE"'
+    freq='0'
+    ccd=items[0]
+    if ccd in freq_dict:
+        freq=freq_dict[ccd]
     print('''
 <tr %s ALIGN=center>
     <td>%d</td>
@@ -171,11 +258,13 @@ for line in fp.read().splitlines()[1:]:
     <td>%s</td>
     <td>%s</td>
     <td>%s</td>
+    <td>%s</td>
     <td ALIGN=left><a href="sym.cgi?code=%s" target="_blank">%s</td>
 </tr>
 '''%(bgcolor,
-    count,
-    items[0],items[0],
+    l+1,
+    ccd,ccd,
+    freq,
     items[1],
     items[2],
     items[3],
