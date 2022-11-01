@@ -73,7 +73,10 @@ if len(set(txt).difference(set("ABCDEFGHIJKLMNOPQRSTUVWXYZ"))):
         ).difference(set("ABCDEFGHIJKLMNOPQRSTUVWXYZ"))),html_footer)
 if len(sequence)>1500:
     ExitWithError("Unable to handle sequence with %d &gt; 1500 residues"%len(sequence),html_footer)
-print("Search sequence (length=%d) through non-redundant sequence database <a href=data/%s_nr.fasta.gz>%s_nr.fasta.gz</a><br>"%(len(sequence),seq_type,seq_type))
+seqID=100
+if seq_type=="protein":
+    seqID=90
+print("Search sequence (length=%d) through non-redundant sequence database <a href=data/%s_nr.fasta.gz>%s_nr.fasta.gz</a> clustered at %d%% identity cutoff.<br>"%(len(sequence),seq_type,seq_type,seqID))
 print('&gt;'+header+'<br>')
 print('<br>'.join(textwrap.wrap(sequence,80))+'<p></p>')
 
@@ -175,7 +178,7 @@ for line in lines:
     nident/Lali,
     evalue, 
     ', '.join(homolog_list)))
-print("</table><p></p><a href=ssearch.html>[Back to search]</a>")
+print("</table><p></p><a href=.>[Back to search]</a>")
 if len(html_footer):
     print(html_footer)
 else:
