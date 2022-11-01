@@ -136,19 +136,23 @@ for line in lines:
     
     if seq_type=="protein":
         pdbid,chainID=hit2chain_dict[sacc]
+        hit="<a href=qsearch.cgi?pdbid=%s&chain=%s target=_blank>%s:%s</a>"%(
+            pdbid,chainID,pdbid,chainID)
     else:
         pdbid,chainID=sacc.split('_%s_'%seq_type)
-    hit="<a href=qsearch.cgi?pdbid=%s&chain=%s target=_blank>%s:%s</a>"%(
-        pdbid,chainID,pdbid,chainID)
+        hit="<a href=qsearch.cgi?lig3=%s&pdbid=%s&chain=%s target=_blank>%s:%s</a>"%(
+            seq_type,pdbid,chainID,pdbid,chainID)
     homolog_list=[]
     if sacc in hit2clust_dict:
         for mem in hit2clust_dict[sacc]:
             if seq_type=="protein":
                 pdbid,chainID=hit2chain_dict[mem]
+                homolog_list.append("<a href=qsearch.cgi?pdbid=%s&chain=%s target=_blank>%s:%s</a>"%(
+                    pdbid,chainID,pdbid,chainID))
             else:
                 pdbid,chainID=mem.split('_%s_'%seq_type)
-            homolog_list.append("<a href=qsearch.cgi?pdbid=%s&chain=%s target=_blank>%s:%s</a>"%(
-                pdbid,chainID,pdbid,chainID))
+                homolog_list.append("<a href=qsearch.cgi?lig3=%s&pdbid=%s&chain=%s target=_blank>%s:%s</a>"%(
+                    seq_type,pdbid,chainID,pdbid,chainID))
     print('''
 <tr %s ALIGN=center>
     <td>%d</td>

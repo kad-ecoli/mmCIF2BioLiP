@@ -83,12 +83,11 @@ print('''
 Download all results in tab-seperated text for 
 <a href=data/pdb_all.tsv.gz>%d receptors</a> and
 <a href=data/lig_all.tsv.gz>%d receptor-ligand interactions</a>.<br>
-<li> Click <strong>PDB</strong> to view the receptor structure.
+<li>Click <strong>PDB</strong> to view the structure at the RCSB PDB database.
 Resolution -1.00 means the resolution is unavailable, e.g., for NMR structures.</li>
 <li>Click <strong>Site #</strong> to view the binding site structure.
 Hover over <strong>Site #</strong> to view the binding residues.</li>
 <li>Hover over <strong>Ligand</strong> to view the full ligand name.</li>
-<li>Click <strong>Ligand chain</strong> to view the ligand structure.</li>
 <li>Hover over <strong>EC number</strong> to view the full name of enzymatic activity.</li>
 <li>Hover over <strong>GO terms</strong> to view all GO terms.
 Click <strong>GO terms</strong> to view the GO annotations for the UniProt protein associated with the PDB chain</li>
@@ -147,15 +146,14 @@ print('''
 <table border="0" align=center width=100%>    
 <tr BGCOLOR="#FF9900">
     <th width=5% ALIGN=center><strong> # </strong></th>
-    <th width=10% ALIGN=center><strong> PDB<br>(Resolution &#8491;) </strong></th>
+    <th width=12% ALIGN=center><strong> PDB<br>(Resolution &#8491;) </strong></th>
     <th width=5%  ALIGN=center><strong> Site # </strong></th>
     <th width=10% ALIGN=center><strong> Ligand </strong> </th>           
-    <th width=5%  ALIGN=center><strong> Ligand chain</strong> </th>           
     <th width=10% ALIGN=center><strong> EC number </strong> </th>           
-    <th width=15% ALIGN=center><strong> GO terms </strong> </th>           
+    <th width=16% ALIGN=center><strong> GO terms </strong> </th>           
     <th width=10% ALIGN=center><strong> UniProt </strong> </th>           
     <th width=10% ALIGN=center><strong> PubMed </strong> </th>           
-    <th width=20% ALIGN=center><strong> Binding<br>affinity</strong> </th>           
+    <th width=22% ALIGN=center><strong> Binding<br>affinity</strong> </th>           
 </tr><tr ALIGN=center>
 ''')
 
@@ -269,10 +267,9 @@ for l in range(pageLimit*(page-1),pageLimit*page):
     print('''
 <tr %s ALIGN=center>
     <td>%d</td>
-    <td><a href="pdb.cgi?pdb=%s&chain=%s" target=_blank>%s:%s</a> (%s)</td>
+    <td><a href="https://rcsb.org/structure/%s" target=_blank>%s:%s</a> (%s)</td>
     <td><span title="%s"><a href="pdb.cgi?pdb=%s&chain=%s&bs=%s" target=_blank>%s</span></td>
     <td><a href="sym.cgi?code=%s" target=_blank>%s</a></td>
-    <td><a href="pdb.cgi?pdb=%s&chain=%s&idx=%s&lig3=%s" target=_blank>%s</a></td>
     <td>%s</td>
     <td>%s</td>
     <td>%s</td>
@@ -281,10 +278,9 @@ for l in range(pageLimit*(page-1),pageLimit*page):
 </tr>
 '''%(bgcolor,
     l+1,
-    pdb,recCha,pdb,recCha,reso,
+    pdb,pdb,recCha,reso,
     resOrig,pdb,recCha,bs,bs,
     ccd,ccd_http,
-    pdb,ligCha,ligIdx,ccd,ligCha,
     ec,
     go,
     uniprot,

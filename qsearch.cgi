@@ -289,10 +289,12 @@ for line in fp.read().splitlines()[1:]:
             ccd_http='<br>'.join(textwrap.wrap(sequence,50))
             #ccd_http=fasta_dict[ligKey]
             if ligKey in clust_dict:
-                ccd_http="(identical to "+', '.join(
+                ccd_http="&gt;"+pdb+':'+ligCha+" (identical to "+', '.join(
                     ['<a href=qsearch.cgi?lig3=%s&pdbid=%s&chain=%s target=_blank>%s</a>'%(
                     lig3,m.split(':')[0],m.split(':')[1],m
                     ) for m in clust_dict[ligKey]])+")<br>"+ccd_http
+            else:
+                ccd_http="&gt;"+pdb+':'+ligCha+'<br>'+ccd_http
             ccd_http='<span title="%s length=%d">%s</span>'%(
                 lig3,len(sequence),ccd_http)
         reso="<br>"+reso
@@ -321,10 +323,9 @@ for line in fp.read().splitlines()[1:]:
     html_txt+='''
 <tr %s ALIGN=center>
     <td>%d</td>
-    <td><a href="pdb.cgi?pdb=%s&chain=%s" target=_blank>%s:%s</a> %s</td>
+    <td><a href="https://rcsb.org/structure/%s" target=_blank>%s:%s</a> %s</td>
     <td><span title="%s"><a href="pdb.cgi?pdb=%s&chain=%s&bs=%s" target=_blank>%s</span></td>
     <td style="word-wrap: break-word">%s</td>
-    <td><a href="pdb.cgi?pdb=%s&chain=%s&idx=%s&lig3=%s" target=_blank>%s</a></td>
     <td>%s</td>
     <td>%s</td>
     <td>%s</td>
@@ -333,10 +334,9 @@ for line in fp.read().splitlines()[1:]:
 </tr>
 '''%(bgcolor,
     totalNum,
-    pdb,recCha,pdb,recCha,reso,
+    pdb,pdb,recCha,reso,
     resOrig,pdb,recCha,bs,bs,
     ccd_http,
-    pdb,ligCha,ligIdx,ccd,ligCha,
     ec,
     go,
     accession,
@@ -354,7 +354,7 @@ if outfmt=="txt":
 print('''
 Download all results in tab-seperated text for 
 <a href="?outfmt=txt&%s" download="BioLiP.txt">%d receptor-ligand interactions</a>, whose format is explained at <a href="download/readme.txt">readme.txt</a>.<br>
-<li>Click <strong>PDB</strong> to view the receptor structure.
+<li>Click <strong>PDB</strong> to view the structure at the RCSB PDB database.
 Resolution -1.00 means the resolution is unavailable, e.g., for NMR structures.</li>
 <li>Click <strong>Site #</strong> to view the binding site structure.
 Hover over <strong>Site #</strong> to view the binding residues.</li>
@@ -364,7 +364,6 @@ if lig3 in ["peptide","rna","dna"]:
 else:
     print("<li>Hover over <strong>Ligand</strong> to view the full ligand name.</li>")
 print('''
-<li>Click <strong>Ligand chain</strong> to view the ligand structure.</li>
 <li>Hover over <strong>EC number</strong> to view the full name of enzymatic activity.</li>
 <li>Hover over <strong>GO terms</strong> to view all GO terms.
 Click <strong>GO terms</strong> to view the GO annotations for the UniProt protein associated with the PDB chain</li>
@@ -428,10 +427,9 @@ div.w {
     <th width=4% ALIGN=center><strong> # </strong></th>
     <th width=4% ALIGN=center><strong> PDB<br>(resolution) </strong></th>
     <th width=4% ALIGN=center><strong> Site<br># </strong></th>
-    <th width=42% ALIGN=center><strong>''')
+    <th width=46% ALIGN=center><strong>''')
     print(lig3.upper() if lig3!="peptide" else "Peptide")
     print('''<br>sequence</strong> </th>           
-    <th width=4% ALIGN=center><strong> Ligand chain</strong> </th>           
     <th width=8% ALIGN=center><strong> EC<br>number </strong> </th>           
     <th width=10% ALIGN=center><strong> GO<br>terms </strong> </th>           
     <th width=8% ALIGN=center><strong> UniProt </strong> </th>           
@@ -444,15 +442,14 @@ else:
 <table border="0" align=center width=100%>    
 <tr BGCOLOR="#FF9900">
     <th width=5% ALIGN=center><strong> # </strong></th>
-    <th width=10% ALIGN=center><strong> PDB<br>(Resolution &#8491;) </strong></th>
+    <th width=12% ALIGN=center><strong> PDB<br>(Resolution &#8491;) </strong></th>
     <th width=5%  ALIGN=center><strong> Site # </strong></th>
     <th width=10% ALIGN=center><strong> Ligand </strong> </th>           
-    <th width=5%  ALIGN=center><strong> Ligand chain</strong> </th>           
     <th width=10% ALIGN=center><strong> EC number </strong> </th>           
-    <th width=15% ALIGN=center><strong> GO terms </strong> </th>           
+    <th width=16% ALIGN=center><strong> GO terms </strong> </th>           
     <th width=10% ALIGN=center><strong> UniProt </strong> </th>           
     <th width=10% ALIGN=center><strong> PubMed </strong> </th>           
-    <th width=20% ALIGN=center><strong> Binding<br>affinity</strong> </th>           
+    <th width=22% ALIGN=center><strong> Binding<br>affinity</strong> </th>           
 </tr><tr ALIGN=center>
 ''')
 print(html_txt)
