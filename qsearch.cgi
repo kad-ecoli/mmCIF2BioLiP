@@ -3,7 +3,6 @@ import cgi
 import cgitb; cgitb.enable()  # for troubleshooting
 import os
 import gzip
-import subprocess
 import textwrap
 
 rootdir=os.path.dirname(os.path.abspath(__file__))

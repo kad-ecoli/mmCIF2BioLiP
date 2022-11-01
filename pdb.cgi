@@ -982,8 +982,10 @@ if __name__=="__main__":
     if not pdbid:
         pdbid=form.getfirst("pdbid",'').lower()
     asym_id=form.getfirst("chain",'')
-    bs     =form.getfirst("bs",'')
+    bs     =form.getfirst("bs",'').upper()
     ligIdx =form.getfirst("idx",'')
+    if not ligIdx:
+        ligIdx =form.getfirst("ligIdx",'')
     lig3   =form.getfirst("lig3",'')
 
     print("Content-type: text/html\n")
@@ -999,6 +1001,23 @@ if __name__=="__main__":
 <table style="table-layout:fixed;" width="100%" cellpadding="2" cellspacing="0">
 <table width=100%>
 ''')
+
+    if len(set(pdbid).difference(set("abcdefghijklmnopqrstuvwxyz1234567890"))
+        ) or len(set(asym_id).difference(set(
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890"))):
+        print("Unknown PDB ID %s:%s"%(pdbid,asym_id))
+        exit()
+    if len(set(bs).difference(set("BS1234567890"))):
+        print("Unknown site "+bs)
+        exit()
+    if len(set(lig3).difference(set(
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890"))):
+        print("Unknown ligand "+lig3)
+        exit()
+    if len(set(ligIdx).difference(set("1234567890"))):
+        print("Unknown ligand index="+ligIdx+".")
+        exit()
+
     pubmed=''
     uniprot=''
     title=pdb2title(pdbid)
