@@ -271,7 +271,7 @@ and <a href="http://www.ncbi.nlm.nih.gov/pubmed/" target=_blank>PubMed</a> datab
 <p>
 <h1><u>Search BioLiP by sequence</u></h1>
 </p>
-<FORM name="searchForm" METHOD=POST ACTION="ssearch.cgi"  onsubmit="return checkform(this);">
+<FORM name="ssearchForm" METHOD=POST ACTION="ssearch.cgi"  onsubmit="return checkform(this);">
 Paste your sequence here:&nbsp;&nbsp;&nbsp;&nbsp;
 [<a href="javascript:example_protein()">Sample protein input</a>]
 [<a href="javascript:example_peptide()">Sample peptide input</a>]
@@ -300,7 +300,7 @@ Needleman-Wunsch alignment (NW-align), respectively.">
 <p>
 <h1><u>Search BioLiP by name</u></h1>
 </p>
-<FORM name="searchForm" METHOD=POST ACTION="qsearch.cgi"  onsubmit="return checkform(this);">
+<FORM name="qsearchForm" METHOD=POST ACTION="qsearch.cgi"  onsubmit="return checkform(this);">
 <table width=100%>
     <tr>
         <td>PDB ID</td>
@@ -390,27 +390,27 @@ return X.responseText;
 function example_protein()
 {
     var STR=IO("example/protein.fasta");
-    document.searchForm.sequence.value = STR;
-    document.searchForm.seq_type.value = "protein";
+    document.ssearchForm.sequence.value = STR;
+    document.ssearchForm.seq_type.value = "protein";
 }
 
 function example_peptide()
 {
     var STR=IO("example/peptide.fasta");
-    document.searchForm.sequence.value = STR;
-    document.searchForm.seq_type.value = "peptide";
+    document.ssearchForm.sequence.value = STR;
+    document.ssearchForm.seq_type.value = "peptide";
 }
 
 function example_rna()
 {
     var STR=IO("example/rna.fasta");
-    document.searchForm.sequence.value = STR;
-    document.searchForm.seq_type.value = "rna";
+    document.ssearchForm.sequence.value = STR;
+    document.ssearchForm.seq_type.value = "rna";
 }
 function example_dna()
 {
     var STR=IO("example/dna.fasta");
-    document.searchForm.sequence.value = STR;
-    document.searchForm.seq_type.value = "dna";
+    document.ssearchForm.sequence.value = STR;
+    document.ssearchForm.seq_type.value = "dna";
 }
 </script>
