@@ -7,6 +7,14 @@ use Cwd 'abs_path';
 my $bindir = dirname(abs_path(__FILE__));
 my $rootdir = dirname($bindir);
 
+print "download go\n";
+system("mkdir -p $rootdir/obo/go/") if (!-d "$rootdir/obo/go/");
+system("wget http://purl.obolibrary.org/obo/go/go-basic.obo -O $rootdir/obo/go/go-basic.obo");
+
+print "download swissprot\n";
+system("mkdir -p $rootdir/uniprot/current_release/knowledgebase/complete") if (!-d "$rootdir/uniprot/current_release/knowledgebase/complete");
+system("wget https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.fasta.gz -O $rootdir/uniprot/current_release/knowledgebase/complete/uniprot_sprot.fasta.gz");
+
 print "download sifts\n";
 system("mkdir -p $rootdir/sifts/flatfiles/tsv");
 foreach my $filename(("pdb_chain_uniprot.tsv.gz",

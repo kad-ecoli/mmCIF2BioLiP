@@ -33,6 +33,8 @@ This step can be performed in parallel to step 1.
 ./script/download_sifts.pl
 ```
 This script downloads taxonomy, uniprot accession, EC, GO and pubmed ID to ``sifts/flatfiles/tsv`` and extract the data to ``data/*.tsv.gz``.
+This script downloads gene ontology to ``obo/go/go-basic.obo``.
+This script downloads swissprot to ``uniprot/current_release/knowledgebase/complete/uniprot_sprot.fasta.gz``.
 
 Optionally, run the following script to download csa. The manually curated dataset of csa is updated infrequently. Therefore, it is not necessary to run it every week.
 ```bash
@@ -102,12 +104,11 @@ This step must be run after step 8, and is recommended before the next time to u
 ```
 
 ### Step 10: download auxilary data ###
-This step can be performed independent of step 1 to 9.
+This step can be performed independent of step 1 to 9 and step 11.
 ```bash
 ./script/download_ligand.pl
 ```
 This script downloads CCD ligand to ``pdb/data/monomers/components.cif.gz`` and extract their summary to ``data/ligand.tsv.gz``.
-This script downloads gene ontology to ``obo/go/go-basic.obo``.
 This script downloads enzyme to ``enzyme/enzyme.dat`` and extract their summary to ``data/enzyme.tsv.gz``.
 
 ## Step 11: curate GO anntation ##
@@ -117,3 +118,4 @@ This step must be performed after step 8 and 10.
 ```
 This script reads GO from ``obo/go/go-basic.obo`` and ``data/pdb_all.tsv.gz``.
 and extract the summary to ``data/go2name.tsv.gz``, ``data/is_a.tsv.gz`` and ``data/pdb_go.tsv.gz``.
+This script reads swissprot name from ``uniprot/current_release/knowledgebase/complete/uniprot_sprot.fasta.gz`` and extract the summary to ``data/uniprot_sprot.tsv.gz``.

@@ -20,9 +20,10 @@ foreach my $GOterm(`cut -f3 $rootdir/obo/go/output.txt|sed 's/,/\\n/g'|sort|uniq
 my %GO_dict=map { $_, 1 } @GO_list;
 
 
+my $txt="";
 foreach my $filename(("go2name.tsv","is_a.tsv"))
 {
-    my $txt="";
+    $txt="";
     foreach my $line(`cat $rootdir/obo/go/$filename`)
     {
         if ($line=~/^(GO:\d+)\t/)
@@ -42,4 +43,41 @@ foreach my $filename(("go2name.tsv","is_a.tsv","alt_id.tsv","input.txt","output.
 {
     system("rm $rootdir/obo/go/$filename");
 }
+
+
+my @uniprot_list;
+for my $uniprot(`zcat $rootdir/data/pdb_all.tsv.gz |tail -n +2|cut -f8|sort|uniq`)
+{
+    chomp($uniprot);
+    push(@uniprot_list,($uniprot));
+}
+my %uniprot_dict=map { $_, 1 } @uniprot_list;
+$txt="";
+for my $line(`zcat $rootdir/uniprot/current_release/knowledgebase/complete/uniprot_sprot.fasta.gz |grep '^>'`)
+{
+    chomp($line);
+    if ($line=~/^>sp\|(\w+)\|(\w+_\w+\s+[\s\S]+$)/)
+    {
+        my $uniprot="$1";
+        if (exists $uniprot_dict{$uniprot})
+        {
+            my $name="$2";
+            my $GN="";
+            if ($name=~/GN=(\S+)/)
+            {
+                $GN="$1";
+            }
+            if ($name=~/([\s\S]+?)\s+\w+=/)
+            {
+                $name="$1";
+            }
+            $txt.="$uniprot\t$name\t$GN\n";
+        }
+    }
+}
+open(FP,">$rootdir/data/uniprot_sprot.tsv");
+print FP $txt;
+close(FP);
+system("gzip -f $rootdir/data/uniprot_sprot.tsv");
+
 exit(0);

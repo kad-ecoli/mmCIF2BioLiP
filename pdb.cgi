@@ -1015,11 +1015,21 @@ if __name__=="__main__":
     
     uniprot_line=''
     if uniprot:
+        sprot_dict=dict()
+        fp=gzip.open(rootdir+"/data/uniprot_sprot.tsv.gz",'rt')
+        for line in fp.read().splitlines():
+            u,name,gn=line.split('\t')
+            sprot_dict[u]=name+" (Gene Name="+gn+")"
+        fp.close()
         uniprot_line='    <tr BGCOLOR="#DEDEDE"><td align=center><strong>UniProt</strong></td><td>'
         for u in uniprot.split(','):
-            uniprot_line+="<a href=https://uniprot.org/uniprot/"+ \
-                u+" target=_blank>"+u+"</a>, "
-        uniprot_line=uniprot_line[:-2]+"</tr>\n"
+            if u in sprot_dict:
+                uniprot_line+="<a href=https://uniprot.org/uniprot/"+ \
+                    u+" target=_blank>"+u+"</a>|"+sprot_dict[u]+";<br>"
+            else:
+                uniprot_line+="<a href=https://uniprot.org/uniprot/"+ \
+                    u+" target=_blank>"+u+"</a>;<br>"
+        uniprot_line=uniprot_line[:-5]+"</tr>\n"
         
     print('''
 <tr><td>

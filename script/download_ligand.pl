@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# download enzyme and GO definition
+# download enzyme definition
 # download ccd definition to ligand from pdb
 use strict;
 use File::Basename;
@@ -36,11 +36,6 @@ open(FP,">$rootdir/data/enzyme.tsv");
 print FP $txt;
 close(FP);
 system("gzip -f $rootdir/data/enzyme.tsv");
-
-
-print "download go\n";
-system("mkdir -p $rootdir/obo/go/") if (!-d "$rootdir/obo/go/");
-system("wget http://purl.obolibrary.org/obo/go/go-basic.obo -O $rootdir/obo/go/go-basic.obo");
 
 
 print "download CCD ligand\n";
