@@ -358,14 +358,17 @@ Download all results in tab-seperated text for
 Resolution -1.00 means the resolution is unavailable, e.g., for NMR structures.</li>
 <li>Click <strong>Site #</strong> to view the binding site structure.
 Hover over <strong>Site #</strong> to view the binding residues.</li>
-<li>Hover over <strong>Ligand</strong> to view the full ligand name.</li>
+'''%(para,totalNum))
+if lig3 in ["peptide","rna","dna"]:
+    print("<li>The <strong>sequence</strong> is converted from residues with experimentally determined coordinates in the structure; residues not observed in the 3D structure are excluded.</li>")
+else:
+    print("<li>Hover over <strong>Ligand</strong> to view the full ligand name.</li>")
+print('''
 <li>Click <strong>Ligand chain</strong> to view the ligand structure.</li>
 <li>Hover over <strong>EC number</strong> to view the full name of enzymatic activity.</li>
 <li>Hover over <strong>GO terms</strong> to view all GO terms.
 Click <strong>GO terms</strong> to view the GO annotations for the UniProt protein associated with the PDB chain</li>
-'''%(para,totalNum))
-if lig3 in ["peptide","rna","dna"]:
-    print("<br>The sequence is converted from residues with experimentally determined coordinates in the structure; residues not observed in the 3D structure are excluded.")
+''')
 
 totalPage=1+int(totalNum/pageLimit)
 if not page:
