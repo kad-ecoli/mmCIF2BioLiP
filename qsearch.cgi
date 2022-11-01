@@ -36,7 +36,7 @@ if got:
     got=got.split()[0]
     if got.startswith("GO:"):
         got=got[3:]
-ligname=form.getfirst("ligname",'').upper().strip().strip("'")
+ligname=form.getfirst("ligname",'').upper().strip().strip('"').replace("'",'')
 pubmed =form.getfirst("pubmed",'').strip("'")
 baff   =form.getfirst("baff",'').strip().strip("'")
 outfmt =form.getfirst("outfmt",'').strip().strip("'")
@@ -49,13 +49,13 @@ if chain:
 if lig3:
     para_list.append("lig3=%s"%lig3)
 elif ligname:
-    para_list.append("ligname='%s'"%ligname)
+    para_list.append('ligname="%s"'%ligname)
 if uniprot:
     para_list.append("uniprot=%s"%uniprot)
 if ecn:
     para_list.append("ecn=%s"%ecn)
 if got:
-    para_list.append("got='%s'"%got)
+    para_list.append("got=%s"%got)
 if baff:
     para_list.append("baff=%s"%baff)
 if pubmed:
@@ -92,7 +92,7 @@ if lig3:
             lig_set=set([ccd for ccd in ligand_dict if not ccd in metal_set])
 elif ligname:
     lig_set=set([ccd for ccd in ligand_dict \
-        if ligname in ligand_dict[ccd].upper()])
+        if ligname in ligand_dict[ccd].replace("'",'').upper()])
 
 fasta_dict=dict()
 clust_dict=dict()
@@ -393,8 +393,8 @@ elif page>totalPage:
 
 print('''<p></p>
 <center> 
-<a class="hover" href="?&page=1&%s">&lt&lt</a>
-<a class="hover" href="?&page=%d&%s">&lt</a>
+<a class='hover' href='?&page=1&%s'>&lt&lt</a>
+<a class='hover' href='?&page=%d&%s'>&lt</a>
 '''%(para,page-1,para))
 for p in range(page-10,page+11):
     if p<1 or p>totalPage:
@@ -402,10 +402,10 @@ for p in range(page-10,page+11):
     elif p==page:
         print(' %d '%(p))
     else:
-        print('<a class="hover" href="?&page=%d&%s">%d</a>'%(p,para,p))
+        print('''<a class='hover' href='?&page=%d&%s'>%d</a>'''%(p,para,p))
 print('''
-<a class="hover" href="?&page=%d&%s">&gt</a>
-<a class="hover" href="?&page=last&%s">&gt&gt</a>
+<a class='hover' href='?&page=%d&%s'>&gt</a>
+<a class='hover' href='?&page=last&%s'>&gt&gt</a>
 <form name="pform" action="qsearch.cgi">Go to page <select name="page" onchange="this.form.submit()">
 '''%(page+1,para,para))
 for p in range(1,totalPage+1):
