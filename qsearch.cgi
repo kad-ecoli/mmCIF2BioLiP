@@ -155,6 +155,13 @@ for line in fp.read().splitlines():
     go2name_dict[g]='('+a+') '+name
 fp.close()
 
+pdb2name_dict=dict()
+fp=gzip.open(rootdir+"/data/title.tsv.gz",'rt')
+for line in fp.read().splitlines():
+    p,name=line.split('\t')
+    pdb2name_dict[p]=name
+fp.close()
+
 #### parse page ####
 pageLimit=200
 if lig3 in ["peptide","rna","dna"]:
@@ -317,13 +324,16 @@ for line in fp.read().splitlines()[1:]:
             affinity+="BindingDB: "+bindingdb.replace(',',', ')+"<br>"
         if affinity:
             affinity=affinity[:-4]
+    title=''
+    if pdb in pdb2name_dict:
+        title=pdb2name_dict[pdb]
     bgcolor=''
     if totalNum%2:
         bgcolor='BGCOLOR="#DEDEDE"'
     html_txt+='''
 <tr %s ALIGN=center>
     <td>%d</td>
-    <td><a href="https://rcsb.org/structure/%s" target=_blank>%s:%s</a> %s</td>
+    <td><span title="%s"><a href="https://rcsb.org/structure/%s" target=_blank>%s:%s</a> %s</span></td>
     <td><span title="%s"><a href="pdb.cgi?pdb=%s&chain=%s&bs=%s" target=_blank>%s</span></td>
     <td style="word-wrap: break-word">%s</td>
     <td>%s</td>
@@ -334,7 +344,7 @@ for line in fp.read().splitlines()[1:]:
 </tr>
 '''%(bgcolor,
     totalNum,
-    pdb,pdb,recCha,reso,
+    title,pdb,pdb,recCha,reso,
     resOrig,pdb,recCha,bs,bs,
     ccd_http,
     ec,
@@ -354,7 +364,8 @@ if outfmt=="txt":
 print('''
 Download all results in tab-seperated text for 
 <a href="?outfmt=txt&%s" download="BioLiP.txt">%d receptor-ligand interactions</a>, whose format is explained at <a href="download/readme.txt">readme.txt</a>.<br>
-<li>Click <strong>PDB</strong> to view the structure at the RCSB PDB database.
+<li>Hover over <strong>PDB</strong> to view the title of the structure.
+Click <strong>PDB</strong> to view the structure at the RCSB PDB database.
 Resolution -1.00 means the resolution is unavailable, e.g., for NMR structures.</li>
 <li>Click <strong>Site #</strong> to view the binding site structure.
 Hover over <strong>Site #</strong> to view the binding residues.</li>

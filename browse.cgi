@@ -69,6 +69,13 @@ for line in fp.read().splitlines():
     go2name_dict[g]='('+a+') '+name
 fp.close()
 
+pdb2name_dict=dict()
+fp=gzip.open(rootdir+"/data/title.tsv.gz",'rt')
+for line in fp.read().splitlines():
+    p,name=line.split('\t')
+    pdb2name_dict[p]=name
+fp.close()
+
 #### parse page ####
 pageLimit=200
 
@@ -83,7 +90,8 @@ print('''
 Download all results in tab-seperated text for 
 <a href=data/pdb_all.tsv.gz>%d receptors</a> and
 <a href=data/lig_all.tsv.gz>%d receptor-ligand interactions</a>.<br>
-<li>Click <strong>PDB</strong> to view the structure at the RCSB PDB database.
+<li>Hover over <strong>PDB</strong> to view the title of the structure.
+Click <strong>PDB</strong> to view the structure at the RCSB PDB database.
 Resolution -1.00 means the resolution is unavailable, e.g., for NMR structures.</li>
 <li>Click <strong>Site #</strong> to view the binding site structure.
 Hover over <strong>Site #</strong> to view the binding residues.</li>
@@ -258,6 +266,9 @@ for l in range(pageLimit*(page-1),pageLimit*page):
         else:
             pubmed="N/A"
    
+    title=''
+    if pdb in pdb2name_dict:
+        title=pdb2name_dict[pdb]
     bgcolor=''
     if l%2:
         bgcolor='BGCOLOR="#DEDEDE"'
@@ -267,7 +278,7 @@ for l in range(pageLimit*(page-1),pageLimit*page):
     print('''
 <tr %s ALIGN=center>
     <td>%d</td>
-    <td><a href="https://rcsb.org/structure/%s" target=_blank>%s:%s</a> (%s)</td>
+    <td><span title="%s"><a href="https://rcsb.org/structure/%s" target=_blank>%s:%s</a> (%s)</span></td>
     <td><span title="%s"><a href="pdb.cgi?pdb=%s&chain=%s&bs=%s" target=_blank>%s</span></td>
     <td><a href="sym.cgi?code=%s" target=_blank>%s</a></td>
     <td>%s</td>
@@ -278,7 +289,7 @@ for l in range(pageLimit*(page-1),pageLimit*page):
 </tr>
 '''%(bgcolor,
     l+1,
-    pdb,pdb,recCha,reso,
+    title,pdb,pdb,recCha,reso,
     resOrig,pdb,recCha,bs,bs,
     ccd,ccd_http,
     ec,

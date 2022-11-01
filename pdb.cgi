@@ -10,6 +10,25 @@ import gzip
 
 rootdir=os.path.dirname(os.path.abspath(__file__))
 
+def read_taxon():
+    taxid2name=dict()
+    fp=gzip.open(rootdir+"/data/taxid2name.tsv.gz",'rt')
+    for line in fp.read().splitlines():
+        species,name=line.split('\t')
+        taxid2name[species]=name
+    fp.close()
+    taxon_dict=dict()
+    fp=gzip.open(rootdir+"/data/chain2taxonomy.tsv.gz",'rt')
+    for line in fp.read().splitlines():
+        p,c,species=line.split('\t')
+        if species in taxid2name:
+            species='<a href="https://ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id='+species+'" target=_blank>'+species+'</a> ('+taxid2name[species]+')'
+        else:
+            species='<a href="https://ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id='+species+'" target=_blank>'+species+'</a>'
+        taxon_dict[p+':'+c]=species
+    fp.close()
+    return taxon_dict
+
 def display_ligand(pdbid,asym_id,lig3,ligIdx,title):
     reso  =''
     pubmed=''
@@ -173,6 +192,7 @@ $(document).ready(function()
     
 
 def display_polymer_ligand(pdbid,asym_id,lig3,title):
+    taxon_dict=read_taxon()
     code=lig3.upper()
     if lig3=="peptide":
         code="peptide"
@@ -183,6 +203,9 @@ def display_polymer_ligand(pdbid,asym_id,lig3,title):
     stdout,stderr=p.communicate()
     sequence=stdout.decode().strip()
     seq_txt='<br>'.join(textwrap.wrap(sequence,50))
+    species=''
+    if pdbid+':'+asym_id in taxon_dict:
+        species="Species: "+taxon_dict[pdbid+':'+asym_id]
 
     cmd="zcat %s/data/%s_nr.fasta.clust.gz|sed 's/\\t/,/g'|grep -P '\\b%s\\b'"%(
         rootdir,lig3,prefix)
@@ -209,7 +232,7 @@ def display_polymer_ligand(pdbid,asym_id,lig3,title):
 <div id="contentDiv">
     <div id="RContent" style="display: block;">
     <table width=100% border="0" style="font-family:Monospace;font-size:14px;background:#F2F2F2;" >
-    <tr><td>&gt;$prefix (length=$L) [<a href=ssearch.cgi?seq_type=$lig3&sequence=$sequence>Search $code sequence</a>]</td></tr>
+    <tr><td>&gt;$prefix (length=$L) $species [<a href=ssearch.cgi?seq_type=$lig3&sequence=$sequence>Search $code sequence</a>]</td></tr>
     <tr><td><span title="Only residues with experimentally determined coordinates are included. Residues unobserved in the structure are excluded.">$seq_txt</span></td></tr>
     $homolog_link
     </table>
@@ -224,6 +247,7 @@ def display_polymer_ligand(pdbid,asym_id,lig3,title):
   ).replace("$sequence",sequence
   ).replace("$seq_txt",seq_txt
   ).replace("$homolog_link",homolog_link
+  ).replace("$species",species
   ))
     return display_ligand(pdbid,asym_id,lig3,'0',title)
 
@@ -394,6 +418,7 @@ def display_go(go,uniprot):
 ''')
 
 def display_protein_receptor(pdbid,asym_id,title):
+    taxon_dict=read_taxon()
     prefix="%s%s"%(pdbid,asym_id)
     cmd="zcat %s/data/protein.fasta.gz|grep -PA1 '^>%s\\t'|tail -1"%(
         rootdir,prefix)
@@ -401,6 +426,9 @@ def display_protein_receptor(pdbid,asym_id,title):
     stdout,stderr=p.communicate()
     sequence=stdout.decode().strip()
     seq_txt='<br>'.join(textwrap.wrap(sequence,50))
+    species=''
+    if pdbid+':'+asym_id in taxon_dict:
+        species="Species: "+taxon_dict[pdbid+':'+asym_id]
     print('''
 <tr><td><h1 align=center>Structure of PDB $pdbid Chain $asym_id</h1></td></tr>
 <tr><td>
@@ -411,7 +439,7 @@ def display_protein_receptor(pdbid,asym_id,title):
 <div id="contentDiv">
     <div id="RContent" style="display: block;">
     <table width=100% border="0" style="font-family:Monospace;font-size:14px;background:#F2F2F2;" >
-    <tr><td>&gt;$prefix (length=$L) [<a href=ssearch.cgi?seq_type=protein&sequence=$sequence target=_blank>Search protein sequence</a>]</td></tr>
+    <tr><td>&gt;$prefix (length=$L) $species [<a href=ssearch.cgi?seq_type=protein&sequence=$sequence target=_blank>Search protein sequence</a>]</td></tr>
     <tr><td><span title="Only residues with experimentally determined coordinates are included. Residues unobserved in the structure are excluded.">$seq_txt</span></td></tr>
     </table>
 </div>
@@ -422,6 +450,7 @@ def display_protein_receptor(pdbid,asym_id,title):
   ).replace("$L",str(len(sequence))
   ).replace("$sequence",sequence
   ).replace("$seq_txt",seq_txt
+  ).replace("$species",species
   ))
 
     reso   =''
@@ -605,6 +634,7 @@ $explainLabel
     return pubmed,uniprot
 
 def display_interaction(pdbid,asym_id,bs,title):    
+    taxon_dict=read_taxon()
     prefix="%s%s"%(pdbid,asym_id)
     cmd="zcat %s/data/protein.fasta.gz|grep -PA1 '^>%s\\t'|tail -1"%(
         rootdir,prefix)
@@ -612,6 +642,9 @@ def display_interaction(pdbid,asym_id,bs,title):
     stdout,stderr=p.communicate()
     sequence=stdout.decode().strip()
     seq_txt='<br>'.join(textwrap.wrap(sequence,50))
+    species=''
+    if pdbid+':'+asym_id in taxon_dict:
+        species="Species: "+taxon_dict[pdbid+':'+asym_id]
     print('''
 <tr><td><h1 align=center>Structure of PDB $pdbid Chain $asym_id Binding Site $bs</h1></td></tr>
 <tr><td>
@@ -622,7 +655,7 @@ def display_interaction(pdbid,asym_id,bs,title):
 <div id="contentDiv">
     <div id="RContent" style="display: block;">
     <table width=100% border="0" style="font-family:Monospace;font-size:14px;background:#F2F2F2;" >
-    <tr><td>&gt;$pdbid Chain $asym_id (length=$L)
+    <tr><td>&gt;$pdbid Chain $asym_id (length=$L) $species
     [<a href=ssearch.cgi?seq_type=protein&sequence=$sequence target=_blank>Search protein sequence</a>]
     [<a href=output/$prefix.pdb.gz>Download receptor structure</a>]
     [<a href=?pdb=$pdbid&chain=$asym_id target=_blank>View receptor structure</a>]
@@ -638,6 +671,7 @@ def display_interaction(pdbid,asym_id,bs,title):
     ).replace("$L",str(len(sequence))
     ).replace("$sequence",sequence
     ).replace("$seq_txt",seq_txt
+    ).replace("$species",species
     ))
 
     
@@ -722,8 +756,11 @@ def display_interaction(pdbid,asym_id,bs,title):
         stdout,stderr=p.communicate()
         lig_sequence=stdout.decode().strip()
         lig_seq_txt='<br>'.join(textwrap.wrap(lig_sequence,50))
+        species=''
+        if pdbid+':'+ligCha in taxon_dict:
+            species="Species: "+taxon_dict[pdbid+':'+ligCha]
         print('''
-<tr><td>&gt;$pdbid Chain $asym_id (length=$L)
+<tr><td>&gt;$pdbid Chain $asym_id (length=$L) $species
 [<a href=ssearch.cgi?seq_type=$lig3&sequence=$sequence>Search $code sequence</a>]
 [<a href=output/$prefix.pdb.gz>Download ligand structure</a>]
 [<a href=?pdb=$pdbid&chain=$asym_id&lig3=$lig3&ligIdx=0 target=_blank>View ligand structure</a>]
@@ -737,6 +774,7 @@ def display_interaction(pdbid,asym_id,bs,title):
         ).replace("$code",code
         ).replace("$sequence",lig_sequence
         ).replace("$seq_txt",lig_seq_txt
+        ).replace("$species",species
         ))
     else:
         formula=''
