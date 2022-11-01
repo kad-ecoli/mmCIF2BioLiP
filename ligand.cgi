@@ -118,10 +118,11 @@ print('''
 '''%(lig3,formula,inchi,inchikey,smiles,ligname))
 
 print('''
-<h4>Search Ligand Result</h4>
-Click the corresponding Ligand <strong>ID</strong> to search BioLiP. The ligand ID follows the <a href="https://www.wwpdb.org/data/ccd" target=_blank>Chemical Component Dictionary (CCD)</a> used by the PDB database.<br>
-Click the corresponding <strong> Ligand Name</strong> to visualize the ligand and display its names/synonyms.<br>
-If multiple SMILES strings exists for the same ligand, different SMILES are separated by semicolon ";".
+<h4>Browse Ligand</h4>
+<li>Click the corresponding Ligand <strong>ID</strong> to visualize the ligand. The ligand ID follows the <a href="https://www.wwpdb.org/data/ccd" target=_blank>Chemical Component Dictionary (CCD)</a> used by the PDB database.</li>
+<li><strong>Count</strong> is the number of BioLiP entries with the ligand. The full statistics is available at <a href=download/lig_frequency.txt>lig_frequency.txt</a>. Click <strong>Count</strong> to search the ligand through BioLiP.</li>
+<li>If multiple SMILES strings exists for the same ligand, different SMILES are separated by semicolon ";"</li>
+<li>Click the corresponding <strong>Ligand Name</strong> to view the ligand on RCSB PDB website.</li>
 <p></p>
 ''')
 
@@ -249,17 +250,18 @@ for l,items in enumerate(lines):
     freq='0'
     ccd=items[0]
     if ccd in freq_dict:
-        freq=freq_dict[ccd]
+        freq='<a href="qsearch.cgi?lig3=%s" target=_blank>%s</a>'%(
+            ccd,freq_dict[ccd])
     print('''
 <tr %s ALIGN=center>
     <td>%d</td>
-    <td><a href="qsearch.cgi?lig3=%s" target="_blank">%s</td>
+    <td><a href="sym.cgi?code=%s" target=_blank>%s</a></td>
     <td>%s</td>
     <td>%s</td>
     <td>%s</td>
     <td>%s</td>
     <td>%s</td>
-    <td ALIGN=left><a href="sym.cgi?code=%s" target="_blank">%s</td>
+    <td ALIGN=left><a href=https://rcsb.org/ligand/%s target=_blank>%s</a></td>
 </tr>
 '''%(bgcolor,
     l+1,
@@ -269,7 +271,7 @@ for l,items in enumerate(lines):
     items[2],
     items[3],
     items[4],
-    items[0],items[5].replace(';',';<br>')
+    ccd,items[5].replace(';',';<br>')
     ))
 fp.close()
 
