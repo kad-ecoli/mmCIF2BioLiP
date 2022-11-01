@@ -225,7 +225,7 @@
         <li><a href="qsearch.cgi?baff=baff">Browse binding affinities</a></li>                                           
         </ul>
     </li>
-    <li><a href="alllig.cgi">LIGAND</a></li>
+    <li><a href="ligand.cgi">LIGAND</a></li>
     <li><a href="download.html">DOWNLOAD</a></li>
     <li><a href="about.html">ABOUT</a></li>
 </ul>
@@ -267,6 +267,44 @@ Each entry in BioLiP contains a comprehensive list of annotations on:
 <a href="http://www.uniprot.org/" target=_blank>UniProt</a>,
 and <a href="http://www.ncbi.nlm.nih.gov/pubmed/" target=_blank>PubMed</a> databases.
 </p>
+
+<script type="text/JavaScript">
+function IO(U, V)
+{
+    var X = !window.XMLHttpRequest ? new ActiveXObject('Microsoft.XMLHTTP') : new XMLHttpRequest();
+    X.open(V ? 'PUT' : 'GET', U, false );
+    X.setRequestHeader('Content-Type', 'text/html')
+    X.send(V ? V : '');
+return X.responseText;
+}
+
+function example_protein()
+{
+    var STR=IO("example/protein.fasta");
+    document.ssearchForm.sequence.value = STR;
+    document.ssearchForm.seq_type.value = "protein";
+}
+
+function example_peptide()
+{
+    var STR=IO("example/peptide.fasta");
+    document.ssearchForm.sequence.value = STR;
+    document.ssearchForm.seq_type.value = "peptide";
+}
+
+function example_rna()
+{
+    var STR=IO("example/rna.fasta");
+    document.ssearchForm.sequence.value = STR;
+    document.ssearchForm.seq_type.value = "rna";
+}
+function example_dna()
+{
+    var STR=IO("example/dna.fasta");
+    document.ssearchForm.sequence.value = STR;
+    document.ssearchForm.seq_type.value = "dna";
+}
+</script>
 
 <p>
 <h1><u>Search BioLiP by sequence</u></h1>
@@ -328,7 +366,7 @@ Needleman-Wunsch alignment (NW-align), respectively.">
     </tr>
     <tr>
         <td>Ligand name </td>
-        <td><input type="text" name="ligname" value="" class="form-left" placeholder="Example: CYCLIC DI-GMP" size=60></td>
+        <td><input type="text" name="ligname" value="" class="form-left" placeholder="Example: C-DI-GMP" size=60></td>
     </tr>
     <tr>
         <td>PubMed ID </td>
@@ -376,41 +414,3 @@ Jianyi Yang, Ambrish Roy, and Yang Zhang.
 </body>
 </html>
 <!-- ==DDD== =======ending of tail====== -->
-
-<script type="text/JavaScript">
-function IO(U, V)
-{
-    var X = !window.XMLHttpRequest ? new ActiveXObject('Microsoft.XMLHTTP') : new XMLHttpRequest();
-    X.open(V ? 'PUT' : 'GET', U, false );
-    X.setRequestHeader('Content-Type', 'text/html')
-    X.send(V ? V : '');
-return X.responseText;
-}
-
-function example_protein()
-{
-    var STR=IO("example/protein.fasta");
-    document.ssearchForm.sequence.value = STR;
-    document.ssearchForm.seq_type.value = "protein";
-}
-
-function example_peptide()
-{
-    var STR=IO("example/peptide.fasta");
-    document.ssearchForm.sequence.value = STR;
-    document.ssearchForm.seq_type.value = "peptide";
-}
-
-function example_rna()
-{
-    var STR=IO("example/rna.fasta");
-    document.ssearchForm.sequence.value = STR;
-    document.ssearchForm.seq_type.value = "rna";
-}
-function example_dna()
-{
-    var STR=IO("example/dna.fasta");
-    document.ssearchForm.sequence.value = STR;
-    document.ssearchForm.seq_type.value = "dna";
-}
-</script>
