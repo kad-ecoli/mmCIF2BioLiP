@@ -10,6 +10,9 @@ import gzip
 
 rootdir=os.path.dirname(os.path.abspath(__file__))
 
+# location of the graphviz 'dot' program
+dot="dot"
+
 def read_taxon():
     taxid2name=dict()
     fp=gzip.open(rootdir+"/data/taxid2name.tsv.gz",'rt')
@@ -350,7 +353,7 @@ def display_ec(ec,csaOrig,csaRenu):
 </td></tr>
 ''')
 
-def display_go(go,uniprot):
+def display_go(go,uniprot,pdbid,asym_id):
     print('''
 <tr><td>
 <div id="headerDiv">
@@ -360,7 +363,21 @@ def display_go(go,uniprot):
 <div id="contentDiv">
     <div id="RContent" style="display: block;">
     <table width=100% border="0" style="font-family:Monospace;font-size:14px;background:#F2F2F2;" >
+    <tr>
 ''')
+    go2is_a=dict()
+    has_svg=0
+    for Aspect in "FPC":
+        filename="%s/output/%s_%s_%s.svg"%(rootdir,pdbid,asym_id,Aspect)
+        if os.path.isfile(filename):
+            has_svg+=1
+    if has_svg==0:
+        fp=gzip.open("%s/data/is_a.tsv.gz"%rootdir,'rt')
+        for line in fp.read().splitlines():
+            GOterm,Aspect,direct_line,indirect_line=line.split('\t')
+            go2is_a[GOterm]=(direct_line.split(','),indirect_line.split(','))
+        fp.close()
+
     go2name_dict=dict()
     fp=gzip.open("%s/data/go2name.tsv.gz"%rootdir,'rt')
     for line in fp.read().splitlines():
@@ -376,7 +393,20 @@ def display_go(go,uniprot):
         if not Aspect in go2aspect:
             go2aspect[Aspect]=[]
         go2aspect[Aspect].append((term,name))
+    for Aspect,namespace in [('F',"Molecular Function"),
+                             ('P',"Biological Process"),
+                             ('C',"Cellular Component")]:
+        if not Aspect in go2aspect:
+            continue
+        print('''<td width=30% align=center><a href=output/$pdbid_$asym_id_$Aspect.svg><img src=output/$pdbid_$asym_id_$Aspect.svg alt="" height=400 wdith=400><br>View graph of $namespace</a></td>
+        '''.replace("$pdbid",pdbid
+          ).replace("$asym_id",asym_id
+          ).replace("$namespace",namespace
+          ).replace("$Aspect",Aspect))
+        
 
+    print('''    </tr></table>
+    <table width=100% border="0" style="font-family:Monospace;font-size:14px;background:#F2F2F2;" >''')
     for Aspect,namespace in [('F',"Molecular Function"),
                              ('P',"Biological Process"),
                              ('C',"Cellular Component")]:
@@ -411,6 +441,53 @@ def display_go(go,uniprot):
         print('''
     </table>
 </tr>''')
+
+        if has_svg:
+            continue
+        go_plotted=[]
+        GVtxt='digraph G{ graph[splines=true,rankdir="BT"];\n'
+        go_direct_list=[term for term,name in go2aspect[Aspect]]
+        go_direct_set =set(go_direct_list)
+        go_indirect_list=[]
+        for term in go_direct_list:
+            label=term
+            if term in go2name_dict:
+                label+='\n'+textwrap.fill(go2name_dict[term][1][:100],25)
+            GVtxt+='"%s"[label="%s" shape=rectangle fillcolor=lightgrey style=filled];\n'%(
+                term,label)
+        for term in go_direct_list:
+            if not term in go2is_a:
+                continue
+            for parent in go2is_a[term][0]+go2is_a[term][1]:
+                if not parent or parent in go_direct_set \
+                             or parent in go_indirect_list:
+                    continue
+                go_indirect_list.append(parent)
+                label=parent
+                if parent in go2name_dict:
+                    label+='\n'+textwrap.fill(go2name_dict[parent][1][:100],25)
+                GVtxt+='"%s"[label="%s" shape=rectangle fillcolor=white style=filled];\n'%(
+                    parent,label)
+        for term in go_direct_list+go_indirect_list:
+            if not term in go2is_a:
+                continue
+            for parent in go2is_a[term][0]:
+                if parent:
+                    GVtxt+='"%s"->"%s";\n'%(term,parent)
+        GVtxt+="}"
+        p=subprocess.Popen(dot+" -Tsvg",shell=True,
+            stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+        stdout,stderr=p.communicate(input=GVtxt.encode('utf-8'))
+        svgtxt=''
+        for line in stdout.decode().splitlines():
+            if not line.startswith('<!--') and not line.startswith(' -->'):
+                svgtxt+=line+'\n'
+        for line in GVtxt.splitlines():
+            svgtxt+='<!-- '+line+' -->\n'
+        filename="%s/output/%s_%s_%s.svg"%(rootdir,pdbid,asym_id,Aspect)
+        fp=open(filename,'w')
+        fp.write(svgtxt)
+        fp.close()
 
     print('''   </table>
 </div>
@@ -506,7 +583,7 @@ def display_protein_receptor(pdbid,asym_id,title):
 <div id="contentDiv">
     <div id="RContent" style="display: block;">
     <table width=100% border="0" style="font-family:Monospace;font-size:14px;background:#F2F2F2;" >
-    <tr><td align=center width=10%><strong>PDB</strong></td><td><a href=qsearch.cgi?pdbid=$pdbid target=_blank>$pdbid</a> $title</td></tr>
+    <tr><td align=center width=10%><strong>PDB</strong></td><td><span title="Search BioLiP entries from the same structure"><a href=qsearch.cgi?pdbid=$pdbid target=_blank>$pdbid</a></span> $title</td></tr>
     <tr BGCOLOR="#DEDEDE"><td align=center><strong>Chain</strong></td><td><a href=qsearch.cgi?pdbid=$pdbid&chain=$asym_id target=_blank>$asym_id</a></td></tr>
     <tr><td align=center><strong>Resolution</strong></td><td>$reso</a></td></tr>
     <tr BGCOLOR="#DEDEDE" align=center><td align=center><strong>3D<br>structure</strong></td><td>
@@ -630,7 +707,7 @@ $explainLabel
 ''')
 
     if go:
-        display_go(go,uniprot)
+        display_go(go,uniprot,pdbid,asym_id)
     return pubmed,uniprot
 
 def display_interaction(pdbid,asym_id,bs,title):    
@@ -934,7 +1011,7 @@ $(document).ready(function()
         </td>
         <td>
         <table>
-            <tr BGCOLOR="#DEDEDE"><td align=center><strong>PDB</strong><td><a href=qsearch.cgi?pdbid=$pdbid target=_blank>$pdbid</a> $title</td></tr>
+            <tr BGCOLOR="#DEDEDE"><td align=center><strong>PDB</strong><td><span title="Search BioLiP entries from the same structure"><a href=qsearch.cgi?pdbid=$pdbid target=_blank>$pdbid</a></span> $title</td></tr>
             <tr><td align=center><strong>Resolution</strong><td>$reso</td></tr>
             <tr BGCOLOR="#DEDEDE"><td align=center><strong>Binding residue<br>(original residue number in PDB)</strong><td>$resOrig</td></tr>
             <tr><td align=center><strong>Binding residue<br>(residue number reindexed from 1)</strong><td>$resRenu</td></tr>
@@ -964,7 +1041,7 @@ $(document).ready(function()
     if ec:
         display_ec(ec,csaOrig,csaRenu)
     if go:
-        display_go(go,uniprot)
+        display_go(go,uniprot,pdbid,asym_id)
     return pubmed,uniprot
 
 def pdb2title(pdbid):
