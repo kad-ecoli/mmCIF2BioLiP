@@ -7,6 +7,7 @@ import subprocess
 import textwrap
 import tarfile
 import gzip
+import re
 
 rootdir=os.path.dirname(os.path.abspath(__file__))
 
@@ -322,11 +323,11 @@ def display_ec(ec,csaOrig,csaRenu):
         print('''
     <tr align=center>
         <td width=10%><strong>Catalytic site (original residue number in PDB)</strong></td>
-        <td width=90%><a href="https://www.ebi.ac.uk/thornton-srv/m-csa/search/?s=$pdbid" target=_blank>$csaOrig</a></td>
+        <td width=90% align=left><a href="https://www.ebi.ac.uk/thornton-srv/m-csa/search/?s=$pdbid" target=_blank>$csaOrig</a></td>
     </tr>
     <tr BGCOLOR="#DEDEDE" align=center>
         <td width=10%><strong>Catalytic site (residue number reindexed from 1)</strong></td>
-        <td width=90%><a href="https://www.ebi.ac.uk/thornton-srv/m-csa/search/?s=$pdbid" target=_blank>$csaRenu</a></td>
+        <td width=90% align=left><a href="https://www.ebi.ac.uk/thornton-srv/m-csa/search/?s=$pdbid" target=_blank>$csaRenu</a></td>
     </tr>
         '''.replace("$csaOrig",csaOrig
           ).replace("$csaRenu",csaRenu
@@ -347,7 +348,7 @@ def display_ec(ec,csaOrig,csaRenu):
         print('''
     <tr align=center>
         <td width=10%><strong>Enzyme Commision number</strong></td>
-        <td width=90%>$ec</td>
+        <td width=90% align=left>$ec</td>
     </tr>
         '''.replace("$ec",'<br>'.join(ec_list)))
     print('''   </table>
@@ -365,7 +366,6 @@ def display_go(go,uniprot,pdbid,asym_id):
 <div id="contentDiv">
     <div id="RContent" style="display: block;">
     <table width=100% border="0" style="font-family:Monospace;font-size:14px;background:#F2F2F2;" >
-    <tr>
 ''')
     go2is_a=dict()
     has_svg=0
@@ -395,20 +395,9 @@ def display_go(go,uniprot,pdbid,asym_id):
         if not Aspect in go2aspect:
             go2aspect[Aspect]=[]
         go2aspect[Aspect].append((term,name))
-    for Aspect,namespace in [('F',"Molecular Function"),
-                             ('P',"Biological Process"),
-                             ('C',"Cellular Component")]:
-        if not Aspect in go2aspect:
-            continue
-        print('''<td width=30% align=center><a href=output/$pdbid_$asym_id_$Aspect.svg><img src=output/$pdbid_$asym_id_$Aspect.svg alt="" height=400 wdith=400><br>View graph of $namespace</a></td>
-        '''.replace("$pdbid",pdbid
-          ).replace("$asym_id",asym_id
-          ).replace("$namespace",namespace
-          ).replace("$Aspect",Aspect))
-        
-
-    print('''    </tr></table>
-    <table width=100% border="0" style="font-family:Monospace;font-size:14px;background:#F2F2F2;" >''')
+    
+    svg_size_dict=dict()
+    svg_size_pat=re.compile('<svg width=\"(\d+)pt\" height=\"(\d+)pt\"')
     for Aspect,namespace in [('F',"Molecular Function"),
                              ('P',"Biological Process"),
                              ('C',"Cellular Component")]:
@@ -416,18 +405,25 @@ def display_go(go,uniprot,pdbid,asym_id):
             continue
         namespace_link=namespace
         if uniprot:
+            u=uniprot.split(',')[0]
             namespace_link='<a href="https://www.ebi.ac.uk/QuickGO/annotations?geneProductId=%s&aspect=%s" target=_blank>%s</a>'%(
-                uniprot.split(',')[0],
+                u,
                 namespace.lower().replace(' ','_'),
                 namespace)
+        height="height=400"
+        if Aspect=='P':
+            height="height=300"
         print('''
 <tr>
     <table width=100%>
     <tr BGCOLOR="#DEDEDE" align=center>
         <th width=10% align=right><strong></strong></th>
-        <th width=90% align=left><strong>$namespace</strong></th>
+        <th width=90% align=left><span title="View $namespace annotation for UniProt protein $uniprot"><strong>$namespace_link</strong></a></th>
     </tr>
-        '''.replace("$namespace",namespace_link))
+        '''.replace("$namespace_link",namespace_link
+          ).replace("$namespace",namespace
+          ).replace("$uniprot",u
+        ))
         for l,(term,name) in enumerate(go2aspect[Aspect]):
             bgcolor=' BGCOLOR="#F2F2F2"'
             #if l%2==1:
@@ -444,7 +440,8 @@ def display_go(go,uniprot,pdbid,asym_id):
     </table>
 </tr>''')
 
-        if has_svg:
+        filename="%s/output/%s_%s_%s.svg"%(rootdir,pdbid,asym_id,Aspect)
+        if os.path.isfile(filename):
             continue
         go_plotted=[]
         GVtxt='digraph G{ graph[splines=true,rankdir="BT"];\n'
@@ -462,14 +459,14 @@ def display_go(go,uniprot,pdbid,asym_id):
                 continue
             for parent in go2is_a[term][0]+go2is_a[term][1]:
                 if not parent or parent in go_direct_set \
-                             or parent in go_indirect_list:
+                         or parent in go_indirect_list:
                     continue
                 go_indirect_list.append(parent)
                 label=parent
                 if parent in go2name_dict:
                     label+='\n'+textwrap.fill(go2name_dict[parent][1][:100],25)
                 GVtxt+='"%s"[label="%s" shape=rectangle fillcolor=white style=filled];\n'%(
-                    parent,label)
+                parent,label)
         for term in go_direct_list+go_indirect_list:
             if not term in go2is_a:
                 continue
@@ -480,17 +477,31 @@ def display_go(go,uniprot,pdbid,asym_id):
         p=subprocess.Popen(dot+" -Tsvg",shell=True,
             stdin=subprocess.PIPE,stdout=subprocess.PIPE)
         stdout,stderr=p.communicate(input=GVtxt.encode('utf-8'))
-        svgtxt=''
-        for line in stdout.decode().splitlines():
-            if not line.startswith('<!--') and not line.startswith(' -->'):
-                svgtxt+=line+'\n'
-        #for line in GVtxt.splitlines():
-        #    svgtxt+='<!-- '+line+' -->\n'
-        filename="%s/output/%s_%s_%s.svg"%(rootdir,pdbid,asym_id,Aspect)
+        svgtxt=stdout.decode()
         fp=open(filename,'w')
         fp.write(svgtxt)
         fp.close()
 
+    print('''   </table>
+    <table width=100% border="0" style="font-family:Monospace;font-size:14px;background:#F2F2F2;" >
+    <tr valign=bottom>''')
+    for Aspect,namespace in [('F',"Molecular Function"),
+                             ('P',"Biological Process"),
+                             ('C',"Cellular Component")]:
+        filename="output/%s_%s_%s.svg"%(pdbid,asym_id,Aspect)
+        if not os.path.isfile(rootdir+'/'+filename):
+            continue
+        height="height=400"
+        if Aspect=='P':
+            height="height=300"
+        print('''
+        <td align=center width=30%><span title="View $namespace graph"><a href=$filename target=_blank><img src=$filename style="display:block;" width="100%"><br>View $namespace graph</a></td>
+        '''.replace("$namespace",namespace
+          ).replace("$height",height
+          ).replace("$filename",filename
+        ))
+    print("    </tr>")
+    
     print('''   </table>
 </div>
 </td></tr>
