@@ -12,6 +12,8 @@ Reinstall cd-hit, makeblastdb, blastn and blastp if using other operating system
 
 This repository contains a copy of [JSmol](https://wiki.jmol.org/index.php/JSmol). This is not needed for database update. It is solely for visualization through the web browser.
 
+Follows ``output/readme.txt`` to set up for web browsing.
+
 ## Usage ##
 
 ### Step 1: Download PDB entries ###
