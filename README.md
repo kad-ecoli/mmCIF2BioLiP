@@ -22,6 +22,7 @@ mkdir ../graphviz
 ./configure --prefix=`readlink -e ../graphviz`
 make
 make install
+rm graphviz-6.0.2.tar.gz
 ```
 
 ## Usage ##
