@@ -14,6 +14,25 @@ This repository contains a copy of [JSmol](https://wiki.jmol.org/index.php/JSmol
 
 Follows ``output/readme.txt`` to set up for web browsing.
 
+Optionally, to show directed acylic graph for Gene Ontology terms on the website, the ``dot`` program from [Graphviz](https://graphviz.org/) can be used. If your system does not have Graphviz, you can install it from source code:
+```bash
+wget https://gitlab.com/api/v4/projects/4207231/packages/generic/graphviz-releases/6.0.2/graphviz-6.0.2.tar.gz
+tar -xvf graphviz-6.0.2.tar.gz
+mkdir ../graphviz
+./configure --prefix=`readlink -e ../graphviz`
+make
+make install
+```
+Change the following line at the top of ``pdb.cgi`` to point to the location of ``dot`` program:
+```python```
+# location of the graphviz 'dot' program
+dot="dot"
+```
+For example, if Graphviz is installed from source as mentioned above:
+```python```
+dot="graphviz/bin/dot"
+```
+
 ## Usage ##
 
 ### Step 1: Download PDB entries ###
