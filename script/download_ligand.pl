@@ -35,7 +35,7 @@ foreach my $line(`cat $rootdir/enzyme/enzyme.dat |grep -P "(^//)|(^ID)|(^DE)"`)
 open(FP,">$rootdir/data/enzyme.tsv");
 print FP $txt;
 close(FP);
-system("gzip -f $rootdir/data/enzyme.tsv");
+&gzipFile("$rootdir/data/enzyme.tsv");
 
 
 print "download CCD ligand\n";
@@ -167,8 +167,9 @@ if (length $_chem_comp_id)
 open(FP,">$outfile");
 print FP $txt;
 close(FP);
-system("cat $outfile |grep -P '^\\w+\\t[A-Z][a-z]{0,1}\\tInChI=1S\\/[A-Z][a-z]{0,1}/q\\+\\d' |gzip - > $rootdir/data/metal.tsv.gz");
-system("gzip -f $outfile");
+system("cat $outfile |grep -P '^\\w+\\t[A-Z][a-z]{0,1}\\tInChI=1S\\/[A-Z][a-z]{0,1}/q\\+\\d' > $rootdir/data/metal.tsv");
+&gzipFile("$outfile");
+&gzipFile("$rootdir/data/metal.tsv");
 exit(0);
 
 sub strip
@@ -179,4 +180,19 @@ sub strip
     $instring=~s/^"//;
     $instring=~s/"$//;
     return $instring;
+}
+
+sub gzipFile
+{
+    my ($filename)=@_;
+    my $oldNum=`zcat $filename.gz 2>/dev/null|wc -l`+0;
+    my $newNum=` cat $filename   |wc -l`+0;
+    if (0.8*$oldNum>$newNum)
+    {
+        print "WARNING! do not update $filename from $oldNum to $newNum entries\n";
+        return;
+    }
+    print "update $filename from $oldNum to $newNum entries\n";
+    system("gzip -f $filename");
+    return;
 }

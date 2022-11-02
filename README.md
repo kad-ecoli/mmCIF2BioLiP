@@ -97,25 +97,25 @@ This step must be performed after step 3 and 7.
 This script converts ``weekly/BioLiP_*.bsr.gz`` to ``weekly/BioLiP_*.txt`` and ``weekly/BioLiP_*_nr.txt``.
 It also creates ``weekly/receptor_*_nr.tar.bz2``, ``weekly/receptor1_*_nr.tar.bz2`` and ``weekly/ligand_*_nr.tar.bz2`` from intermediate files of the previous step.
 
-### Step 9: clean up intermediate files ###
-This step must be run after step 8, and is recommended before the next time to update the database.
-```bash
-./script/clean_up.pl
-```
-
-### Step 10: download auxilary data ###
-This step can be performed independent of step 1 to 9 and step 11.
-```bash
-./script/download_ligand.pl
-```
-This script downloads CCD ligand to ``pdb/data/monomers/components.cif.gz`` and extract their summary to ``data/ligand.tsv.gz``.
-This script downloads enzyme to ``enzyme/enzyme.dat`` and extract their summary to ``data/enzyme.tsv.gz``.
-
-## Step 11: curate GO anntation ##
-This step must be performed after step 8 and 10.
+## Step 9: curate GO anntation ##
+This step must be performed after step 8.
 ```bash
 ./script/curate_GO.pl
 ```
 This script reads GO from ``obo/go/go-basic.obo`` and ``data/pdb_all.tsv.gz``.
 and extract the summary to ``data/go2name.tsv.gz``, ``data/is_a.tsv.gz`` and ``data/pdb_go.tsv.gz``.
 This script reads swissprot name from ``uniprot/current_release/knowledgebase/complete/uniprot_sprot.fasta.gz`` and extract the summary to ``data/uniprot_sprot.tsv.gz``.
+
+### Step 10: download auxilary data ###
+This step can be performed independent of step 1 to 9.
+```bash
+./script/download_ligand.pl
+```
+This script downloads CCD ligand to ``pdb/data/monomers/components.cif.gz`` and extract their summary to ``data/ligand.tsv.gz``.
+This script downloads enzyme to ``enzyme/enzyme.dat`` and extract their summary to ``data/enzyme.tsv.gz``.
+
+### Step 11: clean up intermediate files ###
+This step must be run after everything is done.
+```bash
+./script/clean_up.pl
+```

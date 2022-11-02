@@ -32,7 +32,7 @@ system("cd $rootdir/taxonomy; tar -xvf taxdump.tar.gz names.dmp");
 if (-s "$rootdir/taxonomy/names.dmp")
 {
     system("rm $rootdir/taxonomy/taxdump.tar.gz");
-    system("gzip -f $rootdir/taxonomy/names.dmp");
+    &gzipFile("$rootdir/taxonomy/names.dmp");
 }
 
 system("mkdir -p $rootdir/data");
@@ -68,7 +68,7 @@ if (scalar @taxid_list)
     open(FP,">$rootdir/data/taxid2name.tsv");
     print FP $txt;
     close(FP);
-    system("gzip -f $rootdir/data/taxid2name.tsv");
+    &gzipFile("$rootdir/data/taxid2name.tsv");
 }
 &concatenate_sift("cat $rootdir/data/chain2taxonomy.tsv","$rootdir/data/chain2taxonomy.tsv");
 
@@ -93,10 +93,26 @@ if (-s "$rootdir/sifts/flatfiles/tsv/pdb_chain_go.tsv.gz")
 print "parsing pubmed\n";
 if (-s "$rootdir/sifts/flatfiles/tsv/pdb_pubmed.tsv.gz")
 {
-    system("zcat $rootdir/sifts/flatfiles/tsv/pdb_pubmed.tsv.gz |tail -n +3|grep -P '\\t0\\t'|cut -f1,3|sort|uniq|gzip - > $rootdir/data/pdb2pubmed.tsv.gz");
+    system("zcat $rootdir/sifts/flatfiles/tsv/pdb_pubmed.tsv.gz |tail -n +3|grep -P '\\t0\\t'|cut -f1,3|sort|uniq > $rootdir/data/pdb2pubmed.tsv");
+    &gzipFile("$rootdir/data/pdb2pubmed.tsv");
 }
 
 exit(0);
+
+sub gzipFile
+{
+    my ($filename)=@_;
+    my $oldNum=`zcat $filename.gz 2>/dev/null|wc -l`+0;
+    my $newNum=` cat $filename   |wc -l`+0;
+    if (0.8*$oldNum>$newNum)
+    {
+        print "WARNING! do not update $filename from $oldNum to $newNum entries\n";
+        return;
+    }
+    print "update $filename from $oldNum to $newNum entries\n";
+    system("gzip -f $filename");
+    return;
+}
 
 sub concatenate_sift
 {
@@ -126,5 +142,5 @@ sub concatenate_sift
     open(FP,">$outfile");
     print FP $txt;
     close(FP);
-    system("gzip -f $outfile");
+    &gzipFile($outfile);
 }

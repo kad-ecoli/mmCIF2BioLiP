@@ -9,7 +9,8 @@ my $rootdir = dirname($bindir);
 system("$bindir/obo2csv $rootdir/obo/go/go-basic.obo $rootdir/obo/go/is_a.tsv $rootdir/obo/go/go2name.tsv $rootdir/obo/go/alt_id.tsv");
 system("zcat $rootdir/data/pdb_all.tsv.gz | tail -n +2 | cut -f1,2,7 > $rootdir/obo/go/input.txt");
 system("$bindir/backpropagate $rootdir/obo/go/input.txt $rootdir/obo/go/is_a.tsv $rootdir/obo/go/alt_id.tsv $rootdir/obo/go/output.txt");
-system("sed 's/GO://g' $rootdir/obo/go/output.txt|gzip - > $rootdir/data/pdb_go.tsv.gz");
+system("sed 's/GO://g' $rootdir/obo/go/output.txt > $rootdir/data/pdb_go.tsv");
+&gzipFile("$rootdir/data/pdb_go.tsv");
 
 my @GO_list;
 foreach my $GOterm(`cut -f3 $rootdir/obo/go/output.txt|sed 's/,/\\n/g'|sort|uniq`)
@@ -36,7 +37,7 @@ foreach my $filename(("go2name.tsv","is_a.tsv"))
     open(FP,">$rootdir/data/$filename");
     print FP $txt;
     close(FP);
-    system("gzip -f $rootdir/data/$filename");
+    &gzipFile("$rootdir/data/$filename");
 }
 
 foreach my $filename(("go2name.tsv","is_a.tsv","alt_id.tsv","input.txt","output.txt"))
@@ -78,6 +79,21 @@ for my $line(`zcat $rootdir/uniprot/current_release/knowledgebase/complete/unipr
 open(FP,">$rootdir/data/uniprot_sprot.tsv");
 print FP $txt;
 close(FP);
-system("gzip -f $rootdir/data/uniprot_sprot.tsv");
+&gzipFile("$rootdir/data/uniprot_sprot.tsv");
 
 exit(0);
+
+sub gzipFile
+{
+    my ($filename)=@_;
+    my $oldNum=`zcat $filename.gz 2>/dev/null|wc -l`+0;
+    my $newNum=` cat $filename   |wc -l`+0;
+    if (0.8*$oldNum>$newNum)
+    {
+        print "WARNING! do not update $filename from $oldNum to $newNum entries\n";
+        return;
+    }
+    print "update $filename from $oldNum to $newNum entries\n";
+    system("gzip -f $filename");
+    return;
+}

@@ -17,7 +17,7 @@ if (`cat $rootdir/bind/Download.jsp`=~/(BindingDB_All_\w+.tsv.zip)/)
     {
         system("zcat $rootdir/bind/BindingDB_All_tsv.zip| cut -f9-14,27,28,42,43,47|  head -1 > $rootdir/bind/BindingDB.tsv");
         system("zcat $rootdir/bind/BindingDB_All_tsv.zip| cut -f9-14,27,28,42,43,47|grep -P '\\S+\\t\\S+\\t\\S*\\t\\S*\\t\\S*\$' |grep -vP '\\t\\t\\t\$'  >> $rootdir/bind/BindingDB.tsv");
-        system("gzip -f $rootdir/bind/BindingDB.tsv");
+        &gzipFile("$rootdir/bind/BindingDB.tsv");
     }
 }
 
@@ -120,6 +120,21 @@ foreach my $key(@BindingDB_list)
 open(FP,">$rootdir/data/BindingDB.tsv");
 print FP "$txt";
 close(FP);
-system("gzip -f $rootdir/data/BindingDB.tsv");
+&gzipFile("$rootdir/data/BindingDB.tsv");
 
 exit();
+
+sub gzipFile
+{
+    my ($filename)=@_;
+    my $oldNum=`zcat $filename.gz 2>/dev/null|wc -l`+0;
+    my $newNum=` cat $filename   |wc -l`+0;
+    if (0.8*$oldNum>$newNum)
+    {
+        print "WARNING! do not update $filename from $oldNum to $newNum entries\n";
+        return;
+    }
+    print "update $filename from $oldNum to $newNum entries\n";
+    system("gzip -f $filename");
+    return;
+}
