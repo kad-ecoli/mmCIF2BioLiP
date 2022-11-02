@@ -19,6 +19,9 @@ Second, set the context, which may not be necessary on some system:
     chcon -t httpd_sys_script_exec_t qsearch.cgi
     chcon -t httpd_sys_script_exec_t ssearch.cgi
     chcon -t httpd_sys_script_exec_t sym.cgi
+    chcon -t httpd_sys_script_exec_t script/NWalign
+    chcon -t httpd_sys_script_exec_t script/blastn
+    chcon -t httpd_sys_script_exec_t script/blastp
     chcon -t httpd_sys_rw_content_t output/
 
 You can check the context by
