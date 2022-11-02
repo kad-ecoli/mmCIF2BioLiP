@@ -6,6 +6,35 @@ use Cwd 'abs_path';
 my $bindir = dirname(abs_path(__FILE__));
 my $rootdir = dirname($bindir);
 
+#### remove files older than 1 hour ####
+foreach my $filename(`find $rootdir/output/*gz -mmin +60 2>/dev/null`)
+{
+    chomp($filename);
+    my $cmd="rm -f $filename";
+    #print "$cmd\n";
+    system("$cmd");
+}
+
+#### check data loss ####
+my $hasLoss=0;
+foreach my $filename(`ls $rootdir/data/*.tsv`)
+{
+    next if (!-s "$rootdir/data/$filename.gz");
+    my $oldNum=`zcat $rootdir/data/$filename.gz|wc -l`;
+    my $newNum=`cat $rootdir/data/$filename|wc -l`;
+    if (0.8*$oldNum > $newNum)
+    {
+        print "$rootdir/data/$filename.gz ($oldNum entries) > $rootdir/data/$filename ($newNum entries)\n";
+        $hasLoss+=1;
+    }
+}
+if ($hasLoss)
+{
+    print "WARNING! $hasLoss potential data corruption instances. Please check manually.\n";
+    exit(1);
+}
+
+#### remove intermediate file from output ####
 foreach my $divided(`ls $rootdir/weekly/|grep -F _nr.txt|cut -f2 -d_`)
 {
     chomp($divided);
@@ -24,11 +53,10 @@ foreach my $divided(`ls $rootdir/weekly/|grep -F _nr.txt|cut -f2 -d_`)
     }
 }
 
-# remove files older than 1 hour
-foreach my $filename(`find $rootdir/output/*gz -mmin +60`)
+foreach my $filename(`find $rootdir/interim/ -type f 2>/dev/null|grep -F .backup.gz`)
 {
     chomp($filename);
-    my $cmd="rm -f $filename";
+    my $cmd="rm $filename";
     print "$cmd\n";
     system("$cmd");
 }
