@@ -12,6 +12,8 @@ rootdir=os.path.dirname(os.path.abspath(__file__))
 
 # location of the graphviz 'dot' program
 dot="dot"
+if os.path.isfile("graphviz/bin/dot"):
+    dot="graphviz/bin/dot"
 
 def read_taxon():
     taxid2name=dict()
