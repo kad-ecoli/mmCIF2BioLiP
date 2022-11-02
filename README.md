@@ -1,6 +1,6 @@
 A local copy of ligand and binding site information created from mmCIF files of the PDB database.
 
-## Installation ##
+## Installation for database update ##
 ```bash
 cd script/
 make
@@ -10,11 +10,11 @@ The binary executable of [cd-hit](https://github.com/weizhongli/cdhit) is availa
 The binary executable of makeblastdb, blastn and blastp from the [NCBI BLAST+](ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/) are available at ``script/`` for 64 bit Linux.
 Reinstall cd-hit, makeblastdb, blastn and blastp if using other operating system.
 
-This repository contains a copy of [JSmol](https://wiki.jmol.org/index.php/JSmol). This is not needed for database update. It is solely for visualization through the web browser.
+## Installation for web browsing ##
 
-Follow ``output/readme.sh`` to set up for web browsing.
+1. This repository contains a copy of [JSmol](https://wiki.jmol.org/index.php/JSmol). This is not needed for database update. It is solely for visualization through the web browser.
 
-Optionally, to show directed acylic graph for Gene Ontology terms on the website, the ``dot`` program from [Graphviz](https://graphviz.org/) can be used. If your system does not have Graphviz, you can install it to ``graphviz/bin/dot`` from source code:
+2. Optionally, to show directed acylic graph for Gene Ontology terms on the website, the ``dot`` program from [Graphviz](https://graphviz.org/) can be used. If your system does not have Graphviz, you can install it to ``graphviz/bin/dot`` from source code:
 ```bash
 wget https://gitlab.com/api/v4/projects/4207231/packages/generic/graphviz-releases/6.0.2/graphviz-6.0.2.tar.gz
 tar -xvf graphviz-6.0.2.tar.gz
@@ -24,6 +24,8 @@ make
 make install
 rm graphviz-6.0.2.tar.gz
 ```
+
+3. Follow ``output/readme.sh`` to set up for web browsing.
 
 ## Usage ##
 

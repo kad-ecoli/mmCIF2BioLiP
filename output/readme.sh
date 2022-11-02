@@ -11,6 +11,7 @@
     chmod a+x qsearch.cgi
     chmod a+x ssearch.cgi
     chmod a+x sym.cgi
+    chmod a+x graphviz/bin/dot
     chmod 777 output/
 
 # Second, set the context, which may not be necessary on some system:
@@ -24,6 +25,7 @@
     chcon -t httpd_sys_script_exec_t script/NWalign
     chcon -t httpd_sys_script_exec_t script/blastn
     chcon -t httpd_sys_script_exec_t script/blastp
+    chcon -t httpd_sys_script_exec_t graphviz/bin/dot
     chcon -t httpd_sys_rw_content_t  output/
 
 # You can check the context by
