@@ -30,5 +30,5 @@
 
 # You can check the context by
 
-    ls -laZ *cgi
+    ls -laZ *cgi script/NWalign script/blastn script/blastp graphviz/bin/dot
     ls -laZ|grep output
