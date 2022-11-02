@@ -12,7 +12,7 @@ Reinstall cd-hit, makeblastdb, blastn and blastp if using other operating system
 
 This repository contains a copy of [JSmol](https://wiki.jmol.org/index.php/JSmol). This is not needed for database update. It is solely for visualization through the web browser.
 
-Follows ``output/readme.txt`` to set up for web browsing.
+Follow ``output/readme.sh`` to set up for web browsing.
 
 Optionally, to show directed acylic graph for Gene Ontology terms on the website, the ``dot`` program from [Graphviz](https://graphviz.org/) can be used. If your system does not have Graphviz, you can install it to ``graphviz/bin/dot`` from source code:
 ```bash
