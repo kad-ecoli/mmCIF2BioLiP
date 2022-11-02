@@ -7,7 +7,14 @@ my $bindir = dirname(abs_path(__FILE__));
 my $rootdir = dirname($bindir);
 
 #### remove files older than 1 hour ####
-foreach my $filename(`find $rootdir/output/*gz -mmin +60 2>/dev/null`)
+foreach my $filename(`find $rootdir/output/*.gz -mmin +60 2>/dev/null`)
+{
+    chomp($filename);
+    my $cmd="rm -f $filename";
+    #print "$cmd\n";
+    system("$cmd");
+}
+foreach my $filename(`find $rootdir/output/*.svg -mmin +60 2>/dev/null`)
 {
     chomp($filename);
     my $cmd="rm -f $filename";

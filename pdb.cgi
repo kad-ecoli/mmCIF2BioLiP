@@ -484,8 +484,8 @@ def display_go(go,uniprot,pdbid,asym_id):
         for line in stdout.decode().splitlines():
             if not line.startswith('<!--') and not line.startswith(' -->'):
                 svgtxt+=line+'\n'
-        for line in GVtxt.splitlines():
-            svgtxt+='<!-- '+line+' -->\n'
+        #for line in GVtxt.splitlines():
+        #    svgtxt+='<!-- '+line+' -->\n'
         filename="%s/output/%s_%s_%s.svg"%(rootdir,pdbid,asym_id,Aspect)
         fp=open(filename,'w')
         fp.write(svgtxt)
