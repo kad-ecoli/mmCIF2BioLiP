@@ -27,7 +27,9 @@ rm graphviz-6.0.2.tar.gz
 
 3. Follow ``output/readme.sh`` to set up for web browsing.
 
-## Usage ##
+## Database update ##
+
+The first time to set up the database takes at least two days. Subsequent weekly updates only take a couple hours.
 
 ### Step 1: Download PDB entries ###
 Run the following shell script the first time the database is created.
