@@ -102,9 +102,15 @@ my $txt="";
 foreach my $key(@BindingDB_list)
 {
     my $value=$BindingDB_dict{$key};
-    my %exist_key;
+    my %exist_kd;
     my $uniq_value="";
     foreach my $kd(split(/, /,$value))
+    {
+        if (exists $exist_kd{$kd}) { $exist_kd{$kd}+=1; }
+        else                       { $exist_kd{$kd}=1;  }
+    }
+    my %exist_key;
+    foreach my $kd (sort {$exist_kd{$b} <=> $exist_kd{$a}} keys %exist_kd)
     {
         if ($kd=~/^(\S+)=/)
         {
