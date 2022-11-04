@@ -316,7 +316,7 @@ foreach my $divided(`ls $rootdir/weekly/|grep -P "BioLiP_\\w+\\.bsr\\.gz"|cut -f
               # !-s "$rootdir/weekly/$divided/receptor1/$filename"    &&
                 !-s "$rootdir/weekly/$divided/receptor/$filename");
         system("mv $rootdir/weekly/$divided/receptor/$filename $rootdir/weekly/$divided/receptor_nr/$filename");
-        system("mv $rootdir/weekly/$divided/receptor1/$filename $rootdir/weekly/$divided/receptor_nr1/$filename");
+        #system("mv $rootdir/weekly/$divided/receptor1/$filename $rootdir/weekly/$divided/receptor_nr1/$filename");
     }
     %filename_dict=map {$_ => 1} @ligand_nr;
     @filename_list=keys %filename_dict;
@@ -331,6 +331,7 @@ foreach my $divided(`ls $rootdir/weekly/|grep -P "BioLiP_\\w+\\.bsr\\.gz"|cut -f
     system("cd $rootdir/weekly/$divided/; tar -cjf $rootdir/weekly/ligand_${divided}_nr.tar.bz2 ligand_nr/");
 }
 
+print "generating $rootdir/data/{pdb,lig}_{all,nr}.tsv\n";
 open(FP,">$rootdir/data/pdb_all.tsv");
 print FP $pdb_full_all;
 close(FP);
@@ -361,6 +362,7 @@ foreach my $prefix(("pdb_all","pdb_nr","lig_all","lig_nr"))
     system("gzip -f $rootdir/data/$prefix.tsv");
 }
 
+print "generating $rootdir/data/title.tsv\n";
 my $txt="";
 foreach my $pdbid(`zcat $rootdir/data/pdb_all.tsv.gz |tail -n +2|cut -f1|sort|uniq`)
 {
@@ -376,7 +378,7 @@ print FP $txt;
 close(FP);
 system("gzip -f $rootdir/data/title.tsv");
 
-
+print "generation $rootdir/download/lig_frequency.txt\n";
 my $today=`date '+%Y-%m-%d'`;
 chomp($today);
 my $txt=<<EOF
@@ -402,7 +404,7 @@ print FP $txt;
 close(FP);
 
 
-
+print "generating $rootdir/weekly.html\n";
 my @html_items=split(/<!-- CONTENT [A-Z]+ -->/,`cat $rootdir/index.html`);
 my $html_head =<<EOF
 <html>
@@ -487,6 +489,7 @@ print FP "$html_head$html$html_tail";
 close(FP);
 
 
+print "generating $rootdir/data/index.txt\n";
 my $numProtein  =`zcat $rootdir/data/pdb_all.tsv.gz|wc -l`-1;
 my $numRegular  =0;
 my $numMetal    =0;
