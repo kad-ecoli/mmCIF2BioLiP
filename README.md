@@ -29,7 +29,7 @@ rm graphviz-6.0.2.tar.gz
 
 ## Database update ##
 
-The first time to set up the database takes at least two days. Subsequent weekly updates only take a couple hours.
+The first time to set up the database takes at least two days. Subsequent weekly updates only take a couple hours. The database would requires ~100GB of disk space, including ~60GB to store original mmCIF files downloaded from PDB (``pdb/data/structures/divided/mmCIF/``; see Step 11 to reduce this requirement), ~20GB to store intermediate PDB files (``interim/``), and another ~20GB to store final files (``weekly/``, ``data/`` and ``download/``).
 
 ### Step 1: Download PDB entries ###
 Run the following shell script the first time the database is created.
