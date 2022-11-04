@@ -17,7 +17,7 @@ foreach my $divided(`ls $rootdir/interim/`)
     }
     system("rm -rf $rootdir/weekly/$divided/") if (-d "$rootdir/weekly/$divided");
     system("mkdir -p $rootdir/weekly/$divided/receptor/");
-    system("mkdir -p $rootdir/weekly/$divided/receptor1/");
+    #system("mkdir -p $rootdir/weekly/$divided/receptor1/");
     system("mkdir -p $rootdir/weekly/$divided/ligand/");
     foreach my $filename(`ls $rootdir/interim/$divided/|grep '.tar.bz2\$'`)
     {
@@ -26,8 +26,9 @@ foreach my $divided(`ls $rootdir/interim/`)
         next if (!-s "$rootdir/interim/$divided/$filename");
         system("cd $rootdir/weekly/$divided; tar -xf $rootdir/interim/$divided/$filename; mv *_*_*.pdb $rootdir/weekly/$divided/ligand/; mv *.pdb $rootdir/weekly/$divided/receptor/");
     }
-    system("ls $rootdir/weekly/$divided/receptor/ | $bindir/receptor1 $rootdir/weekly/$divided/receptor/ $rootdir/weekly/$divided/receptor1/ -");
-    foreach my $moltype(("receptor","receptor1","ligand"))
+    #system("ls $rootdir/weekly/$divided/receptor/ | $bindir/receptor1 $rootdir/weekly/$divided/receptor/ $rootdir/weekly/$divided/receptor1/ -");
+    #foreach my $moltype(("receptor","receptor1","ligand"))
+    foreach my $moltype(("receptor","ligand"))
     {
         print "$rootdir/weekly/${moltype}_$divided.tar.bz2\n";
         my $cmd="cd $rootdir/weekly/$divided; tar -cjf $rootdir/weekly/${moltype}_$divided.tar.bz2 $moltype/";

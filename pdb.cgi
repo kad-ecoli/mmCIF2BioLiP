@@ -110,7 +110,8 @@ $(document).ready(function()
 [<a href="javascript:Jmol.script(jmolApplet0, 'set antialiasDisplay false')">Low quality</a>]<p></p>
 [<a href="javascript:Jmol.script(jmolApplet0, 'color background white')">White quality</a>]<br>
 [<a href="javascript:Jmol.script(jmolApplet0, 'color background black')">Black quality</a>]<p></p>
-[<a href=output/$prefix.pdb.gz>Download</a>]
+[<a href=output/$prefix.pdb.gz>Download</a>]<br>
+[<a href=?pdbid=$pdbid&chain=$asym_id&lig3=$lig3&ligIdx=$ligIdx&outfmt=1 download=$prefix.pdb>Download structure with residue number starting from 1</a>]
     </td></tr></table>
 
 
@@ -121,6 +122,8 @@ $(document).ready(function()
 '''.replace("$pdbid",pdbid
   ).replace("$title",title
   ).replace("$asym_id",asym_id
+  ).replace("$lig3",lig3
+  ).replace("$ligIdx",ligIdx
   ).replace("$reso",reso
   ).replace("$prefix",prefix
   ).replace("$script",script
@@ -507,6 +510,25 @@ def display_go(go,uniprot,pdbid,asym_id):
 </td></tr>
 ''')
 
+def download_pdb1(pdbid,asym_id,lig3,ligIdx):
+    print("Content-type: text/plain\n")
+    prefix="%s%s"%(pdbid,asym_id)
+    if lig3:
+        if lig3 in ["rna","dna","peptide"]:
+            ligIdx='0'
+        if not ligIdx:
+            ligIdx='1'
+        prefix='_'.join((pdbid,lig3,asym_id,ligIdx))
+    filename="%s/output/%s.pdb.gz"%(rootdir,prefix)
+    cmd="%s/script/receptor1 %s -"%(rootdir,filename)
+    print(cmd)
+    if not os.path.isfile(filename):
+        exit()
+    p=subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
+    stdout,stderr=p.communicate()
+    print(stdout.decode())
+    return
+
 def display_protein_receptor(pdbid,asym_id,title):
     taxon_dict=read_taxon()
     prefix="%s%s"%(pdbid,asym_id)
@@ -624,7 +646,8 @@ $explainLabel
 [<a href="javascript:Jmol.script(jmolApplet0, 'set antialiasDisplay false')">Low quality</a>]<p></p>
 [<a href="javascript:Jmol.script(jmolApplet0, 'color background white')">White quality</a>]<br>
 [<a href="javascript:Jmol.script(jmolApplet0, 'color background black')">Black quality</a>]<p></p>
-[<a href=output/$prefix.pdb.gz>Download</a>]
+[<a href=output/$prefix.pdb.gz>Download</a>]<br>
+[<a href=?pdbid=$pdbid&chain=$asym_id&outfmt=1 download=$prefix.pdb>Download structure with residue number starting from 1</a>]
     </td></tr></table>
 
 
@@ -748,6 +771,7 @@ def display_interaction(pdbid,asym_id,bs,title):
     <tr><td>&gt;$pdbid Chain $asym_id (length=$L) $species
     [<a href=ssearch.cgi?seq_type=protein&sequence=$sequence target=_blank>Search protein sequence</a>]
     [<a href=output/$prefix.pdb.gz>Download receptor structure</a>]
+    [<a href=?pdbid=$pdbid&chain=$asym_id&outfmt=1 download=$prefix.pdb>Download structure with residue number starting from 1</a>]
     [<a href=?pdb=$pdbid&chain=$asym_id target=_blank>View receptor structure</a>]
     </td></tr>
     <tr><td><span title="Only residues with experimentally determined coordinates are included. Residues unobserved in the structure are excluded.">$seq_txt</span></td></tr>
@@ -853,6 +877,7 @@ def display_interaction(pdbid,asym_id,bs,title):
 <tr><td>&gt;$pdbid Chain $asym_id (length=$L) $species
 [<a href=ssearch.cgi?seq_type=$lig3&sequence=$sequence>Search $code sequence</a>]
 [<a href=output/$prefix.pdb.gz>Download ligand structure</a>]
+[<a href=?pdbid=$pdbid&chain=$asym_id&lig3=$lig3&outfmt=1 download=$prefix.pdb>Download structure with residue number starting from 1</a>]
 [<a href=?pdb=$pdbid&chain=$asym_id&lig3=$lig3&ligIdx=0 target=_blank>View ligand structure</a>]
 </td></tr>
 <tr><td><span title="Only residues with experimentally determined coordinates are included. Residues unobserved in the structure are excluded.">$seq_txt</span></td></tr>
@@ -894,7 +919,10 @@ used by the PDB database."><a href=https://rcsb.org/ligand/$lig3>$lig3</a></span
         <tr><td align=center>SMILES</td><td>$SMILES</td></tr>
         <tr BGCOLOR="#DEDEDE"><td align=center>Formula</td><td>$formula</td></tr>
         <tr><td align=center>Name</td><td>$name</td></tr>
-        <tr BGCOLOR="#DEDEDE"><td align=center>Chain</td><td>$pdbid Chain $asym_id [<a href=output/$prefix.pdb.gz>Download ligand structure</a>] [<a href=?pdb=$pdbid&chain=$asym_id&lig3=$lig3&ligIdx=$ligIdx target=_blank>View ligand structure</a>]
+        <tr BGCOLOR="#DEDEDE"><td align=center>Chain</td><td>$pdbid Chain $asym_id 
+        [<a href=output/$prefix.pdb.gz>Download ligand structure</a>] 
+        [<a href=?pdb=$pdbid&chain=$asym_id&lig3=$lig3&ligIdx=$ligIdx&outfmt=1 download=$prefix.pdb>Download structure with residue number starting from 1</a>] 
+        [<a href=?pdb=$pdbid&chain=$asym_id&lig3=$lig3&ligIdx=$ligIdx target=_blank>View ligand structure</a>]
         </td></tr>
     </table>
     </td>
@@ -1072,11 +1100,19 @@ if __name__=="__main__":
     if not pdbid:
         pdbid=form.getfirst("pdbid",'').lower()
     asym_id=form.getfirst("chain",'')
+    if not asym_id:
+        asym_id=form.getfirst("asym_id",'')
     bs     =form.getfirst("bs",'').upper()
     ligIdx =form.getfirst("idx",'')
     if not ligIdx:
         ligIdx =form.getfirst("ligIdx",'')
     lig3   =form.getfirst("lig3",'')
+    outfmt =form.getfirst("outfmt",'')
+    
+    if outfmt=='1':
+        download_pdb1(pdbid,asym_id,lig3,ligIdx)
+        exit(0)
+        
 
     print("Content-type: text/html\n")
     print('''<html>

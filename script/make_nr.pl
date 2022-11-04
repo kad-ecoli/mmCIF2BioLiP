@@ -312,9 +312,9 @@ foreach my $divided(`ls $rootdir/weekly/|grep -P "BioLiP_\\w+\\.bsr\\.gz"|cut -f
     foreach my $filename(@filename_list)
     {
         next if (-s "$rootdir/weekly/$divided/receptor_nr/$filename"  &&
-                 -s "$rootdir/weekly/$divided/receptor_nr1/$filename" &&
-                !-s "$rootdir/weekly/$divided/receptor/$filename"     &&
-                !-s "$rootdir/weekly/$divided/receptor1/$filename");
+              #  -s "$rootdir/weekly/$divided/receptor_nr1/$filename" &&
+              # !-s "$rootdir/weekly/$divided/receptor1/$filename"    &&
+                !-s "$rootdir/weekly/$divided/receptor/$filename");
         system("mv $rootdir/weekly/$divided/receptor/$filename $rootdir/weekly/$divided/receptor_nr/$filename");
         system("mv $rootdir/weekly/$divided/receptor1/$filename $rootdir/weekly/$divided/receptor_nr1/$filename");
     }
@@ -326,7 +326,7 @@ foreach my $divided(`ls $rootdir/weekly/|grep -P "BioLiP_\\w+\\.bsr\\.gz"|cut -f
                 !-s "$rootdir/weekly/$divided/ligand/$filename");
         system("mv $rootdir/weekly/$divided/ligand/$filename $rootdir/weekly/$divided/ligand_nr/$filename");
     }
-    system("cd $rootdir/weekly/$divided/; tar -cjf $rootdir/weekly/receptor1_${divided}_nr.tar.bz2 receptor_nr1/");
+    #system("cd $rootdir/weekly/$divided/; tar -cjf $rootdir/weekly/receptor1_${divided}_nr.tar.bz2 receptor_nr1/");
     system("cd $rootdir/weekly/$divided/; tar -cjf $rootdir/weekly/receptor_${divided}_nr.tar.bz2 receptor_nr/");
     system("cd $rootdir/weekly/$divided/; tar -cjf $rootdir/weekly/ligand_${divided}_nr.tar.bz2 ligand_nr/");
 }
@@ -415,12 +415,6 @@ my $html_head =<<EOF
 <body bgcolor="#F0FFF0">
 <img src=images/BioLiP1.png ></br>
 <p><a href=.>[Back to database home]</a></p>
-<style>
-table, th, td {
-  border: 1px solid black;
-  border-collapse: collapse;
-}
-</style>
 EOF
 ;
 
@@ -431,23 +425,37 @@ For your convenience, you can use this Perl script for automatic download of all
 Non-redundant dataset is a subset of the redundant dataset by protein sequence clustering at 90% sequence identity.
 For both redundant and non-redundant datasets, the following files are provided:
 <br><br>
-<li>Receptor: 3D structure of proteins interacting with at least one biologically relevent ligand; original PDB residue numbering.</li>
-<li>Receptor1: the same as above but with with residues re-numbered starting from 1.</li>
+<li>Receptor: 3D structure of proteins interacting with at least one biologically relevent ligand; original PDB residue numbering.
+    Due to hard disk space constraints, BioLiP no longer provides separate batch download for receptor structures with residue number starting from 1. However, we provide a C++ program at <a href=script/receptor1.cpp>receptor1.cpp</a> to facilitate the generation of such files by the user.</li>
 <li>Ligand: 3D structures of biologically relevant ligands</li>
 <li>Annotations: The annotations for each ligand-protein interaction site, as explained in <a href=download/readme.txt>README</a>.
 <br><br>
-<table border=2>
-<tr><th width=10%>ID</th><th colspan="4" width=45%>Redundant set</th> <th colspan="4" width=45%>Non-redundant set</th></tr>
+
+<style>
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+  text-align: center;
+}
+</style>
+
+<table border=2 width=100%>
+<tr><th width=10%>ID</th><th colspan=3 width=45%>Redundant set</th> <th colspan=3 width=45%>Non-redundant set</th></tr>
 EOF
 ;
-foreach my $divided(`ls $rootdir/weekly/|grep -P "BioLiP_\\w+\\.bsr\\.gz"|cut -f1 -d.|cut -f2 -d_`)
+#foreach my $divided(`ls $rootdir/weekly/|grep -P "BioLiP_\\w+\\.bsr\\.gz"|cut -f1 -d.|cut -f2 -d_`)
+foreach my $divided(`ls $rootdir/weekly/|grep -P "receptor_\\w{2}\\.tar\\.bz2"|cut -f1 -d.|cut -f2 -d_`)
 {
     chomp($divided);
     $html.=<<EOF
 
 <tr><td>$divided</td>
-<td align=middle> <a href=weekly/receptor_$divided.tar.bz2>Receptor</a> </td> <td align=middle> <a href=weekly/receptor1_$divided.tar.bz2> Recepto1 </a></td> <td align=middle> <a href=weekly/ligand_$divided.tar.bz2>Ligand</a> </td> <td align=middle> <a href=weekly/BioLiP_$divided.txt>Annotation</a></td>
-<td align=middle> <a href=weekly/receptor_${divided}_nr.tar.bz2>Receptor</a> </td> <td align=middle> <a href=weekly/receptor1_${divided}_nr.tar.bz2> Recepto1 </a></td> <td align=middle> <a href=weekly/ligand_${divided}_nr.tar.bz2>Ligand</a> </td> <td align=middle> <a href=weekly/BioLiP_${divided}_nr.txt>Annotation</a></td>
+    <td><a href=weekly/receptor_$divided.tar.bz2>Receptor</a> </td>
+    <td><a href=weekly/ligand_$divided.tar.bz2>Ligand</a> </td>
+    <td><a href=weekly/BioLiP_$divided.txt>Annotation</a></td>
+    <td><a href=weekly/receptor_${divided}_nr.tar.bz2>Receptor</a> </td>
+    <td><a href=weekly/ligand_${divided}_nr.tar.bz2>Ligand</a> </td> 
+    <td><a href=weekly/BioLiP_${divided}_nr.txt>Annotation</a></td>
 </tr>
 
 EOF
@@ -468,6 +476,10 @@ if (scalar @html_items>=2)
 {
     $html_head=$html_items[0];
     $html_tail=$html_items[2];
+    if (scalar @html_items>=3)
+    {
+        $html_tail=$html_items[3];
+    }
 }
 
 open(FP,">$rootdir/weekly.html");
