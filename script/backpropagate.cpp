@@ -133,12 +133,12 @@ void parse_is_a_file(const string &is_a_filename,
         Split(line, line_vec, '\t');
         GOterm       =line_vec[0];
         Aspect       =line_vec[1];
-        is_a_direct  =line_vec[2];
-        is_a_indirect=line_vec[3];
-        for (i=0;i<line_vec.size();i++) line_vec[i].clear(); line_vec.clear();
+        is_a_direct  =(line_vec.size()>2)?line_vec[2]:"";
+        is_a_indirect=(line_vec.size()>3)?line_vec[3]:"";
+        clear_line_vec(line_vec);
         Split(is_a_direct,line_vec,',');
         is_a_dict[GOterm]=line_vec;
-        for (i=0;i<line_vec.size();i++) line_vec[i].clear(); line_vec.clear();
+        clear_line_vec(line_vec);
         Split(is_a_indirect,line_vec,',');
         for (i=0;i<line_vec.size();i++)
         {
