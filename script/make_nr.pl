@@ -397,7 +397,7 @@ system("rm $rootdir/data/title.tsv");
 print "generation $rootdir/download/lig_frequency.txt\n";
 my $today=`date '+%Y-%m-%d'`;
 chomp($today);
-my $txt=<<EOF
+$txt=<<EOF
 #Please note that "peptide" is named III in old BioLiP; "rna" and "dna" are named "NUC" in old BioLiP
 #The following statistics is based on the version $today of BioLiP.
 
@@ -446,7 +446,6 @@ For both redundant and non-redundant datasets, the following files are provided:
 <li>Receptor: 3D structure of proteins interacting with at least one biologically relevent ligand; original PDB residue numbering.
     Due to hard disk space constraints, BioLiP no longer provides separate batch download for receptor structures with residue number starting from 1. However, we provide a C++ program at <a href=script/receptor1.cpp>receptor1.cpp</a> to facilitate the generation of such files by the user.</li>
 <li>Ligand: 3D structures of biologically relevant ligands</li>
-<li>Annotations: The annotations for each ligand-protein interaction site, as explained in <a href=download/readme.txt>README</a>.
 <br><br>
 
 <style>

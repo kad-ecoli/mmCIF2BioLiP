@@ -7,7 +7,8 @@ my $rootdir = dirname($bindir);
 
 print "download PDB\n";
 system("mkdir -p $rootdir/pdb/derived_data/index/");
-system("wget https://files.wwpdb.org/pub/pdb/derived_data/index/resolu.idx -O $rootdir/pdb/derived_data/index/resolu.idx");
+system("wget http://files.wwpdb.org/pub/pdb/derived_data/index/resolu.idx -O $rootdir/pdb/derived_data/index/resolu.idx");
+system("wget ftp://files.wwpdb.org/pub/pdb/derived_data/index/resolu.idx -O $rootdir/pdb/derived_data/index/resolu.idx") if (!-s "$rootdir/pdb/derived_data/index/resolu.idx");
 if (!-s "$rootdir/pdb/derived_data/index/resolu.idx")
 {
     print "ERROR! cannot download $rootdir/pdb/derived_data/index/resolu.idx\n";
@@ -31,7 +32,13 @@ foreach my $pdb(`grep ';' $rootdir/pdb/derived_data/index/resolu.idx|cut -f1 -d'
     system("$cmd");
     if (!-s "$inputdir/$pdb.cif.gz")
     {
-        print "ERROR! cannot download $inputdir/$pdb.cif.gz\n";
+        my $cmd="wget -q https://files.rcsb.org/download/$pdb.cif.gz -O $inputdir/$pdb.cif.gz";
+        print "$cmd\n";
+        system("$cmd");
+        if (!-s "$inputdir/$pdb.cif.gz")
+        {
+            print "ERROR! cannot download $inputdir/$pdb.cif.gz\n";
+        }
     }
 }
 

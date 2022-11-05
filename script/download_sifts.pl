@@ -10,10 +10,12 @@ my $rootdir = dirname($bindir);
 print "download go\n";
 system("mkdir -p $rootdir/obo/go/") if (!-d "$rootdir/obo/go/");
 system("wget http://purl.obolibrary.org/obo/go/go-basic.obo -O $rootdir/obo/go/go-basic.obo");
+system("wget http://current.geneontology.org/ontology/go-basic.obo -O $rootdir/obo/go/go-basic.obo") if (!-s "$rootdir/obo/go/go-basic.obo");
 
 print "download swissprot\n";
 system("mkdir -p $rootdir/uniprot/current_release/knowledgebase/complete") if (!-d "$rootdir/uniprot/current_release/knowledgebase/complete");
-system("wget https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.fasta.gz -O $rootdir/uniprot/current_release/knowledgebase/complete/uniprot_sprot.fasta.gz");
+system("wget http://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.fasta.gz -O $rootdir/uniprot/current_release/knowledgebase/complete/uniprot_sprot.fasta.gz");
+system("wget  ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.fasta.gz -O $rootdir/uniprot/current_release/knowledgebase/complete/uniprot_sprot.fasta.gz") if (!-s "$rootdir/uniprot/current_release/knowledgebase/complete/uniprot_sprot.fasta.gz");
 
 print "download sifts\n";
 system("mkdir -p $rootdir/sifts/flatfiles/tsv");
@@ -23,11 +25,13 @@ foreach my $filename(("pdb_chain_uniprot.tsv.gz",
                       "pdb_chain_enzyme.tsv.gz",
                       "pdb_chain_go.tsv.gz"))
 {
-    system("wget ftp://ftp.ebi.ac.uk/pub/databases/msd/sifts/flatfiles/tsv/$filename -O $rootdir/sifts/flatfiles/tsv/$filename");
+    system("wget http://ftp.ebi.ac.uk/pub/databases/msd/sifts/flatfiles/tsv/$filename -O $rootdir/sifts/flatfiles/tsv/$filename");
+    system("wget  ftp://ftp.ebi.ac.uk/pub/databases/msd/sifts/flatfiles/tsv/$filename -O $rootdir/sifts/flatfiles/tsv/$filename") if (!-s "$rootdir/sifts/flatfiles/tsv/$filename");
 }
 
 system("mkdir -p $rootdir/taxonomy");
-system("wget ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz -O $rootdir/taxonomy/taxdump.tar.gz");
+system("wget http://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz -O $rootdir/taxonomy/taxdump.tar.gz");
+system("wget  ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz -O $rootdir/taxonomy/taxdump.tar.gz") if (!-s "$rootdir/taxonomy/taxdump.tar.gz");
 system("cd $rootdir/taxonomy; tar -xvf taxdump.tar.gz names.dmp");
 if (-s "$rootdir/taxonomy/names.dmp")
 {
