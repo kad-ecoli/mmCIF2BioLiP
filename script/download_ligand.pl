@@ -9,7 +9,8 @@ my $rootdir = dirname($bindir);
 
 print "download enzyme\n";
 system("mkdir -p $rootdir/enzyme/") if (!-d "$rootdir/enzyme/");
-system("wget https://ftp.expasy.org/databases/enzyme/enzyme.dat -O $rootdir/enzyme/enzyme.dat");
+system("wget http://ftp.expasy.org/databases/enzyme/enzyme.dat -O $rootdir/enzyme/enzyme.dat");
+system("wget ftp://ftp.expasy.org/databases/enzyme/enzyme.dat -O $rootdir/enzyme/enzyme.dat") if (!-s"$rootdir/enzyme/enzyme.dat");
 my $ID;
 my $DE;
 my $txt;
