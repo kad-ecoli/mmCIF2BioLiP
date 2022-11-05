@@ -27,6 +27,7 @@
     chcon -t httpd_sys_script_exec_t script/blastn
     chcon -t httpd_sys_script_exec_t script/blastp
     chcon -t httpd_sys_script_exec_t graphviz/bin/dot
+    chcon -t httpd_sys_script_exec_t graphviz/lib/*so*
     chcon -t httpd_sys_rw_content_t  output/
 
 # You can check the context by
