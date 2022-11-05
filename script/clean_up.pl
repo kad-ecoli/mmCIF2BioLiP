@@ -21,6 +21,13 @@ foreach my $filename(`find $rootdir/output/*.svg -mmin +60 2>/dev/null`)
     #print "$cmd\n";
     system("$cmd");
 }
+foreach my $filename(`find $rootdir/output/*.dot -mmin +60 2>/dev/null`)
+{
+    chomp($filename);
+    my $cmd="rm -f $filename";
+    #print "$cmd\n";
+    system("$cmd");
+}
 
 #### check data loss ####
 my $hasLoss=0;
