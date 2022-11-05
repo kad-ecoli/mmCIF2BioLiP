@@ -372,7 +372,7 @@ foreach my $pdbid(`zcat $rootdir/data/pdb_all.tsv.gz |tail -n +2|cut -f1|sort|un
 }
 my %pdb_dict=map { $_, 0 } @pdb_list; 
 my $pdbid;
-foreach my $line(`head -1 -v $rootdir/interim/*/*.txt`)
+foreach my $line(`head -1 -v $rootdir/interim/*/*.txt|sed 's/\\t/ /g'`)
 {
     chomp($line);
     if (length $line==0)
