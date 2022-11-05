@@ -459,7 +459,8 @@ Sort results by
 <input type=hidden name=got     value='%s'>
 <input type=hidden name=ligname value='%s'>
 <input type=hidden name=pubmed  value='%s'>
-</form>'''%(pdbid,lig3,uniprot,ecn,got,ligname,pubmed)
+<input type=hidden name=baff  value='%s'>
+</form>'''%(pdbid,lig3,uniprot,ecn,got,ligname,pubmed,baff)
 ).replace('value="%s"'%order,
           'value="%s" selected="selected"'%order))
 
