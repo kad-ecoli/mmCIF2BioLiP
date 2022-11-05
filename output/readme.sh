@@ -31,5 +31,5 @@
 
 # You can check the context by
 
-    ls -laZ *cgi script/NWalign script/blastn script/blastp graphviz/bin/dot
+    ls -laZ *cgi script/NWalign script/blastn script/blastp graphviz/bin/dot script/receptor1
     ls -laZ|grep output
