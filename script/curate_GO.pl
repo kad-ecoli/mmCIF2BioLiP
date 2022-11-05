@@ -158,6 +158,11 @@ EOF
 ;
 close(FP);
 
+print "generating $rootdir/download/BioLiP*.txt.gz\n";
+system("cd $rootdir/weekly; cat `ls BioLiP*_nr.txt`|sort > $rootdir/download/BioLiP_nr.txt");
+system("cd $rootdir/weekly; cat `ls $rootdir/weekly/BioLiP*.txt|grep -v _nr.txt`|sort > $rootdir/download/BioLiP.txt");
+system("gzip -f $rootdir/download/BioLiP_nr.txt");
+system("gzip -f $rootdir/download/BioLiP.txt");
 
 exit(0);
 

@@ -458,7 +458,7 @@ table, th, td {
 </style>
 
 <table border=2 width=100%>
-<tr><th width=10%>ID</th><th colspan=3 width=45%>Redundant set</th> <th colspan=3 width=45%>Non-redundant set</th></tr>
+<tr><th width=10%>ID</th><th colspan=2 width=45%>Redundant set</th> <th colspan=2 width=45%>Non-redundant set</th></tr>
 EOF
 ;
 #foreach my $divided(`ls $rootdir/weekly/|grep -P "BioLiP_\\w+\\.bsr\\.gz"|cut -f1 -d.|cut -f2 -d_`)
@@ -470,10 +470,8 @@ foreach my $divided(`ls $rootdir/weekly/|grep -P "receptor_\\w{2}\\.tar\\.bz2"|c
 <tr><td>$divided</td>
     <td><a href=weekly/receptor_$divided.tar.bz2>Receptor</a> </td>
     <td><a href=weekly/ligand_$divided.tar.bz2>Ligand</a> </td>
-    <td><a href=weekly/BioLiP_$divided.txt>Annotation</a></td>
     <td><a href=weekly/receptor_${divided}_nr.tar.bz2>Receptor</a> </td>
     <td><a href=weekly/ligand_${divided}_nr.tar.bz2>Ligand</a> </td> 
-    <td><a href=weekly/BioLiP_${divided}_nr.txt>Annotation</a></td>
 </tr>
 
 EOF
