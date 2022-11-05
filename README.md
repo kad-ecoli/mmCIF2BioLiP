@@ -19,7 +19,6 @@ Reinstall cd-hit, makeblastdb, blastn and blastp if using other operating system
 wget https://gitlab.com/api/v4/projects/4207231/packages/generic/graphviz-releases/6.0.2/graphviz-6.0.2.tar.gz
 tar -xvf graphviz-6.0.2.tar.gz
 mkdir ../graphviz
-export LDFLAGS=-static
 ./configure --prefix=`readlink -e ../graphviz`
 make
 make install
