@@ -482,9 +482,16 @@ def display_go(go,uniprot,pdbid,asym_id):
             stdin=subprocess.PIPE,stdout=subprocess.PIPE)
         stdout,stderr=p.communicate(input=GVtxt.encode('utf-8'))
         svgtxt=stdout.decode()
-        fp=open(filename,'w')
-        fp.write(svgtxt)
-        fp.close()
+        if len(svgtxt):
+            fp=open(filename,'w')
+            fp.write(svgtxt)
+            fp.close()
+        else:
+            dotfilename="%s/output/%s_%s_%s.dot"%(rootdir,pdbid,asym_id,Aspect)
+            fp=open(dotfilename,'w')
+            fp.write(dotfilename)
+            fp.close()
+            os.system(dot+" -Tsvg -O "+dotfilename)
 
     print('''   </table>
     <table width=100% border="0" style="font-family:Monospace;font-size:14px;background:#F2F2F2;" >
