@@ -162,7 +162,7 @@ fp.close()
 pdb2name_dict=dict()
 fp=gzip.open(rootdir+"/data/title.tsv.gz",'rt')
 for line in fp.read().splitlines():
-    p,name=line.split('\t')
+    p,name=line.split('\t')[:2]
     pdb2name_dict[p]=name
 fp.close()
 
