@@ -82,6 +82,8 @@ close(FP);
 &gzipFile("$rootdir/data/uniprot_sprot.tsv");
 
 print "generating $rootdir/data/index.txt\n";
+my $today=`date '+%Y-%m-%d'`;
+chomp($today);
 my $numProtein  =`zcat $rootdir/data/pdb_all.tsv.gz|wc -l`-1;
 my $numRegular  =0;
 my $numMetal    =0;
