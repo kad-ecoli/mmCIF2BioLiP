@@ -489,7 +489,7 @@ def display_go(go,uniprot,pdbid,asym_id):
         else:
             dotfilename="%s/output/%s_%s_%s.dot"%(rootdir,pdbid,asym_id,Aspect)
             fp=open(dotfilename,'w')
-            fp.write(dotfilename)
+            fp.write(GVtxt)
             fp.close()
             os.system(dot+" -Tsvg -O "+dotfilename)
 
