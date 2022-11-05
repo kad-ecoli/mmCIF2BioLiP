@@ -2315,6 +2315,7 @@ void receptor1(const string &infile,const string&outfile)
             buf.str(string());
             if (newresi.size()==4) newresi+=" ";
             txt+=line.substr(0,22)+newresi.substr(0,5)+line.substr(27)+"\n";
+            //txt+=line.substr(0,22)+newresi.substr(0,5)+line.substr(27,27)+"\n";
             prev_resi=resi;
         }
         else txt+=line+"\n";

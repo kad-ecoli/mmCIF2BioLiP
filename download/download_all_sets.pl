@@ -35,7 +35,6 @@ close(OUT);
 foreach my $r(@all)
 {        
     my $rec="receptor_$r.tar.bz2";
-    my $rec1="receptor1_$r.tar.bz2";
     my $lig="ligand_$r.tar.bz2";
     my $ano="BioLiP_$r.txt";
     my $ano1="BioLiP_$r\_nr.txt";
@@ -43,8 +42,6 @@ foreach my $r(@all)
 	print "Dowload redundant set for the week $r...\n";    
 	system("wget -o log -c $head/$rec") == 0 or die "System call failed: $!";
 	system("tar -xvf $rec >log")== 0 or die "System call failed: $!";
-	system("wget -o log -c $head/$rec1") == 0 or die "System call failed: $!";
-	system("tar -xvf $rec1>log")== 0 or die "System call failed: $!";
 	system("wget -o log -c $head/$lig") == 0 or die "System call failed: $!";
 	system("tar -xvf $lig >log")== 0 or die "System call failed: $!";
 	system("wget -o log -c $head/$ano") == 0 or die "System call failed: $!"; 
@@ -52,12 +49,9 @@ foreach my $r(@all)
 	
 	print "Dowload non-redundant set for the week $r...\n";
 	$rec="receptor_$r\_nr.tar.bz2";
-	$rec1="receptor1_$r\_nr.tar.bz2";
 	$lig="ligand_$r\_nr.tar.bz2";
 	system("wget -o log -c $head/$rec") == 0 or die "System call failed: $!";
 	system("tar -xvf $rec >log")== 0 or die "System call failed: $!";
-	system("wget -o log -c $head/$rec1") == 0 or die "System call failed: $!";
-	system("tar -xvf $rec1>log")== 0 or die "System call failed: $!";
 	system("wget -o log -c $head/$lig") == 0 or die "System call failed: $!";
 	system("tar -xvf $lig >log")== 0 or die "System call failed: $!";
 	system("wget -o log -c $head/$ano1") == 0 or die "System call failed: $!"; 
