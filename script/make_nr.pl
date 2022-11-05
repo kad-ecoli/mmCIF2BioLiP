@@ -364,19 +364,35 @@ foreach my $prefix(("pdb_all","pdb_nr","lig_all","lig_nr"))
 
 print "generating $rootdir/data/title.tsv\n";
 my $txt="";
+my @pdb_list;
 foreach my $pdbid(`zcat $rootdir/data/pdb_all.tsv.gz |tail -n +2|cut -f1|sort|uniq`)
 {
     chomp($pdbid);
-    my $divided=substr($pdbid,(length $pdbid)-3,2);
-    my $title=`head -1 $rootdir/interim/$divided/$pdbid.txt`;
-    chomp($title);
-    next if (length $title==0);
-    $txt.="$pdbid\t$title\n";
+    push(@pdb_list,($pdbid));
+}
+my %pdb_dict=map { $_, 0 } @pdb_list; 
+my $pdbid;
+foreach my $line(`head -1 -v $rootdir/interim/*/*.txt`)
+{
+    chomp($line);
+    if (length $line==0)
+    {
+        next;
+    }
+    elsif ($line=~/==> \S+\/(\w+)\.txt <==/)
+    {
+        $pdbid="$1";
+    }
+    elsif (exists $pdb_dict{$pdbid})
+    {
+        $txt.="$pdbid\t$line\n";
+    }
 }
 open(FP,">$rootdir/data/title.tsv");
 print FP $txt;
 close(FP);
-system("gzip -f $rootdir/data/title.tsv");
+system("cat $rootdir/data/title.tsv|sort |gzip - > $rootdir/data/title.tsv.gz");
+system("rm $rootdir/data/title.tsv");
 
 print "generation $rootdir/download/lig_frequency.txt\n";
 my $today=`date '+%Y-%m-%d'`;
