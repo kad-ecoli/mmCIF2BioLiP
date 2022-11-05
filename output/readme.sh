@@ -27,9 +27,11 @@
     chcon -t httpd_sys_script_exec_t script/blastn
     chcon -t httpd_sys_script_exec_t script/blastp
     chcon -t httpd_sys_script_exec_t graphviz/bin/dot
+    chcon -t httpd_sys_script_exec_t graphviz/lib/*so*
+    chcon -t httpd_sys_script_exec_t graphviz/lib/graphviz/*so*
     chcon -t httpd_sys_rw_content_t  output/
 
 # You can check the context by
 
-    ls -laZ *cgi script/NWalign script/blastn script/blastp graphviz/bin/dot
+    ls -laZ *cgi script/NWalign script/blastn script/blastp graphviz/bin/dot script/receptor1
     ls -laZ|grep output

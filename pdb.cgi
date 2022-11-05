@@ -54,15 +54,16 @@ def display_ligand(pdbid,asym_id,lig3,ligIdx,title):
     filename="%s/output/%s.pdb.gz"%(rootdir,prefix)
     if not os.path.isfile(filename):
         divided=pdbid[-3:-1]
-        tar = tarfile.open("%s/weekly/ligand_%s.tar.bz2"%(rootdir,divided))
-        fin=tar.extractfile("ligand/%s.pdb"%prefix)
-        lines=fin.read().decode().splitlines()
-        txt=''
-        for line in lines:
-            if line.startswith("ATOM") or line.startswith("HETATM"):
-                txt+=line[:20]+" L"+line[22:]+'\n'
-            else:
-                txt+=line+'\n'
+        if os.path.isfile("%s/weekly/ligand_%s.tar.bz2"%(rootdir,divided)):
+            tar = tarfile.open("%s/weekly/ligand_%s.tar.bz2"%(rootdir,divided))
+            fin=tar.extractfile("ligand/%s.pdb"%prefix)
+            lines=fin.read().decode().splitlines()
+            txt=''
+            for line in lines:
+                if line.startswith("ATOM") or line.startswith("HETATM"):
+                    txt+=line[:20]+" L"+line[22:]+'\n'
+                else:
+                    txt+=line+'\n'
         fout=gzip.open(filename,'wt')
         fout.write(txt)
         fout.close()
@@ -481,9 +482,16 @@ def display_go(go,uniprot,pdbid,asym_id):
             stdin=subprocess.PIPE,stdout=subprocess.PIPE)
         stdout,stderr=p.communicate(input=GVtxt.encode('utf-8'))
         svgtxt=stdout.decode()
-        fp=open(filename,'w')
-        fp.write(svgtxt)
-        fp.close()
+        if len(svgtxt):
+            fp=open(filename,'w')
+            fp.write(svgtxt)
+            fp.close()
+        else:
+            dotfilename="%s/output/%s_%s_%s.dot"%(rootdir,pdbid,asym_id,Aspect)
+            fp=open(dotfilename,'w')
+            fp.write(GVtxt)
+            fp.close()
+            os.system(dot+" -Tsvg -O "+dotfilename)
 
     print('''   </table>
     <table width=100% border="0" style="font-family:Monospace;font-size:14px;background:#F2F2F2;" >
@@ -586,20 +594,21 @@ def display_protein_receptor(pdbid,asym_id,title):
     filename="%s/output/%s.pdb.gz"%(rootdir,prefix)
     if not os.path.isfile(filename):
         divided=pdbid[-3:-1]
-        tar = tarfile.open("%s/weekly/receptor_%s.tar.bz2"%(rootdir,divided))
-        fin=tar.extractfile("receptor/%s.pdb"%prefix)
-        lines=fin.read().decode().splitlines()
-        txt=''
-        for line in lines:
-            if line.startswith("ATOM") or line.startswith("HETATM"):
-                txt+=line[:20]+" R"+line[22:]+'\n'
-            else:
-                txt+=line+'\n'
-        fout=gzip.open(filename,'wt')
-        fout.write(txt)
-        fout.close()
-        fin.close()
-        tar.close()
+        if os.path.isfile("%s/weekly/receptor_%s.tar.bz2"%(rootdir,divided)):
+            tar = tarfile.open("%s/weekly/receptor_%s.tar.bz2"%(rootdir,divided))
+            fin=tar.extractfile("receptor/%s.pdb"%prefix)
+            lines=fin.read().decode().splitlines()
+            txt=''
+            for line in lines:
+                if line.startswith("ATOM") or line.startswith("HETATM"):
+                    txt+=line[:20]+" R"+line[22:]+'\n'
+                else:
+                    txt+=line+'\n'
+            fout=gzip.open(filename,'wt')
+            fout.write(txt)
+            fout.close()
+            fin.close()
+            tar.close()
 
     script=''
     explainLabel=''
@@ -822,23 +831,24 @@ def display_interaction(pdbid,asym_id,bs,title):
     z_list=[]
     if not os.path.isfile(filename):
         divided=pdbid[-3:-1]
-        tar = tarfile.open("%s/weekly/ligand_%s.tar.bz2"%(rootdir,divided))
-        fin=tar.extractfile("ligand/%s.pdb"%lig_prefix)
-        lines=fin.read().decode().splitlines()
-        txt=''
-        for line in lines:
-            if line.startswith("ATOM") or line.startswith("HETATM"):
-                txt+=line[:20]+" L"+line[22:]+'\n'
-                x_list.append(float(line[30:38]))
-                y_list.append(float(line[38:46]))
-                z_list.append(float(line[46:54]))
-            else:
-                txt+=line+'\n'
-        fout=gzip.open(filename,'wt')
-        fout.write(txt)
-        fout.close()
-        fin.close()
-        tar.close()
+        if os.path.isfile("%s/weekly/ligand_%s.tar.bz2"%(rootdir,divided)):
+            tar = tarfile.open("%s/weekly/ligand_%s.tar.bz2"%(rootdir,divided))
+            fin=tar.extractfile("ligand/%s.pdb"%lig_prefix)
+            lines=fin.read().decode().splitlines()
+            txt=''
+            for line in lines:
+                if line.startswith("ATOM") or line.startswith("HETATM"):
+                    txt+=line[:20]+" L"+line[22:]+'\n'
+                    x_list.append(float(line[30:38]))
+                    y_list.append(float(line[38:46]))
+                    z_list.append(float(line[46:54]))
+                else:
+                    txt+=line+'\n'
+            fout=gzip.open(filename,'wt')
+            fout.write(txt)
+            fout.close()
+            fin.close()
+            tar.close()
     else:
         fin=gzip.open(filename,'rt')
         for line in fin.read().splitlines():
@@ -847,9 +857,14 @@ def display_interaction(pdbid,asym_id,bs,title):
                 y_list.append(float(line[38:46]))
                 z_list.append(float(line[46:54]))
         fin.close()
-    xcen=sum(x_list)/len(x_list)
-    ycen=sum(y_list)/len(y_list)
-    zcen=sum(z_list)/len(z_list)
+    if len(x_list):
+        xcen=sum(x_list)/len(x_list)
+        ycen=sum(y_list)/len(y_list)
+        zcen=sum(z_list)/len(z_list)
+    else:
+        xcen=0
+        ycen=0
+        zcen=0
     print('''
 <tr><td>
 <div id="headerDiv">
@@ -965,20 +980,21 @@ used by the PDB database."><a href=https://rcsb.org/ligand/$lig3>$lig3</a></span
     filename="%s/output/%s.pdb.gz"%(rootdir,prefix)
     if not os.path.isfile(filename):
         divided=pdbid[-3:-1]
-        tar = tarfile.open("%s/weekly/receptor_%s.tar.bz2"%(rootdir,divided))
-        fin=tar.extractfile("receptor/%s.pdb"%prefix)
-        lines=fin.read().decode().splitlines()
-        txt=''
-        for line in lines:
-            if line.startswith("ATOM") or line.startswith("HETATM"):
-                txt+=line[:20]+" R"+line[22:]+'\n'
-            else:
-                txt+=line+'\n'
-        fout=gzip.open(filename,'wt')
-        fout.write(txt)
-        fout.close()
-        fin.close()
-        tar.close()
+        if os.path.isfile("%s/weekly/receptor_%s.tar.bz2"%(rootdir,divided)):
+            tar = tarfile.open("%s/weekly/receptor_%s.tar.bz2"%(rootdir,divided))
+            fin=tar.extractfile("receptor/%s.pdb"%prefix)
+            lines=fin.read().decode().splitlines()
+            txt=''
+            for line in lines:
+                if line.startswith("ATOM") or line.startswith("HETATM"):
+                    txt+=line[:20]+" R"+line[22:]+'\n'
+                else:
+                    txt+=line+'\n'
+            fout=gzip.open(filename,'wt')
+            fout.write(txt)
+            fout.close()
+            fin.close()
+            tar.close()
 
     script=''
     if resOrig:

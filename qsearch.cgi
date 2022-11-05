@@ -162,7 +162,7 @@ fp.close()
 pdb2name_dict=dict()
 fp=gzip.open(rootdir+"/data/title.tsv.gz",'rt')
 for line in fp.read().splitlines():
-    p,name=line.split('\t')
+    p,name=line.split('\t')[:2]
     pdb2name_dict[p]=name
 fp.close()
 
@@ -459,7 +459,8 @@ Sort results by
 <input type=hidden name=got     value='%s'>
 <input type=hidden name=ligname value='%s'>
 <input type=hidden name=pubmed  value='%s'>
-</form>'''%(pdbid,lig3,uniprot,ecn,got,ligname,pubmed)
+<input type=hidden name=baff  value='%s'>
+</form>'''%(pdbid,lig3,uniprot,ecn,got,ligname,pubmed,baff)
 ).replace('value="%s"'%order,
           'value="%s" selected="selected"'%order))
 

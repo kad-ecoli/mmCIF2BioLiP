@@ -21,6 +21,13 @@ foreach my $filename(`find $rootdir/output/*.svg -mmin +60 2>/dev/null`)
     #print "$cmd\n";
     system("$cmd");
 }
+foreach my $filename(`find $rootdir/output/*.dot -mmin +60 2>/dev/null`)
+{
+    chomp($filename);
+    my $cmd="rm -f $filename";
+    #print "$cmd\n";
+    system("$cmd");
+}
 
 #### check data loss ####
 my $hasLoss=0;
@@ -58,6 +65,17 @@ foreach my $divided(`ls $rootdir/weekly/|grep -F _nr.txt|cut -f2 -d_`)
         print "$cmd\n";
         system("$cmd");
     }
+    
+    if (-f "$rootdir/weekly/BioLiP_$divided.txt")
+    {
+        my $cmd="rm -rf $rootdir/weekly/BioLiP_$divided.txt";
+        print "$cmd\n";
+        system("$cmd");
+    }
+    
+    my $cmd="rm -rf $rootdir/weekly/BioLiP_${divided}_nr.txt";
+    print "$cmd\n";
+    system("$cmd");
 }
 
 foreach my $filename(`find $rootdir/interim/ -type f 2>/dev/null|grep -F .backup.gz`)

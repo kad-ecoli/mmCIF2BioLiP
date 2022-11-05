@@ -75,22 +75,30 @@ This script downloads MOAD to ``bind/every.csv`` and extract the summary to ``da
 
 Again optionally, follow instructions at [bind/README.md](bind/README.md) for how to semi-manually create PDBbind-CN summary at ``data/PDBbind.tsv``. This only need to be peformed annually.
 
-### Step 4: convert mmCIF to PDB format ###
-This step must be performed after step 1 (regardless of step 2 and 3).
+### Step 4: download auxilary data ###
+This step can be performed independent of step 1 to 8, but must be done before step 9.
+```bash
+./script/download_ligand.pl
+```
+This script downloads CCD ligand to ``pdb/data/monomers/components.cif.gz`` and extract their summary to ``data/ligand.tsv.gz``.
+This script downloads enzyme to ``enzyme/enzyme.dat`` and extract their summary to ``data/enzyme.tsv.gz``.
+
+### Step 5: convert mmCIF to PDB format ###
+This step must be performed after step 1 (regardless of step 2 to 4).
 ```bash
 ./script/curate_pdb.pl
 ```
 This script converts mmCIF files from ``pdb/data/structures/divided/mmCIF`` to ``interim/*/*.tar.gz`` and ``interim/*/*.txt``
 
-### Step 5: download pubmed abstract ###
-This step must be performed after step 2 and 4 (regardless of step 3).
+### Step 6: download pubmed abstract ###
+This step must be performed after step 2 and 5 (regardless of step 3 and 4).
 ```bash
 ./script/download_pubmed.pl
 ```
 This script checks ``interim/*/*.txt`` for artifact ligand and download pubmed abstract to ``pubmed/*.txt``
 
 ### Step 6: remove artifact and unbound ligand ###
-This step must be performed after step 5.
+This step must be performed after step 6.
 ```bash
 ./script/curate_ligand.pl
 ```
@@ -99,37 +107,29 @@ It repackages receptor and biologically relevent ligand pdb files into ``interim
 Binding sites are written to ``interim/*/*.bsr``.
 
 ### Step 7: prepare redundant dataset ###
-This step must be performed after step 6.
+This step must be performed after step 7.
 ```bash
 ./script/make_weekly.pl
 ```
 This script reads ``interim/*/*.tar.bz2`` and ``interim/*/*.bsr`` and writes ``weekly/receptor_*.tar.bz2``, ``weekly/receptor1_*.tar.bz2``, ``weekly/ligand_*.tar.bz2`` and ``weekly/BioLiP_*.bsr.gz``.
 FASTA sequence of protein, peptide, rna, dna are saved to ``data/*.fasta.gz``
 
-### Step 8: prepare nonredundant dataset ###
-This step must be performed after step 3 and 7.
+### Step 9: prepare nonredundant dataset ###
+This step must be performed after step 3, 4 and 8.
 ```bash
 ./script/make_nr.pl
 ```
 This script converts ``weekly/BioLiP_*.bsr.gz`` to ``weekly/BioLiP_*.txt`` and ``weekly/BioLiP_*_nr.txt``.
 It also creates ``weekly/receptor_*_nr.tar.bz2``, ``weekly/receptor1_*_nr.tar.bz2`` and ``weekly/ligand_*_nr.tar.bz2`` from intermediate files of the previous step.
 
-## Step 9: curate GO anntation ##
-This step must be performed after step 8.
+## Step 10: curate GO anntation ##
+This step must be performed after step 9.
 ```bash
 ./script/curate_GO.pl
 ```
 This script reads GO from ``obo/go/go-basic.obo`` and ``data/pdb_all.tsv.gz``.
 and extract the summary to ``data/go2name.tsv.gz``, ``data/is_a.tsv.gz`` and ``data/pdb_go.tsv.gz``.
 This script reads swissprot name from ``uniprot/current_release/knowledgebase/complete/uniprot_sprot.fasta.gz`` and extract the summary to ``data/uniprot_sprot.tsv.gz``.
-
-### Step 10: download auxilary data ###
-This step can be performed independent of step 1 to 9.
-```bash
-./script/download_ligand.pl
-```
-This script downloads CCD ligand to ``pdb/data/monomers/components.cif.gz`` and extract their summary to ``data/ligand.tsv.gz``.
-This script downloads enzyme to ``enzyme/enzyme.dat`` and extract their summary to ``data/enzyme.tsv.gz``.
 
 ### Step 11: clean up intermediate files ###
 This step must be run after everything is done.

@@ -2,7 +2,6 @@
 import cgi
 import cgitb; cgitb.enable()  # for troubleshooting
 import os
-from datetime import datetime
 import subprocess
 
 rootdir=os.path.dirname(os.path.abspath(__file__))
@@ -35,6 +34,19 @@ if os.path.isfile(filename):
     fp=open(filename,'r')
     print(fp.read())
     fp.close()
+
+cmd="ls -rt output/|grep -P '[a-z0-9]+_[A-Za-z0-9]+_[FPC]\.svg'|cut -f1,2 -d_|uniq -c|grep ' 3 '|tail -1|grep -ohP '\S+$'"
+p=subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
+stdout,stderr=p.communicate()
+stdout=stdout.decode().strip()
+if len(stdout):
+    pdbid,chain=stdout.split('_')[:2]
+    print('''
+<p>
+<h1><span title="PDB $pdbid Chain $chain Binding Site BS01"><a href=pdb.cgi?pdb=$pdbid&chain=$chain&bs=BS01 target=_blank>Browse a random BioLiP entry</a></span></h1>
+</p>
+'''.replace("$pdbid",pdbid).replace("$chain",chain))
+
 
 if len(html_footer):
     print(html_footer)

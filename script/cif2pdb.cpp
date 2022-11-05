@@ -3586,10 +3586,10 @@ COLUMNS        DATA  TYPE    FIELD        DEFINITION
                 fout.open(filename.c_str());
                 fout<<fout_buf.str()<<flush;
                 fout.close();
-                fout_buf.str(string());
                 ligand_filename_vec.push_back(filename);
             }
             else ligand_dup_map[filename]--;
+            fout_buf.str(string());
             for (a=0;a<ligand_vec.size();a++) ligand_vec[a].clear();
             ligand_vec.clear();
         }

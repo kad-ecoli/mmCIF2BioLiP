@@ -364,19 +364,35 @@ foreach my $prefix(("pdb_all","pdb_nr","lig_all","lig_nr"))
 
 print "generating $rootdir/data/title.tsv\n";
 my $txt="";
+my @pdb_list;
 foreach my $pdbid(`zcat $rootdir/data/pdb_all.tsv.gz |tail -n +2|cut -f1|sort|uniq`)
 {
     chomp($pdbid);
-    my $divided=substr($pdbid,(length $pdbid)-3,2);
-    my $title=`head -1 $rootdir/interim/$divided/$pdbid.txt`;
-    chomp($title);
-    next if (length $title==0);
-    $txt.="$pdbid\t$title\n";
+    push(@pdb_list,($pdbid));
+}
+my %pdb_dict=map { $_, 0 } @pdb_list; 
+my $pdbid;
+foreach my $line(`head -1 -v $rootdir/interim/*/*.txt|sed 's/\\t/ /g'`)
+{
+    chomp($line);
+    if (length $line==0)
+    {
+        next;
+    }
+    elsif ($line=~/==> \S+\/(\w+)\.txt <==/)
+    {
+        $pdbid="$1";
+    }
+    elsif (exists $pdb_dict{$pdbid})
+    {
+        $txt.="$pdbid\t$line\n";
+    }
 }
 open(FP,">$rootdir/data/title.tsv");
 print FP $txt;
 close(FP);
-system("gzip -f $rootdir/data/title.tsv");
+system("cat $rootdir/data/title.tsv|sort |gzip - > $rootdir/data/title.tsv.gz");
+system("rm $rootdir/data/title.tsv");
 
 print "generation $rootdir/download/lig_frequency.txt\n";
 my $today=`date '+%Y-%m-%d'`;
@@ -442,7 +458,7 @@ table, th, td {
 </style>
 
 <table border=2 width=100%>
-<tr><th width=10%>ID</th><th colspan=3 width=45%>Redundant set</th> <th colspan=3 width=45%>Non-redundant set</th></tr>
+<tr><th width=10%>ID</th><th colspan=2 width=45%>Redundant set</th> <th colspan=2 width=45%>Non-redundant set</th></tr>
 EOF
 ;
 #foreach my $divided(`ls $rootdir/weekly/|grep -P "BioLiP_\\w+\\.bsr\\.gz"|cut -f1 -d.|cut -f2 -d_`)
@@ -454,10 +470,8 @@ foreach my $divided(`ls $rootdir/weekly/|grep -P "receptor_\\w{2}\\.tar\\.bz2"|c
 <tr><td>$divided</td>
     <td><a href=weekly/receptor_$divided.tar.bz2>Receptor</a> </td>
     <td><a href=weekly/ligand_$divided.tar.bz2>Ligand</a> </td>
-    <td><a href=weekly/BioLiP_$divided.txt>Annotation</a></td>
     <td><a href=weekly/receptor_${divided}_nr.tar.bz2>Receptor</a> </td>
     <td><a href=weekly/ligand_${divided}_nr.tar.bz2>Ligand</a> </td> 
-    <td><a href=weekly/BioLiP_${divided}_nr.txt>Annotation</a></td>
 </tr>
 
 EOF
@@ -488,79 +502,4 @@ open(FP,">$rootdir/weekly.html");
 print FP "$html_head$html$html_tail";
 close(FP);
 
-
-print "generating $rootdir/data/index.txt\n";
-my $numProtein  =`zcat $rootdir/data/pdb_all.tsv.gz|wc -l`-1;
-my $numRegular  =0;
-my $numMetal    =0;
-my $numRna      =0;
-my $numDna      =0;
-my $numPeptide  =0;
-my $numBaff     =`zcat $rootdir/data/lig_all.tsv.gz |cut -f9-|grep -P "\\S+"|wc -l`-1;
-my $numManual   =`zcat $rootdir/data/lig_all.tsv.gz |cut -f9 |grep -P "\\S+"|wc -l`-1;
-my $numMoad     =`zcat $rootdir/data/lig_all.tsv.gz |cut -f10|grep -P "\\S+"|wc -l`-1;
-my $numPdbbind  =`zcat $rootdir/data/lig_all.tsv.gz |cut -f11|grep -P "\\S+"|wc -l`-1;
-my $numBindingdb=`zcat $rootdir/data/lig_all.tsv.gz |cut -f12|grep -P "\\S+"|wc -l`-1;
-my $numGO       =`zcat $rootdir/data/pdb_go.tsv.gz  |wc -l`+0;
-my $numMF       =`zcat $rootdir/data/pdb_go.tsv.gz  |grep 0003674|wc -l`+0;
-my $numBP       =`zcat $rootdir/data/pdb_go.tsv.gz  |grep 0008150|wc -l`+0;
-my $numCC       =`zcat $rootdir/data/pdb_go.tsv.gz  |grep 0005575|wc -l`+0;
-my @metal_list=();
-foreach my $metal(`zcat $rootdir/data/metal.tsv.gz |cut -f1`)
-{
-    chomp($metal);
-    push(@metal_list,($metal));
-}
-my %metal_dict=map { $_, 1 } @metal_list;
-foreach my $ccd(`zcat $rootdir/data/lig_all.tsv.gz|tail -n +2|cut -f4`)
-{
-    chomp($ccd);
-    if ($ccd eq "rna")
-    {
-        $numRna++;
-    }
-    elsif ($ccd eq "dna")
-    {
-        $numDna++;
-    }
-    elsif ($ccd eq "peptide")
-    {
-        $numPeptide++;
-    }
-    elsif (exists $metal_dict{$ccd})
-    {
-        $numMetal++;
-    }
-    else
-    {
-        $numRegular++;
-    }
-}
-my $numEntry=$numRegular+$numDna+$numPeptide+$numMetal+$numRegular;
-open(FP,">$rootdir/data/index.txt");
-print FP <<EOF
-<p>
-<h1><u>BioLiP in numbers</u></h1>
-</p>
-
-BioLiP is updated weekly and the current version ($today) contains:
-<li>Number of entries: <a href=qsearch.cgi>$numEntry</a></li>
-<li>Number of entries for regular ligands: <a href=qsearch.cgi?lig3=regular>$numRegular</a></li>
-<li>Number of entries for metal ligands: <a href=qsearch.cgi?lig3=metal>$numMetal</a></li>
-<li>Number of entries for peptide ligands: <a href=qsearch.cgi?lig3=peptide>$numPeptide</a></li>
-<li>Number of entries for DNA ligands: <a href=qsearch.cgi?lig3=dna>$numDna</a></li>
-<li>Number of entries for RNA ligands: <a href=qsearch.cgi?lig3=rna>$numRegular</a></li>
-<li>Number of entries with binding affinity data: <a href=qsearch.cgi?baff=baff>$numBaff</a>
-(<a href=qsearch.cgi?baff=moad>$numMoad</a> from Binding MOAD,
- <a href=qsearch.cgi?baff=pdbbind>$numPdbbind</a> from PDBbind-CN,
- <a href=qsearch.cgi?baff=bindingdb>$numBindingdb</a> from BindingDB, and
- <a href=qsearch.cgi?baff=manual>$numManual</a> from manual survey of the original literature)</li>
-<li>Number of protein receptors: <a href=qsearch.cgi>$numProtein</a></li>
-<li>Number of protein receptors with Gene Ontology annotations: $numGO
-(<a href=qsearch.cgi?&got=0003674>$numMF</a> with Molecular Function, 
- <a href=qsearch.cgi?&got=0008150>$numBP</a> with Biological Process, and 
- <a href=qsearch.cgi?&got=0005575>$numCC</a> with Cellular Component)</li>
-EOF
-;
-close(FP);
 exit();
