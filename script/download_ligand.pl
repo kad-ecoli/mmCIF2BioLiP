@@ -43,7 +43,8 @@ print "download CCD ligand\n";
 
 system("mkdir -p $rootdir/pdb/data/monomers/");
 my $infile ="$rootdir/pdb/data/monomers/components.cif.gz";
-system("wget https://files.wwpdb.org/pub/pdb/data/monomers/components.cif.gz -O $infile");
+system("wget http://files.wwpdb.org/pub/pdb/data/monomers/components.cif.gz -O $infile");
+system("wget ftp://files.wwpdb.org/pub/pdb/data/monomers/components.cif.gz -O $infile") if (!-s "$infile");
 if (!-s "$infile")
 {
     print "ERROR! cannot download $infile\n";
@@ -51,7 +52,7 @@ if (!-s "$infile")
 }
 my $outfile="$rootdir/data/ligand.tsv";
 
-my $txt="#CCD\tformula\tInChI\tInChIKey\tSMILES\tname\n";
+$txt="#CCD\tformula\tInChI\tInChIKey\tSMILES\tname\n";
 my $_chem_comp_id="";
 my $_chem_comp_name="";
 my $_chem_comp_formula="";
