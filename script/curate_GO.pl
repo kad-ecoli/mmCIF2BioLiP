@@ -130,7 +130,7 @@ foreach my $ccd(`zcat $rootdir/data/lig_all.tsv.gz|tail -n +2|cut -f4`)
         $numRegular++;
     }
 }
-my $numEntry=$numRegular+$numDna+$numPeptide+$numMetal+$numRegular;
+my $numEntry=$numRna+$numDna+$numPeptide+$numMetal+$numRegular;
 open(FP,">$rootdir/data/index.txt");
 print FP <<EOF
 <p>
@@ -143,7 +143,7 @@ BioLiP is updated weekly and the current version ($today) contains:
 <li>Number of entries for metal ligands: <a href=qsearch.cgi?lig3=metal>$numMetal</a></li>
 <li>Number of entries for peptide ligands: <a href=qsearch.cgi?lig3=peptide>$numPeptide</a></li>
 <li>Number of entries for DNA ligands: <a href=qsearch.cgi?lig3=dna>$numDna</a></li>
-<li>Number of entries for RNA ligands: <a href=qsearch.cgi?lig3=rna>$numRegular</a></li>
+<li>Number of entries for RNA ligands: <a href=qsearch.cgi?lig3=rna>$numRna</a></li>
 <li>Number of entries with binding affinity data: <a href=qsearch.cgi?baff=baff>$numBaff</a>
 (<a href=qsearch.cgi?baff=moad>$numMoad</a> from Binding MOAD,
  <a href=qsearch.cgi?baff=pdbbind>$numPdbbind</a> from PDBbind-CN,
