@@ -436,7 +436,7 @@ Hover over <strong>Site #</strong> to view the binding residues.</li>
 if lig3 in ["peptide","rna","dna"]:
     print("<li>The <strong>sequence</strong> is converted from residues with experimentally determined coordinates in the structure; residues not observed in the 3D structure are excluded.</li>")
 else:
-    print("<li>Hover over <strong>Ligand</strong> to view the full ligand name.</li>")
+    print("<li>Hover over <strong>Ligand</strong> to view the full ligand name. Click <strong>Ligand</strong> to view the ligand structure.</li>")
 print('''
 <li>Hover over <strong>EC number</strong> to view the full name of enzymatic activity.</li>
 <li>Hover over <strong>GO terms</strong> to view all GO terms.
