@@ -8,7 +8,8 @@ my $rootdir = dirname($bindir);
 
 print "download csa\n";
 system("mkdir -p $rootdir/m-csa/api/");
-system("wget 'https://www.ebi.ac.uk/thornton-srv/m-csa/api/residues/?format=json' -O $rootdir/m-csa/api/residues.json");
+system("wget 'http://www.ebi.ac.uk/thornton-srv/m-csa/api/homologues_residues.json' -O $rootdir/m-csa/api/homologues_residues.json");
+system("wget 'http://www.ebi.ac.uk/thornton-srv/m-csa/api/residues/?format=json' -O $rootdir/m-csa/api/residues.json");
 
 my $chain_name="";
 my $pdb_id    ="";
@@ -17,29 +18,47 @@ my $auth_resid="";
 my %chain2resid;
 my @chain_list;
 
-foreach my $line(`grep -ohP '(\\"chain_name\\":\\s*\\"\\w+\\")|(\\"pdb_id\\":\\s*\\"\\w+\\")|(\\"auth_resid\\":\\s*\\d+)' $rootdir/m-csa/api/residues.json`)
+foreach my $line(split(/{/,`cat $rootdir/m-csa/api/residues.json $rootdir/m-csa/api/homologues_residues.json`))
 {
-    $line=~/(\S+):(\S+)/;
-    my $key="$1";
-    my $value="$2";
-    $key=~s/^"|"$//g;
-    $value=~s/^"|"$//g;
-    
-    if ($key eq "chain_name") { $chain_name=$value; }
-    elsif ($key eq "pdb_id")  { $pdb_id    =$value; }
-    elsif ($key eq "auth_resid")
+    if ($line=~/\"chain_name\":\s*\"(\w+)\"/)
     {
-        $auth_resid=$value;
-        $key       ="$pdb_id\t$chain_name";
-        if (exists($chain2resid{$key}))
+        $chain_name="$1"; 
+    }
+    else
+    {
+        next;
+    }
+    if ($line=~/\"pdb_id\":\s*\"(\w+)\"/)
+    {
+        $pdb_id="$1"
+    }
+    else
+    {
+        next;
+    }
+    if ($line=~/\"auth_resid\":\s*(\w+)/)
+    {
+        $auth_resid="$1";
+        next if ($auth_resid eq "null");
+    }
+    else
+    {
+        print "$line\n";
+        next;
+    }
+
+    my $key="$pdb_id\t$chain_name";
+    if (exists($chain2resid{$key}))
+    {
+        if ($chain2resid{$key}!~/\b$auth_resid\b/)
         {
             $chain2resid{$key}.=",$auth_resid";
         }
-        else
-        {
-            $chain2resid{$key}="$auth_resid";
-            push(@chain_list,"$key");
-        }
+    }
+    else
+    {
+        $chain2resid{$key}="$auth_resid";
+        push(@chain_list,"$key");
     }
 }
 
