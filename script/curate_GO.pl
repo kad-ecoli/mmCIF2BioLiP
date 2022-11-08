@@ -99,6 +99,7 @@ my $numGO       =`zcat $rootdir/data/pdb_go.tsv.gz  |wc -l`+0;
 my $numMF       =`zcat $rootdir/data/pdb_go.tsv.gz  |grep 0003674|wc -l`+0;
 my $numBP       =`zcat $rootdir/data/pdb_go.tsv.gz  |grep 0008150|wc -l`+0;
 my $numCC       =`zcat $rootdir/data/pdb_go.tsv.gz  |grep 0005575|wc -l`+0;
+my $numEC       =`zcat $rootdir/data/pdb_all.tsv.gz |cut -f6 |grep -v '^\$'|wc -l`-1;
 my @metal_list=();
 foreach my $metal(`zcat $rootdir/data/metal.tsv.gz |cut -f1`)
 {
@@ -150,6 +151,7 @@ BioLiP is updated weekly and the current version ($today) contains:
  <a href=qsearch.cgi?baff=bindingdb>$numBindingdb</a> from BindingDB, and
  <a href=qsearch.cgi?baff=manual>$numManual</a> from manual survey of the original literature)</li>
 <li>Number of protein receptors: <a href=qsearch.cgi>$numProtein</a></li>
+<li>Number of protein receptors with Enzyme Commission numbers: <a href=qsearch.cgi?ecn=0>$numEC</a></li>
 <li>Number of protein receptors with Gene Ontology annotations: $numGO
 (<a href=qsearch.cgi?&got=0003674>$numMF</a> with Molecular Function, 
  <a href=qsearch.cgi?&got=0008150>$numBP</a> with Biological Process, and 

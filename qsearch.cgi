@@ -234,7 +234,9 @@ for line in fp.read().splitlines()[1:]:
             continue
         else:
             accession=items[-2]
-        if ecn and not ecn in items[-4].split(','):
+        if ecn=='0' and not items[-4]:
+            continue
+        elif ecn and ecn!='0' and not ecn in items[-4].split(','):
             continue
         else:
             ec=items[-4]
