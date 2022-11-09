@@ -275,8 +275,8 @@ def display_regular_ligand(pdbid,asym_id,lig3,ligIdx,title):
     p=subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
     stdout,stderr=p.communicate()
     items=stdout.decode().split('\t')
-    if len(items)>=6:
-        formula,InChI,InChIKey,SMILES,name=items[1:6]
+    if len(items)>=9:
+        formula,InChI,InChIKey,SMILES,name,ChEMBL,DrugBank,ZINC=items[1:9]
     svg="https://cdn.rcsb.org/images/ccd/labeled/%s/%s.svg"%(lig3[0],lig3)
     print('''
 <tr><td><h1 align=center>Structure of PDB $pdbid Chain $asym_id ligand $lig3</h1></td></tr>
@@ -289,7 +289,7 @@ def display_regular_ligand(pdbid,asym_id,lig3,ligIdx,title):
     <div id="RContent" style="display: block;">
     <table width=100% border="0" style="font-family:Monospace;font-size:14px;background:#F2F2F2;" >
     <tr align=center><td width=10%><strong>2D<br>diagram</strong></td><td><a href=$svg target=_blank><img src=$svg width=400></a></td></tr>
-    <tr BGCOLOR="#DEDEDE"><td align=center><a href=https://wwpdb.org/data/ccd target=_blank><strong>Ligand ID</strong></a></td><td><span title="The ligand ID follows the
+    <tr BGCOLOR="#DEDEDE"><td align=center><a href=https://wwpdb.org/data/ccd target=_blank><strong>PDB Ligand ID</strong></a></td><td><span title="The ligand ID follows the
 Chemical Component Dictionary (CCD)
 used by the PDB database."><a href=https://rcsb.org/ligand/$lig3>$lig3</a></span></td></tr>
     <tr><td align=center><a href=https://inchi-trust.org target=_blank><strong>InChI</strong></a></td><td>$InChI</td></tr>
@@ -297,6 +297,9 @@ used by the PDB database."><a href=https://rcsb.org/ligand/$lig3>$lig3</a></span
     <tr><td align=center><strong>SMILES</strong></td><td>$SMILES</td></tr>
     <tr BGCOLOR="#DEDEDE"><td align=center><strong>Formula</strong></td><td>$formula</td></tr>
     <tr><td align=center><strong>Name</strong></td><td>$name</td></tr>
+    <tr BGCOLOR="#DEDEDE"><td align=center><strong>ChEMBL</strong></td><td><a href="https://www.ebi.ac.uk/chembl/compound_report_card/$ChEMBL" target=_blank>$ChEMBL</a></td></tr>
+    <tr><td align=center><strong>DrugBank</strong></td><td><a href="https://go.drugbank.com/drugs/$DrugBank" target=_blank>$DrugBank</a></td></tr>
+    <tr BGCOLOR="#DEDEDE"><td align=center><strong>ZINC</strong></td><td><a href="https://zinc.docking.org/substances/$ZINC" target=_blank>$ZINC</a></td></tr>
     </table>
 </div>
 </td></tr>
@@ -309,6 +312,9 @@ used by the PDB database."><a href=https://rcsb.org/ligand/$lig3>$lig3</a></span
   ).replace("$SMILES",SMILES.replace(';',';<br>')
   ).replace("$formula",formula
   ).replace("$name",name.replace(';',';<br>')
+  ).replace("$ChEMBL",ChEMBL
+  ).replace("$DrugBank",DrugBank
+  ).replace("$ZINC",ZINC
   ))
     return display_ligand(pdbid,asym_id,lig3,ligIdx,title)
 
@@ -506,7 +512,7 @@ def display_go(go,uniprot,pdbid,asym_id):
         if Aspect=='P':
             height="height=300"
         print('''
-        <td align=center width=30%><span title="View $namespace graph"><a href=$filename target=_blank><img src=$filename style="display:block;" width="100%"><br>View $namespace graph</a></td>
+        <td align=center width=30%><span title="View graph for $namespace. Grey and white boxes indidate GO terms directly annotated to the protein by SIFTS and their parent terms, respectively."><a href=$filename target=_blank><img src=$filename style="display:block;" width="100%"><br>View graph for $namespace</a></td>
         '''.replace("$namespace",namespace
           ).replace("$height",height
           ).replace("$filename",filename
@@ -912,12 +918,15 @@ def display_interaction(pdbid,asym_id,bs,title):
         InChIKey=''
         SMILES=''
         name=''
+        ChEMBL=''
+        DrugBank=''
+        ZINC=''
         cmd="zcat %s/data/ligand.tsv.gz|grep -P '^%s\\t'"%(rootdir,lig3)
         p=subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
         stdout,stderr=p.communicate()
         items=stdout.decode().split('\t')
-        if len(items)>=6:
-            formula,InChI,InChIKey,SMILES,name=items[1:6]
+        if len(items)>=9:
+            formula,InChI,InChIKey,SMILES,name,ChEMBL,DrugBank,ZINC=items[1:9]
         svg="https://cdn.rcsb.org/images/ccd/labeled/%s/%s.svg"%(lig3[0],lig3)
         print('''
 <tr>
@@ -934,7 +943,10 @@ used by the PDB database."><a href=https://rcsb.org/ligand/$lig3>$lig3</a></span
         <tr><td align=center>SMILES</td><td>$SMILES</td></tr>
         <tr BGCOLOR="#DEDEDE"><td align=center>Formula</td><td>$formula</td></tr>
         <tr><td align=center>Name</td><td>$name</td></tr>
-        <tr BGCOLOR="#DEDEDE"><td align=center>Chain</td><td>$pdbid Chain $asym_id 
+        <tr BGCOLOR="#DEDEDE"><td align=center>ChEMBL</td><td><a href="https://www.ebi.ac.uk/chembl/compound_report_card/$ChEMBL" target=_blank>$ChEMBL</a></td></tr>
+        <tr><td align=center>DrugBank</td><td><a href="https://go.drugbank.com/drugs/$DrugBank" target=_blank>$DrugBank</a></td></tr>
+        <tr BGCOLOR="#DEDEDE"><td align=center>ZINC</td><td><a href="https://zinc.docking.org/substances/$ZINC" target=_blank>$ZINC</a></td></tr>
+        <tr><td align=center>PDB chain</td><td>$pdbid Chain $asym_id 
         [<a href=output/$prefix.pdb.gz>Download ligand structure</a>] 
         [<a href=?pdb=$pdbid&chain=$asym_id&lig3=$lig3&ligIdx=$ligIdx&outfmt=1 download=$prefix.pdb>Download structure with residue number starting from 1</a>] 
         [<a href=?pdb=$pdbid&chain=$asym_id&lig3=$lig3&ligIdx=$ligIdx target=_blank>View ligand structure</a>]
@@ -953,6 +965,9 @@ used by the PDB database."><a href=https://rcsb.org/ligand/$lig3>$lig3</a></span
         ).replace("$SMILES",SMILES.replace(';',';<br>')
         ).replace("$formula",formula
         ).replace("$name",name.replace(';',';<br>')
+        ).replace("$ChEMBL",ChEMBL
+        ).replace("$DrugBank",DrugBank
+        ).replace("$ZINC",ZINC
         ))
     print('''
     </table>
