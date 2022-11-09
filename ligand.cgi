@@ -74,9 +74,13 @@ fp.close()
 print('''
 <h4>Search Ligand</h4>
 <FORM id="form1" name="form1" METHOD="POST" ENCTYPE="MULTIPART/FORM-DATA" ACTION="ligand.cgi">
-    <span title="Example: 5GP">
+    <span title="Search ligand by PDB CCD ID, ChEMBL ID, DrugBank ID, or ZINC ID. Example:
+    ATP
+    CHEMBL14249
+    DB00171
+    ZINC000004261765">
     Ligand ID
-    <input type="text" name="code" value="" placeholder="%s" size=3>
+    <input type="text" name="code" value="" placeholder="%s" size=10>
     </span>
     &nbsp;&nbsp;
     
@@ -119,10 +123,11 @@ print('''
 
 print('''
 <h4>Browse Ligand</h4>
-<li>Click the corresponding Ligand <strong>ID</strong> to visualize the ligand. The ligand ID follows the <a href="https://www.wwpdb.org/data/ccd" target=_blank>Chemical Component Dictionary (CCD)</a> used by the PDB database.</li>
+<li>The 3-letter <strong>Ligand ID</strong> follows the <a href="https://www.wwpdb.org/data/ccd" target=_blank>Chemical Component Dictionary (CCD)</a> used by the PDB database.
+    When availble, the <strong>Ligand ID</strong> from <a href=https://www.ebi.ac.uk/chembl>ChEMBL</a>, <a href=https://go.drugbank.com>DrugBank</a>, and <a href=https://zinc.docking.org>ZINC</a> databases are also listed in the form of CHEMBL*, DB*, and ZINC*, respectively. Click on the <strong>Ligand ID</strong> to view the ligand at RCSB PDB, ChEMBL, DrugBank or ZINC.</li>
 <li><strong>Count</strong> is the number of BioLiP entries with the ligand. The full statistics is available at <a href=download/lig_frequency.txt>lig_frequency.txt</a>. Click <strong>Count</strong> to search the ligand through BioLiP.</li>
 <li>If multiple SMILES strings exists for the same ligand, different SMILES are separated by semicolon ";"</li>
-<li>Click the corresponding <strong>Ligand Name</strong> to view the ligand on RCSB PDB website.</li>
+<li>Click the corresponding <strong>Ligand Name</strong> to view 2D diagram of the ligand.</li>
 <p></p>
 ''')
 
@@ -144,7 +149,7 @@ for line in fp.read().splitlines()[1:]:
             continue
         elif lig3=="regular" and items[0] in metal_set:
             continue
-        elif not lig3 in ["metal","regular"] and items[0]!=lig3:
+        elif not lig3 in ["metal","regular"] and not lig3 in items[:1]+items[6:]:
             continue
     if formula:
         formula_template_set=set(items[1].split())
@@ -231,13 +236,13 @@ if not inchi and not inchikey: # inchi only has unique hit
 print('''<table border="0" align=center width=100%>    
 <tr BGCOLOR="#FF9900">
     <th width=4%  ALIGN=center><strong> # </strong></th>
-    <th width=4%  ALIGN=center><strong> ID </strong></th>
+    <th width=9%  ALIGN=center><strong> ID </strong></th>
     <th width=5%  ALIGN=center><strong> Count </strong></th>
     <th width=10% ALIGN=center><strong> Chemical<br>formula </strong></th>
-    <th width=10% ALIGN=center><strong> InChI </strong></th>
-    <th width=12% ALIGN=center><strong> InChIKey </strong></th>
+    <th width=11% ALIGN=center><strong> InChI </strong></th>
+    <th width=11% ALIGN=center><strong> InChIKey </strong></th>
     <th width=10% ALIGN=center><strong> SMILES </strong></th>
-    <th width=45% ALIGN=left>  <strong> Ligand<br>Name </strong> </th>           
+    <th width=40% ALIGN=left>  <strong> Ligand<br>Name </strong> </th>           
 </tr><tr ALIGN=center>
 ''')
 
@@ -252,26 +257,34 @@ for l,items in enumerate(lines):
     if ccd in freq_dict:
         freq='<a href="qsearch.cgi?lig3=%s" target=_blank>%s</a>'%(
             ccd,freq_dict[ccd])
+    ligandID='<span title="View at RCSB PDB"><a href=http://rcsb.org/ligand/%s target=_blank>%s</a></span>'%(ccd,ccd)
+    if items[6]:
+        ligandID+='<br><span title="View at ChEMBL"><a href=http://ebi.ac.uk/chembl/compound_report_card/%s target=_blank>%s</a>'%(items[6],items[6])
+    if items[7]:
+        ligandID+='<br><span title="View at DrugBank"><a href=http://go.drugbank.com/drugs/%s target=_blank>%s</a>'%(items[7],items[7])
+    if items[8]:
+        ligandID+='<br><span title="View at ZINC"><a href=http://zinc.docking.org/substances/%s target=_blank>%s</a>'%(items[8],items[8])
+        
     print('''
 <tr %s ALIGN=center>
     <td>%d</td>
-    <td><a href="sym.cgi?code=%s" target=_blank>%s</a></td>
     <td>%s</td>
     <td>%s</td>
     <td>%s</td>
     <td>%s</td>
     <td>%s</td>
-    <td ALIGN=left><a href=https://rcsb.org/ligand/%s target=_blank>%s</a></td>
+    <td>%s</td>
+    <td ALIGN=left><span title="View 2D diagram for\n%s"><a href="sym.cgi?code=%s" target=_blank>%s</a></span></td>
 </tr>
 '''%(bgcolor,
     l+1,
-    ccd,ccd,
+    ligandID,
     freq,
     items[1],
     items[2],
     items[3],
     items[4],
-    ccd,items[5].replace(';',';<br>')
+    items[5].replace(';',';\n'),ccd,items[5].replace(';',';<br>')
     ))
 fp.close()
 

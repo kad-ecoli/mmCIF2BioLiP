@@ -39,8 +39,36 @@ close(FP);
 &gzipFile("$rootdir/data/enzyme.tsv");
 
 
-print "download CCD ligand\n";
+print "download unichem\n";
+#1	chembl
+#2	drugbank
+#3	pdb
+#9	zinc
+system("mkdir -p $rootdir/UniChem/");
+system("wget http://ftp.ebi.ac.uk/pub/databases/chembl/UniChem/data/wholeSourceMapping/src_id1/src1src3.txt.gz -O $rootdir/UniChem/src1src3.txt.gz");
+system("wget ftp://ftp.ebi.ac.uk/pub/databases/chembl/UniChem/data/wholeSourceMapping/src_id1/src1src3.txt.gz -O $rootdir/UniChem/src1src3.txt.gz") if (!-s "$rootdir/UniChem/src1src3.txt.gz");
+system("wget http://ftp.ebi.ac.uk/pub/databases/chembl/UniChem/data/wholeSourceMapping/src_id2/src2src3.txt.gz -O $rootdir/UniChem/src2src3.txt.gz");
+system("wget ftp://ftp.ebi.ac.uk/pub/databases/chembl/UniChem/data/wholeSourceMapping/src_id2/src2src3.txt.gz -O $rootdir/UniChem/src2src3.txt.gz") if (!-s "$rootdir/UniChem/src2src3.txt.gz");
+system("wget http://ftp.ebi.ac.uk/pub/databases/chembl/UniChem/data/wholeSourceMapping/src_id3/src3src9.txt.gz -O $rootdir/UniChem/src3src9.txt.gz");
+system("wget ftp://ftp.ebi.ac.uk/pub/databases/chembl/UniChem/data/wholeSourceMapping/src_id3/src3src9.txt.gz -O $rootdir/UniChem/src3src9.txt.gz") if (!-s "$rootdir/UniChem/src3src9.txt.gz");
+my %pdb2chembl;
+foreach my $line(`zcat $rootdir/UniChem/src1src3.txt.gz|tail -n +2`)
+{ 
+    $pdb2chembl{"$2"}="$1" if ($line=~/(\S+)\t(\S+)/);
+}
+my %pdb2drugbank;
+foreach my $line(`zcat $rootdir/UniChem/src2src3.txt.gz|tail -n +2`)
+{ 
+    $pdb2drugbank{"$2"}="$1" if ($line=~/(\S+)\t(\S+)/);
+}
+my %pdb2zinc;
+foreach my $line(`zcat $rootdir/UniChem/src3src9.txt.gz|tail -n +2`)
+{ 
+    $pdb2zinc{"$1"}="$2" if ($line=~/(\S+)\t(\S+)/);
+}
 
+
+print "download CCD ligand\n";
 system("mkdir -p $rootdir/pdb/data/monomers/");
 my $infile ="$rootdir/pdb/data/monomers/components.cif.gz";
 system("wget http://files.wwpdb.org/pub/pdb/data/monomers/components.cif.gz -O $infile");
@@ -52,7 +80,7 @@ if (!-s "$infile")
 }
 my $outfile="$rootdir/data/ligand.tsv";
 
-$txt="#CCD\tformula\tInChI\tInChIKey\tSMILES\tname\n";
+$txt="#CCD\tformula\tInChI\tInChIKey\tSMILES\tname\tChEMBL\tDrugBank\tZINC\n";
 my $_chem_comp_id="";
 my $_chem_comp_name="";
 my $_chem_comp_formula="";
@@ -87,9 +115,15 @@ for (my $l=0;$l<scalar @lines;$l++)
             $_chem_comp_name=~s/; $//;
    
             my %SMILES_hash = map { $_, 1 } @SMILES_list;
-            my $SMILES = join("; ",keys %SMILES_hash);
-            $txt.="$_chem_comp_id\t$_chem_comp_formula\t$InChI\t";
-            $txt.="$InChIKey\t$SMILES\t$_chem_comp_name\n";
+            my $SMILES  = join("; ",keys %SMILES_hash);
+            my $chembl  ="";
+            my $drugbank="";
+            my $zinc    ="";
+            $chembl  =$pdb2chembl{$_chem_comp_id}   if (exists $pdb2chembl{$_chem_comp_id});
+            $drugbank=$pdb2drugbank{$_chem_comp_id} if (exists $pdb2drugbank{$_chem_comp_id});
+            $zinc    =$pdb2zinc{$_chem_comp_id}     if (exists $pdb2zinc{$_chem_comp_id});
+            $txt.="$_chem_comp_id\t$_chem_comp_formula\t$InChI\t$InChIKey\t";
+            $txt.="$SMILES\t$_chem_comp_name\t$chembl\t$drugbank\t$zinc\n";
         }
 
         $_chem_comp_id="";
@@ -162,8 +196,15 @@ if (length $_chem_comp_id)
    
     my %SMILES_hash = map { $_, 1 } @SMILES_list;
     my $SMILES = join("; ",keys %SMILES_hash);
-    $txt.="$_chem_comp_id\t$_chem_comp_formula\t$InChI\t";
-    $txt.="$InChIKey\t$SMILES\t$_chem_comp_name\n";
+
+    my $chembl  ="";
+    my $drugbank="";
+    my $zinc    ="";
+    $chembl  =$pdb2chembl{$_chem_comp_id}   if (exists $pdb2chembl{$_chem_comp_id});
+    $drugbank=$pdb2drugbank{$_chem_comp_id} if (exists $pdb2drugbank{$_chem_comp_id});
+    $zinc    =$pdb2zinc{$_chem_comp_id}     if (exists $pdb2zinc{$_chem_comp_id});
+    $txt.="$_chem_comp_id\t$_chem_comp_formula\t$InChI\t$InChIKey\t";
+    $txt.="$SMILES\t$_chem_comp_name\t$chembl\t$drugbank\t$zinc\n";
 }
 
 open(FP,">$outfile");
