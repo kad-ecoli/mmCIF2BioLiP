@@ -160,39 +160,11 @@ $size=keys %binddb_dict;
 print "$size affinity from BindingDB\n";
 
 my %csa_dict;
-foreach my $line(`cat $rootdir/data/csa.tsv`)
+foreach my $line(`$bindir/mapCSA $rootdir/data/csa.tsv $rootdir/weekly`)
 {
-    if ($line=~/^(\S+)\t(\S+)\t(\S+)/)
-    {
-        my $pdbid  ="$1";
-        my $asym_id="$2";
-        my $csaOrig="$3";
-        my $csaRenu="";
-
-        my $divided=substr($pdbid,(length $pdbid)-3,2);
-        my $filename="$rootdir/weekly/$divided/receptor/$pdbid$asym_id.pdb";
-           $filename="$rootdir/weekly/$divided/receptor_nr/$pdbid$asym_id.pdb" if (!-s "$filename");
-        next if (!-s "$filename");
-        my @res_list=split(/,/,$csaOrig);
-        my %res_dict=map { $_, 0 } @res_list; 
-        
-        my $r=0;
-        foreach my $resSeq(`grep -F ' CA ' $filename|cut -c23-27`)
-        {
-            $r++;
-            my $resi=substr($resSeq,0,4);
-            $resi=~s/ //g;
-            next if (!exists $res_dict{$resi});
-            my $icode=substr($resSeq,4);
-            $res_dict{$resi}=$r if ($icode eq " " || $res_dict{$resi}==0);
-        }
-        foreach my $resi(@res_list)
-        {
-            $csaRenu.=",$res_dict{$resi}";
-        }
-        $csaRenu=~s/^,//;
-        $csa_dict{$pdbid.$asym_id}="$csaOrig\t$csaRenu";
-    }
+    chomp($line);
+    my @items=split(/\t/,$line);
+    $csa_dict{$items[0].$items[1]}="$items[2]\t$items[3]";
 }
 $size=keys %csa_dict;
 print "$size csa site\n";
@@ -228,8 +200,8 @@ foreach my $divided(`ls $rootdir/weekly/|grep -P "BioLiP_\\w+\\.bsr\\.gz"|cut -f
 
         my $resolu =""; # [3]  resolution
            $resolu =$resolu_dict{$pdbid} if (exists $resolu_dict{$pdbid});
-        my $csaOrig=""; # [10] catalytic site atlas original numbering
-        my $csaRenu=""; # [11] catalytic site atlas renumbered from 1
+        my $csaRes ="\t";# [10] catalytic site atlas original numbering
+                        # [11] catalytic site atlas renumbered from 1
         my $ec     =""; # [12] EC number
            $ec     =$ec_dict{$chain} if (exists $ec_dict{$chain});
         my $go     =""; # [13] GO term
@@ -260,31 +232,9 @@ foreach my $divided(`ls $rootdir/weekly/|grep -P "BioLiP_\\w+\\.bsr\\.gz"|cut -f
         my $pubmed =""; # [19] pubmed id
            $pubmed =$pubmed_dict{$pdbid} if (exists $pubmed_dict{$pdbid});
         my $sequence=$fasta_dict{$chain};#[20] receptor sequence
-        if (exists $csa_dict{$chain})
-        {
-            my $line=$csa_dict{$chain};
-            if ($line=~/(\S+)\t(\S+)/)
-            {
-                $csaOrig="$1";
-                $csaRenu="$2";
-                my @csaOrig_list=split(/,/,$csaOrig);
-                my @csaRenu_list=split(/,/,$csaRenu);
-                $csaOrig="";
-                $csaRenu="";
-                for (my $i=0;$i<scalar @csaRenu_list;$i++)
-                {
-                    my $rOrig=$csaOrig_list[$i];
-                    my $rRenu=$csaRenu_list[$i];
-                    my $aa=substr($sequence,$rRenu-1,1);
-                    $csaOrig.=" $aa$rOrig";
-                    $csaRenu.=" $aa$rRenu";
-                }
-                $csaOrig=~s/^\s//g;
-                $csaRenu=~s/^\s//g;
-            }
-        }
+           $csaRes=$csa_dict{$chain} if (exists $csa_dict{$chain});
         $line="$pdbid\t$recCha\t$resolu\t$bs\t$ccd\t$ligCha\t$ligIdx\t".
-              "$resOrig\t$resRenu\t$csaOrig\t$csaRenu\t$ec\t$go\t$affman\t".
+              "$resOrig\t$resRenu\t$csaRes\t$ec\t$go\t$affman\t".
               "$moad\t$bindcn\t$binddb\t$uniprot\t$pubmed\t$sequence\n";
         $txt_full.="$line";
         next if (!exists $nr_dict{$chain});
