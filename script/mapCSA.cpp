@@ -258,8 +258,8 @@ void mapCSA(const string &infile, const string &infolder, const string &outfile)
         if (csaOrig.size())
             outtxt+=pdbid+'\t'+asym_id+'\t'+csaOrig.substr(1)+
                                        '\t'+csaRenu.substr(1)+'\n';
-        else cerr<<"WARNING! fail to map "<<pdbid<<':'<<asym_id
-            <<" (L="<<r<<")\t"<<line<<endl;
+        //else cerr<<"WARNING! fail to map "<<pdbid<<':'<<asym_id
+        //    <<" (L="<<r<<")\t"<<line<<endl;
         clear_line_vec(pdblines);
         clear_line_vec(line_vec);
     }
