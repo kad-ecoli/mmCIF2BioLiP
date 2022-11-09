@@ -30,7 +30,11 @@ else:
 <p><a href=.>[Back to Home]</a></p>
 ''')
 
-print('''
+lig3=form.getfirst("code",'')
+if not lig3:
+    lig3=form.getfirst("lig3",'')
+if lig3 in ["peptide","rna","dna","metal","regular"]:
+    print('''
 <style>
 table, th, td {
   border: 1px solid black;
@@ -38,51 +42,81 @@ table, th, td {
 }
 </style>
 <table>
+<tr><th>Ligand</th><th>Explanation</th></tr>
+<tr><td><a href=qsearch.cgi?lig3=peptide>peptide</a></td><td>Short amino acid chain with &lt;30 residues. Old BioLiP ID: III</td></tr>
+<tr><td><a href=qsearch.cgi?lig3=rna>rna</a></td><td>RNA chain. Old BioLiP ID: NUC</td></tr>
+<tr><td><a href=qsearch.cgi?lig3=dna>dna</a></td><td>DNA chain. Old BioLiP ID: NUC</td></tr>
+<tr><td><a href=qsearch.cgi?lig3=metal>metal</a></td><td>Metal ion</td></tr>
+<tr><td><a href=qsearch.cgi?lig3=regular>regular</a></td><td>Small molecule other than a metal ion.</td></tr>
+</table>
 ''')
-
-code=form.getfirst("code",'')
-if code in ["peptide","rna","dna"]:
-    print('''
-<tr><th>New BioLiP code for polymer</th><th>Old BioLiP code for Polymer</th></tr>
-<tr><td><a href=qsearch.cgi?lig3=peptide>peptide</a></td><td>III</td></tr>
-<tr><td><a href=qsearch.cgi?lig3=rna>rna</a></td><td>NUC</td></tr>
-<tr><td><a href=qsearch.cgi?lig3=dna>dna</a></td><td>NUC</td></tr>
-''')
-elif code:
+elif lig3:
+    txt_table='''
+<style>
+table, th, td {
+  border: 0px solid black;
+  border-collapse: collapse;
+}
+td {
+  vertical-align: top;
+  align: left;
+}
+</style>
+<table valign=top>
+'''
+    freq_dict=dict()
+    fp=open(rootdir+"/download/lig_frequency.txt",'r')
+    for line in fp.read().splitlines()[4:]:
+        items=line.split('\t')
+        if len(items)==3 and items[1]==lig3:
+            freq_dict[items[1]]=items[2]
+    fp.close()
     fp=gzip.open(rootdir+"/data/ligand.tsv.gz",'rt')
-    txt_table=''
     for line in fp.read().splitlines():
         items=line.split('\t')
-        if line.startswith('#'):
-            items[0]=items[0][1:]
-            txt_table+="<tr><th>"+"</th><th>".join(items)+"</th></tr>"
-        if code!=items[0]:
+        if lig3!=items[0]:
             continue
-        for i in range(len(items)):
-            if "; " in items[i]:
-                items[i]=items[i].replace("; ",";<br>")
-            elif i==2:
-                inchi_list=[]
-                for j in range(0,len(items[2]),20):
-                    start=j
-                    end  =j+20
-                    inchi_list.append(items[2][start:end])
-                items[2]='<br>'.join(inchi_list)
-            elif i==4:
-                smiles_list=[]
-                for j in range(0,len(items[4]),20):
-                    start=j
-                    end  =j+20
-                    smiles_list.append(items[4][start:end])
-                items[4]='<br>'.join(smiles_list)
-                items[4].replace('; ',';<br>')
-        txt_table+="<tr><td>"+"</td><td>".join(items)+"</td></tr>"
-        lig3=items[0]
+        freq="0"
+        if lig3 in freq_dict and freq_dict[lig3]!='0':
+            freq='<a href="qsearch.cgi?lig3=%s" target=_blank>%s</a>'%(lig3,freq_dict[lig3])
+        txt_table+='''
+<tr BGCOLOR="#DEDEDE"><td width=10%><strong>PDB CCD ID: </strong></td><td width=90%><a href=https://www.rcsb.org/ligand/$ccd target=_blank>$ccd</a></td></tr>
+<tr><td><strong>Number of entries in BioLiP: </strong></td><td>$freq</td></tr>
+<tr BGCOLOR="#DEDEDE"><td><strong>Chemical formula: </strong></td><td>$formula</td></tr>
+<tr><td><strong>InChI: </strong></td><td>$InChI</td></tr>
+<tr BGCOLOR="#DEDEDE"><td><strong>InChIKey: </strong></td><td>$InChIKey</td></tr>
+<tr><td><strong>SMILES: </strong></td><td>$SMILES</td></tr>
+<tr BGCOLOR="#DEDEDE"><td><strong>Name:</strong></td><td>$name</td></tr>
+      '''.replace("$ccd",lig3
+        ).replace("$freq",freq
+        ).replace("$formula",items[1]
+        ).replace("$InChIKey",items[3]
+        ).replace("$InChI",items[2]
+        ).replace("$SMILES",items[4].replace(';',';<br>')
+        ).replace("$name",items[5].replace(';',';<br>'))
+        BGCOLOR=""
+        if items[6]:
+            txt_table+='''<tr><td><strong>ChEMBL: </strong></td><td><a href="https://www.ebi.ac.uk/chembl/compound_report_card/$ChEMBL" target=_blank>$ChEMBL</a></td></tr>
+            '''.replace("$ChEMBL",items[6])
+            BGCOLOR='BGCOLOR="#DEDEDE"'
+        if items[7]:
+            txt_table+='''<tr $BGCOLOR><td><strong>DrugBank: </strong></td><td><a href="https://go.drugbank.com/drugs/$DrugBank" target=_blank>$DrugBank</a></td></tr>
+            '''.replace("$DrugBank",items[7]
+              ).replace("$BGCOLOR", BGCOLOR)
+            if BGCOLOR:
+                BGCOLOR=""
+            else:
+                BGCOLOR='BGCOLOR="#DEDEDE"'
+        if items[8]:
+            txt_table+='''<tr $BGCOLOR><td><strong>ZINC: </strong></td><td><a href="https://zinc.docking.org/substances/$ZINC" target=_blank>$ZINC</a></td></tr>
+            '''.replace("$ZINC",items[8]
+              ).replace("$BGCOLOR", BGCOLOR)
         svg="https://cdn.rcsb.org/images/ccd/labeled/%s/%s.svg"%(lig3[0],lig3)
         print("<p><ul><a href=%s target=_blank><img src=%s alt='' width=300></a><br>"%(svg,svg))
         print("View %s at the <a href=https://rcsb.org/ligand/%s target=_blank>PDB</a> and <a href=qsearch.cgi?lig3=%s>BioLiP</a> database</ul></p>"%(
             lig3,lig3,lig3))
-    print(txt_table)
+    fp.close()
+    print(txt_table+"</table>")
 else:
     fp=gzip.open(rootdir+"/data/ligand.tsv.gz",'rt')
     ligand_list=[]
@@ -90,14 +124,13 @@ else:
         ligand_list.append(line.split('\t')[0])
     fp.close()
     import random
-    code=random.choice(ligand_list)
+    lig3=random.choice(ligand_list)
     
     print('''No ligand code provided. You may <a href="%s?code=%s">[browse a random ligand]</a>
 <meta http-equiv="refresh" content="3; url='%s?code=%s'" /><br>
 This page will be redicted in 3 seconds.
-'''%(os.path.basename(__file__),code,
-     os.path.basename(__file__),code))
-print("</table>")
+'''%(os.path.basename(__file__),lig3,
+     os.path.basename(__file__),lig3))
 
 if len(html_footer):
     print(html_footer)
