@@ -442,7 +442,7 @@ else:
 print('''
 <li>Hover over <strong>EC number</strong> to view the full name of enzymatic activity.</li>
 <li>Hover over <strong>GO terms</strong> to view all GO terms.
-Click <strong>GO terms</strong> to view the GO annotations for the UniProt protein associated with the PDB chain</li>
+<li>Hover over <strong>UniProt</strong> to view the protein name.</li>
 ''')
 
 
