@@ -35,7 +35,7 @@ if os.path.isfile(filename):
     print(fp.read())
     fp.close()
 
-cmd="ls -rt output/|grep -P '[a-z0-9]+_[A-Za-z0-9]+_[FPC]\.svg'|cut -f1,2 -d_|uniq -c|grep ' 3 '|tail -1|grep -ohP '\S+$'"
+cmd="ls -rt output/|grep -P '[a-z0-9]+_[A-Za-z0-9]+_[FPC]\.svg'|cut -f1,2 -d_|uniq|tail -1"
 p=subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
 stdout,stderr=p.communicate()
 stdout=stdout.decode().strip()
