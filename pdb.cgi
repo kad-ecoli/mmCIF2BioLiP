@@ -297,9 +297,9 @@ used by the PDB database."><a href=https://rcsb.org/ligand/$lig3>$lig3</a></span
     <tr><td align=center><strong>SMILES</strong></td><td>$SMILES</td></tr>
     <tr BGCOLOR="#DEDEDE"><td align=center><strong>Formula</strong></td><td>$formula</td></tr>
     <tr><td align=center><strong>Name</strong></td><td>$name</td></tr>
-    <tr BGCOLOR="#DEDEDE"><td align=center><strong>ChEMBL</strong></td><td><a href="https://www.ebi.ac.uk/chembl/compound_report_card/$ChEMBL" target=_blank>$ChEMBL</a></td></tr>
-    <tr><td align=center><strong>DrugBank</strong></td><td><a href="https://go.drugbank.com/drugs/$DrugBank" target=_blank>$DrugBank</a></td></tr>
-    <tr BGCOLOR="#DEDEDE"><td align=center><strong>ZINC</strong></td><td><a href="https://zinc.docking.org/substances/$ZINC" target=_blank>$ZINC</a></td></tr>
+    <tr BGCOLOR="#DEDEDE"><td align=center><strong><a href=https://www.ebi.ac.uk/chembl target=_blank>ChEMBL</a></strong></td><td><a href="https://www.ebi.ac.uk/chembl/compound_report_card/$ChEMBL" target=_blank>$ChEMBL</a></td></tr>
+    <tr><td align=center><strong><a href=https://go.drugbank.com target=_blank>DrugBank</a></strong></td><td><a href="https://go.drugbank.com/drugs/$DrugBank" target=_blank>$DrugBank</a></td></tr>
+    <tr BGCOLOR="#DEDEDE"><td align=center><strong><a href=https://zinc.docking.org target=_blank>ZINC</a></strong></td><td><a href="https://zinc.docking.org/substances/$ZINC" target=_blank>$ZINC</a></td></tr>
     </table>
 </div>
 </td></tr>
@@ -406,8 +406,6 @@ def display_go(go,uniprot,pdbid,asym_id):
             go2aspect[Aspect]=[]
         go2aspect[Aspect].append((term,name))
     
-    svg_size_dict=dict()
-    svg_size_pat=re.compile('<svg width=\"(\d+)pt\" height=\"(\d+)pt\"')
     for Aspect,namespace in [('F',"Molecular Function"),
                              ('P',"Biological Process"),
                              ('C',"Cellular Component")]:
@@ -498,6 +496,24 @@ def display_go(go,uniprot,pdbid,asym_id):
             fp.write(GVtxt)
             fp.close()
             os.system(dot+" -Tsvg -O "+dotfilename)
+    
+    svg_size_dict=dict()
+    svg_size_pat=re.compile('<svg width=\"(\d+)pt\" height=\"(\d+)pt\"')
+    for Aspect in ['F','P','C']:
+        filename="output/%s_%s_%s.svg"%(pdbid,asym_id,Aspect)
+        if not os.path.isfile(filename):
+            continue
+        fp=open(filename,'r')
+        findall_list=svg_size_pat.findall(fp.read())
+        fp.close()
+        svg_size_dict[Aspect]=1
+        if len(findall_list) and len(findall_list[0])>=2:
+            w,h=findall_list[0][:2]
+            svg_size_dict[Aspect]=float(w)/float(h)
+    if len(svg_size_dict):
+        total_width=sum([svg_size_dict[a] for a in svg_size_dict])
+        for a in svg_size_dict:
+            svg_size_dict[a]=int(100.*svg_size_dict[a]/total_width)
 
     print('''   </table>
     <table width=100% border="0" style="font-family:Monospace;font-size:14px;background:#F2F2F2;" >
@@ -512,9 +528,11 @@ def display_go(go,uniprot,pdbid,asym_id):
         if Aspect=='P':
             height="height=300"
         print('''
-        <td align=center width=30%><span title="View graph for $namespace. Grey and white boxes indidate GO terms directly annotated to the protein by SIFTS and their parent terms, respectively."><a href=$filename target=_blank><img src=$filename style="display:block;" width="100%"><br>View graph for $namespace</a></td>
+        <td align=center width=$width%><span title="View graph for $namespace.
+Grey and white boxes indidate GO terms directly annotated to the protein by SIFTS and their parent terms, respectively."><a href=$filename target=_blank><img src=$filename style="display:block;" width="100%"><br>View graph for<br>$namespace</a></td>
         '''.replace("$namespace",namespace
           ).replace("$height",height
+          ).replace("$width","%d"%svg_size_dict[Aspect]
           ).replace("$filename",filename
         ))
     print("    </tr>")
@@ -820,6 +838,7 @@ def display_interaction(pdbid,asym_id,bs,title):
     pdbbind  =items[10]
     bindingdb=items[11]
 
+    baff_line=''
     baff_list=[]
     if manual:
         baff_list.append("Manual survey: "+manual)
@@ -829,6 +848,11 @@ def display_interaction(pdbid,asym_id,bs,title):
         baff_list.append("<a href=http://pdbbind.org.cn/quickpdb.php?quickpdb=%s target=_blank>PDBbind-CN</a>: %s"%(pdbid,pdbbind))
     if bindingdb:
         baff_list.append("BindingDB: "+bindingdb)
+    if len(baff_list):
+        baff_line='''
+            <tr BGCOLOR="#DEDEDE"><td align=center><strong>Binding affinity</strong><td>$baff</td></tr>
+        '''.replace("$baff",'<br>'.join(baff_list))
+
 
     lig_prefix="%s_%s_%s_%s"%(pdbid,lig3,ligCha,ligIdx)
     filename="%s/output/%s.pdb.gz"%(rootdir,lig_prefix)
@@ -943,9 +967,9 @@ used by the PDB database."><a href=https://rcsb.org/ligand/$lig3>$lig3</a></span
         <tr><td align=center>SMILES</td><td>$SMILES</td></tr>
         <tr BGCOLOR="#DEDEDE"><td align=center>Formula</td><td>$formula</td></tr>
         <tr><td align=center>Name</td><td>$name</td></tr>
-        <tr BGCOLOR="#DEDEDE"><td align=center>ChEMBL</td><td><a href="https://www.ebi.ac.uk/chembl/compound_report_card/$ChEMBL" target=_blank>$ChEMBL</a></td></tr>
-        <tr><td align=center>DrugBank</td><td><a href="https://go.drugbank.com/drugs/$DrugBank" target=_blank>$DrugBank</a></td></tr>
-        <tr BGCOLOR="#DEDEDE"><td align=center>ZINC</td><td><a href="https://zinc.docking.org/substances/$ZINC" target=_blank>$ZINC</a></td></tr>
+        <tr BGCOLOR="#DEDEDE"><td align=center><a href=https://www.ebi.ac.uk/chembl target=_blank>ChEMBL</a></td><td><a href="https://www.ebi.ac.uk/chembl/compound_report_card/$ChEMBL" target=_blank>$ChEMBL</a></td></tr>
+        <tr><td align=center><a href=https://go.drugbank.com target=_blank>DrugBank</a></td><td><a href="https://go.drugbank.com/drugs/$DrugBank" target=_blank>$DrugBank</a></td></tr>
+        <tr BGCOLOR="#DEDEDE"><td align=center><a href=https://zinc.docking.org>ZINC</a></td><td><a href="https://zinc.docking.org/substances/$ZINC" target=_blank>$ZINC</a></td></tr>
         <tr><td align=center>PDB chain</td><td>$pdbid Chain $asym_id 
         [<a href=output/$prefix.pdb.gz>Download ligand structure</a>] 
         [<a href=?pdb=$pdbid&chain=$asym_id&lig3=$lig3&ligIdx=$ligIdx&outfmt=1 download=$prefix.pdb>Download structure with residue number starting from 1</a>] 
@@ -1087,7 +1111,7 @@ $(document).ready(function()
             <tr><td align=center><strong>Resolution</strong><td>$reso</td></tr>
             <tr BGCOLOR="#DEDEDE"><td align=center><strong>Binding residue<br>(original residue number in PDB)</strong><td>$resOrig</td></tr>
             <tr><td align=center><strong>Binding residue<br>(residue number reindexed from 1)</strong><td>$resRenu</td></tr>
-            <tr BGCOLOR="#DEDEDE"><td align=center><strong>Binding affinity</strong><td>$baff</td></tr>
+            $baff_line
         </table>
         </td>
     </tr>
@@ -1104,10 +1128,10 @@ $(document).ready(function()
     ).replace("$script",script
     ).replace("$resOrig",resOrig
     ).replace("$resRenu",resRenu
-    ).replace("$baff",'<br>'.join(baff_list)
-    ).replace("$xcen","%.3f"%xcen,
-    ).replace("$ycen","%.3f"%ycen,
-    ).replace("$zcen","%.3f"%zcen,
+    ).replace("$baff_line",baff_line
+    ).replace("$xcen","%.3f"%xcen
+    ).replace("$ycen","%.3f"%ycen
+    ).replace("$zcen","%.3f"%zcen
     ))
 
     if ec:
