@@ -127,7 +127,7 @@ print('''
 <li>The 3-letter <strong>Ligand ID</strong> follows the <a href="https://www.wwpdb.org/data/ccd" target=_blank>Chemical Component Dictionary (CCD)</a> used by the PDB database.
     When availble, the <strong>Ligand ID</strong> from <a href=https://www.ebi.ac.uk/chembl>ChEMBL</a>, <a href=https://go.drugbank.com>DrugBank</a>, and <a href=https://zinc.docking.org>ZINC</a> databases are also listed in the form of CHEMBL*, DB*, and ZINC*, respectively. Click on the <strong>Ligand ID</strong> to view the ligand at RCSB PDB, ChEMBL, DrugBank or ZINC.</li>
 <li><strong>Count</strong> is the number of BioLiP entries with the ligand. The full statistics is available at <a href=download/lig_frequency.txt>lig_frequency.txt</a>. Click <strong>Count</strong> to search the ligand through BioLiP.</li>
-<li>If multiple SMILES strings exists for the same ligand, different SMILES are separated by semicolon ";"</li>
+<li>If multiple SMILES strings exists for the same ligand, different SMILES are separated by semicolon ";".</li>
 <p></p>
 ''')
 
@@ -279,8 +279,7 @@ for l,items in enumerate(lines):
     ligandID,
     freq,
     items[1],
-    items[2],
-    items[3],
+    items[2], items[3],
     items[4],
     items[5].replace(';',';\n'),items[5].replace(';',';<br>')
     ))
