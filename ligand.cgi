@@ -25,7 +25,7 @@ if not lig3:
 if not lig3 in ["metal","regular"]:
     lig3=lig3.upper()
 formula = form.getfirst("formula",'').upper()
-inchi   = form.getfirst("inchi",'').upper().replace('"','').replace(' ','')
+inchi   = form.getfirst("inchi",'').upper().replace('"','').replace(' ','').rstrip(';')
 if inchi and not inchi.startswith("INCHI="):
     inchi="INCHI="+inchi
 inchikey= form.getfirst("inchikey",'').upper().replace(' ','')
@@ -123,11 +123,11 @@ print('''
 
 print('''
 <h4>Browse Ligand</h4>
+<li>Click <strong>#</strong> to view 2D diagram of the ligand.</li>
 <li>The 3-letter <strong>Ligand ID</strong> follows the <a href="https://www.wwpdb.org/data/ccd" target=_blank>Chemical Component Dictionary (CCD)</a> used by the PDB database.
     When availble, the <strong>Ligand ID</strong> from <a href=https://www.ebi.ac.uk/chembl>ChEMBL</a>, <a href=https://go.drugbank.com>DrugBank</a>, and <a href=https://zinc.docking.org>ZINC</a> databases are also listed in the form of CHEMBL*, DB*, and ZINC*, respectively. Click on the <strong>Ligand ID</strong> to view the ligand at RCSB PDB, ChEMBL, DrugBank or ZINC.</li>
 <li><strong>Count</strong> is the number of BioLiP entries with the ligand. The full statistics is available at <a href=download/lig_frequency.txt>lig_frequency.txt</a>. Click <strong>Count</strong> to search the ligand through BioLiP.</li>
 <li>If multiple SMILES strings exists for the same ligand, different SMILES are separated by semicolon ";"</li>
-<li>Click the corresponding <strong>Ligand Name</strong> to view 2D diagram of the ligand.</li>
 <p></p>
 ''')
 
@@ -235,14 +235,13 @@ if not inchi and not inchikey: # inchi only has unique hit
 
 print('''<table border="0" align=center width=100%>    
 <tr BGCOLOR="#FF9900">
-    <th width=4%  ALIGN=center><strong> # </strong></th>
-    <th width=9%  ALIGN=center><strong> ID </strong></th>
+    <th width=5%  ALIGN=center><strong> # </strong></th>
+    <th width=10% ALIGN=center><strong> ID </strong></th>
     <th width=5%  ALIGN=center><strong> Count </strong></th>
-    <th width=10% ALIGN=center><strong> Chemical<br>formula </strong></th>
-    <th width=11% ALIGN=center><strong> InChI </strong></th>
-    <th width=11% ALIGN=center><strong> InChIKey </strong></th>
-    <th width=10% ALIGN=center><strong> SMILES </strong></th>
-    <th width=40% ALIGN=left>  <strong> Ligand<br>Name </strong> </th>           
+    <th width=5%  ALIGN=center><strong> Chemical<br>formula </strong></th>
+    <th width=12% ALIGN=center><strong> InChI;<br>InChIKey </strong></th>
+    <th width=13% ALIGN=center><strong> SMILES </strong></th>
+    <th width=50% ALIGN=left>  <strong> Ligand<br>Name </strong> </th>           
 </tr><tr ALIGN=center>
 ''')
 
@@ -267,24 +266,23 @@ for l,items in enumerate(lines):
         
     print('''
 <tr %s ALIGN=center>
-    <td>%d</td>
+    <td><span title="View 2D diagram for %s"><a href="sym.cgi?code=%s" target=_blank>%d</a></span></td>
     <td>%s</td>
     <td>%s</td>
     <td>%s</td>
+    <td>%s;<br>%s</td>
     <td>%s</td>
-    <td>%s</td>
-    <td>%s</td>
-    <td ALIGN=left><span title="View 2D diagram for\n%s"><a href="sym.cgi?code=%s" target=_blank>%s</a></span></td>
+    <td ALIGN=left><span title="%s">%s</a></span></td>
 </tr>
 '''%(bgcolor,
-    l+1,
+    ccd,ccd,l+1,
     ligandID,
     freq,
     items[1],
     items[2],
     items[3],
     items[4],
-    items[5].replace(';',';\n'),ccd,items[5].replace(';',';<br>')
+    items[5].replace(';',';\n'),items[5].replace(';',';<br>')
     ))
 fp.close()
 
