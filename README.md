@@ -6,13 +6,16 @@ cd script/
 make
 ```
 The compilation requires GCC with C++ 11 support.
-The binary executable of [cd-hit](https://github.com/weizhongli/cdhit) is available at ``script/cd-hit`` for 64 bit Linux.
-The binary executable of makeblastdb, blastn and blastp from the [NCBI BLAST+](ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/) are available at ``script/`` for 64 bit Linux.
-Reinstall cd-hit, makeblastdb, blastn and blastp if using other operating system.
+The binary executable of [cd-hit](https://github.com/weizhongli/cdhit) is available at ``script/cd-hit`` for 64 bit Linux. When using other operating system, the cd-hit program needs to be recompiled:
+```bash
+cd cdhit/
+make install
+```
+The binary executable of makeblastdb, blastn and blastp from the [NCBI BLAST+](ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/) are available at ``script/`` for 64 bit Linux. Reinstall makeblastdb, blastn and blastp if using other operating system.
 
 ## Installation for web browsing ##
 
-1. This repository contains a copy of [JSmol](https://wiki.jmol.org/index.php/JSmol). This is not needed for database update. It is solely for visualization through the web browser.
+1. This repository contains a copy of [JSmol](https://wiki.jmol.org/index.php/JSmol) under the ``jsmol`` folder. This is not needed for database update. It is solely for visualization through the web browser.
 
 2. Optionally, to show directed acylic graph for Gene Ontology terms on the website, the ``dot`` program from [Graphviz](https://graphviz.org/) can be used. If your system does not have Graphviz, you can install it to ``graphviz/bin/dot`` from source code:
 ```bash
