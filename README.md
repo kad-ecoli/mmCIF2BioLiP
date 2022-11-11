@@ -11,7 +11,7 @@ The binary executable of [cd-hit](https://github.com/weizhongli/cdhit) is availa
 cd cdhit/
 make install
 ```
-The binary executable of makeblastdb, blastn and blastp from the [NCBI BLAST+](ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/) are available at ``script/`` for 64 bit Linux. Reinstall makeblastdb, blastn and blastp if using other operating system.
+The binary executable of makeblastdb, blastn and blastp from the [NCBI BLAST+](https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/) are available at ``script/`` for 64 bit Linux. Reinstall makeblastdb, blastn and blastp if using other operating system.
 
 ## Installation for web browsing ##
 
