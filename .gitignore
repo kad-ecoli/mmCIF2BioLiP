@@ -24,6 +24,7 @@ bind/every.csv
 download/lig_frequency.txt
 download/BioLiP*.txt.gz
 output/*.pdb.gz
+output/*.svg
 
 # Prerequisites
 *.d
