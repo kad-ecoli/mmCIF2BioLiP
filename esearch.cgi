@@ -275,37 +275,37 @@ print('''
 <FORM id="form1" name="form1" METHOD="POST" ENCTYPE="MULTIPART/FORM-DATA" ACTION="esearch.cgi">
     PDB ID
     <span title="Example: 1a69">
-    <input type="text" name="pdbid" value="" placeholder="%s" size=10>
+    <input type="text" name="pdbid" value="" placeholder="%s" size=9>
     </span>
     &nbsp;&nbsp;
     
     Chain ID
     <span title="Example: A">
-    <input type="text" name="chain" value="" placeholder="%s" size=10>
+    <input type="text" name="chain" value="" placeholder="%s" size=9>
     </span>
     &nbsp;&nbsp;
     
     UniProt accession
     <span title="Example: P0ABP8">
-    <input type="text" name="uniprot" value="" placeholder="%s" size=10>
+    <input type="text" name="uniprot" value="" placeholder="%s" size=9>
     </span>
     &nbsp;&nbsp;
     
     EC number
-    <span title="Example: P0ABP8">
-    <input type="text" name="ecn" value="" placeholder="%s" size=10>
+    <span title="Example: 2.4.2.1">
+    <input type="text" name="ecn" value="" placeholder="%s" size=9>
     </span>
     &nbsp;&nbsp;
     
     GO term
     <span title="Example: 0004731, or GO:0004731">
-    <input type="text" name="got" value="" placeholder="%s" size=10>
+    <input type="text" name="got" value="" placeholder="%s" size=9>
     </span>
     &nbsp;&nbsp;
    
     PubMed ID
     <span title="Example: 9653038">
-    <input type="text" name="pubmed" value="" placeholder="%s" size=10>
+    <input type="text" name="pubmed" value="" placeholder="%s" size=9>
     </span>
     &nbsp;&nbsp;
 
