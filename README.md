@@ -125,7 +125,7 @@ This step must be performed after step 3, 4 and 8.
 This script converts ``weekly/BioLiP_*.bsr.gz`` to ``weekly/BioLiP_*.txt`` and ``weekly/BioLiP_*_nr.txt``.
 It also creates ``weekly/receptor_*_nr.tar.bz2``, ``weekly/receptor1_*_nr.tar.bz2`` and ``weekly/ligand_*_nr.tar.bz2`` from intermediate files of the previous step.
 
-## Step 10: curate GO anntation ##
+### Step 10: curate GO annotation ###
 This step must be performed after step 9.
 ```bash
 ./script/curate_GO.pl
