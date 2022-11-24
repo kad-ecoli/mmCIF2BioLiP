@@ -2,7 +2,7 @@ CC=g++
 CFLAGS=-O3 -std=c++11
 LDFLAGS=-static
 
-all: cif2pdb rmligand fasta2nr receptor1 NWalign obo2csv backpropagate mapCSA
+all: cif2pdb rmligand fasta2nr receptor1 NWalign obo2csv backpropagate mapCSA cif2chain
 
 cif2pdb: cif2pdb.cpp
 	${CC} ${CFLAGS} $@.cpp -o $@ ${LDFLAGS}
@@ -27,3 +27,7 @@ backpropagate: backpropagate.cpp
 
 mapCSA: mapCSA.cpp
 	${CC} ${CFLAGS} $@.cpp -o $@ ${LDFLAGS}
+
+cif2chain: cif2chain.cpp
+	${CC} ${CFLAGS} $@.cpp -o $@ ${LDFLAGS}
+
