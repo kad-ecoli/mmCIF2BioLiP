@@ -7,7 +7,7 @@ my $bindir = dirname(abs_path(__FILE__));
 my $rootdir = dirname($bindir);
 
 system("$bindir/obo2csv $rootdir/obo/go/go-basic.obo $rootdir/obo/go/is_a.tsv $rootdir/obo/go/go2name.tsv $rootdir/obo/go/alt_id.tsv");
-system("zcat $rootdir/data/pdb_all.tsv.gz | tail -n +2 | cut -f1,2,7 > $rootdir/obo/go/input.txt");
+system("zcat $rootdir/data/pdb_all.tsv.gz $rootdir/data/pdb_all.tsv.gz | grep -v '^#'|sort |uniq | cut -f1,2,7 > $rootdir/obo/go/input.txt");
 system("$bindir/backpropagate $rootdir/obo/go/input.txt $rootdir/obo/go/is_a.tsv $rootdir/obo/go/alt_id.tsv $rootdir/obo/go/output.txt");
 system("sed 's/GO://g' $rootdir/obo/go/output.txt > $rootdir/data/pdb_go.tsv");
 &gzipFile("$rootdir/data/pdb_go.tsv");
