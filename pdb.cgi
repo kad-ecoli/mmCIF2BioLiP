@@ -573,9 +573,13 @@ def display_protein_receptor(pdbid,asym_id,title):
     species=''
     if pdbid+':'+asym_id in taxon_dict:
         species="Species: "+taxon_dict[pdbid+':'+asym_id]
+    print('''
+<tr><td><h1 align=center>Structure of PDB $pdbid Chain $asym_id</h1></td></tr>
+'''.replace("$pdbid",pdbid
+  ).replace("$asym_id",asym_id))
+
     if len(sequence):
         print('''
-<tr><td><h1 align=center>Structure of PDB $pdbid Chain $asym_id</h1></td></tr>
 <tr><td>
 <div id="headerDiv">
     <div id="titleText">Receptor sequence</div>
