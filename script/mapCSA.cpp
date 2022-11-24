@@ -220,10 +220,9 @@ void mapCSA(const string &infile, const string &infolder, const string &outfile)
                 "/receptor_nr/"+pdbid+asym_id+".pdb";
             if (!isfile(filename))
             {
-                //cerr<<"WARNING! No such file "<<infolder
-                    //<<pdbid.substr(pdbid.size()-3,2)
-                    //<<"/receptor*/"<<pdbid<<asym_id<<".pdb"<<endl;
-                continue;
+                filename=infolder+pdbid.substr(pdbid.size()-3,2)+
+                    "/Enzyme/"+pdbid+asym_id+".pdb";
+                if (!isfile(filename)) continue;
             }
         }
         Split(line,line_vec,',');
