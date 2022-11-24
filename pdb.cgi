@@ -573,7 +573,8 @@ def display_protein_receptor(pdbid,asym_id,title):
     species=''
     if pdbid+':'+asym_id in taxon_dict:
         species="Species: "+taxon_dict[pdbid+':'+asym_id]
-    print('''
+    if len(sequence):
+        print('''
 <tr><td><h1 align=center>Structure of PDB $pdbid Chain $asym_id</h1></td></tr>
 <tr><td>
 <div id="headerDiv">
@@ -604,8 +605,8 @@ def display_protein_receptor(pdbid,asym_id,title):
     go     =''
     uniprot=''
     pubmed =''
-    cmd="zcat %s/data/pdb_all.tsv.gz |grep -P '^%s\\t%s\\t'|head -1"%(
-        rootdir,pdbid,asym_id)
+    cmd="zcat %s/data/pdb_all.tsv.gz %s/data/ec_all.tsv.gz|grep -P '^%s\\t%s\\t'|head -1"%(
+        rootdir,rootdir,pdbid,asym_id)
     p=subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
     stdout,stderr=p.communicate()
     items=stdout.decode().split('\t')
@@ -618,9 +619,16 @@ def display_protein_receptor(pdbid,asym_id,title):
     filename="%s/output/%s.pdb.gz"%(rootdir,prefix)
     if not os.path.isfile(filename):
         divided=pdbid[-3:-1]
-        if os.path.isfile("%s/weekly/receptor_%s.tar.bz2"%(rootdir,divided)):
-            tar = tarfile.open("%s/weekly/receptor_%s.tar.bz2"%(rootdir,divided))
-            fin=tar.extractfile("receptor/%s.pdb"%prefix)
+        for prefix_tar in ["receptor","Enzyme"]:
+            if not os.path.isfile("%s/weekly/%s_%s.tar.bz2"%(
+                rootdir,prefix_tar,divided)):
+                continue
+            tar = tarfile.open("%s/weekly/%s_%s.tar.bz2"%(
+                rootdir,prefix_tar,divided))
+            extract_filename="%s/%s.pdb"%(prefix_tar,prefix)
+            if not extract_filename in tar.getnames():
+                continue
+            fin=tar.extractfile(extract_filename)
             lines=fin.read().decode().splitlines()
             txt=''
             for line in lines:
@@ -633,6 +641,7 @@ def display_protein_receptor(pdbid,asym_id,title):
             fout.close()
             fin.close()
             tar.close()
+            break
 
     script=''
     explainLabel=''
