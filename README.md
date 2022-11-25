@@ -125,16 +125,22 @@ This step must be performed after step 3, 4 and 8.
 This script converts ``weekly/BioLiP_*.bsr.gz`` to ``weekly/BioLiP_*.txt`` and ``weekly/BioLiP_*_nr.txt``.
 It also creates ``weekly/receptor_*_nr.tar.bz2``, ``weekly/receptor1_*_nr.tar.bz2`` and ``weekly/ligand_*_nr.tar.bz2`` from intermediate files of the previous step.
 
-### Step 10: curate GO annotation ###
+### Step 10: curate EC annotation ###
 This step must be performed after step 9.
+```bash
+./script/make_EC.pl
+```
+This script reads EC from ``data/chain2ec.tsv.gz`` and extract the summary to ``data/ec_all.tsv.gz``. It also creates ``weekly/Enzyme_*.tar.bz2``.
+
+### Step 11: curate GO annotation ###
+This step must be performed after step 10.
 ```bash
 ./script/curate_GO.pl
 ```
-This script reads GO from ``obo/go/go-basic.obo`` and ``data/pdb_all.tsv.gz``.
-and extract the summary to ``data/go2name.tsv.gz``, ``data/is_a.tsv.gz`` and ``data/pdb_go.tsv.gz``.
+This script reads GO from ``obo/go/go-basic.obo``, ``data/pdb_all.tsv.gz`` and ``data/ec_all.tsv.gz``. It extracts the summary to ``data/go2name.tsv.gz``, ``data/is_a.tsv.gz`` and ``data/pdb_go.tsv.gz``.
 This script reads swissprot name from ``uniprot/current_release/knowledgebase/complete/uniprot_sprot.fasta.gz`` and extract the summary to ``data/uniprot_sprot.tsv.gz``.
 
-### Step 11: clean up intermediate files ###
+### Step 12: clean up intermediate files ###
 This step must be run after everything is done.
 ```bash
 ./script/clean_up.pl
