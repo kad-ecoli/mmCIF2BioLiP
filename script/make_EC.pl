@@ -22,7 +22,7 @@ my %receptor_dict=map { $_, 0 } @receptor_list;
 my @chain2ec_list;
 my %chain2ec_dict;
 my @miss_list;
-foreach my $line(`zcat $rootdir/data/chain2ec.tsv.gz|head -10000`)
+foreach my $line(`zcat $rootdir/data/chain2ec.tsv.gz`)
 {
     if ($line=~/(\w+)\s(\w+)\s(\S+)/)
     {
