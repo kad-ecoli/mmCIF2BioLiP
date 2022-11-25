@@ -126,7 +126,7 @@ This script converts ``weekly/BioLiP_*.bsr.gz`` to ``weekly/BioLiP_*.txt`` and `
 It also creates ``weekly/receptor_*_nr.tar.bz2``, ``weekly/receptor1_*_nr.tar.bz2`` and ``weekly/ligand_*_nr.tar.bz2`` from intermediate files of the previous step.
 
 ### Step 10: curate EC annotation ###
-This step must be performed after step 9.
+This step must be performed after step 8.
 ```bash
 ./script/make_EC.pl
 ```
