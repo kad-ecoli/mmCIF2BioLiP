@@ -364,7 +364,7 @@ for p in range(page-10,page+11):
 print('''
 <a class='hover' href='?&page=%d&%s'>&gt</a>
 <a class='hover' href='?&page=last&%s'>&gt&gt</a>
-<form name="pform" action="ssearch.cgi">Go to page <select name="page" onchange="this.form.submit()">
+<form name="pform" action="esearch.cgi">Go to page <select name="page" onchange="this.form.submit()">
 '''%(page+1,para,para))
 for p in range(1,totalPage+1):
     if p==page:
