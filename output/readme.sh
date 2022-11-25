@@ -10,6 +10,7 @@
     chmod a+x pdb.cgi
     chmod a+x qsearch.cgi
     chmod a+x ssearch.cgi
+    chmod a+x esearch.cgi
     chmod a+x sym.cgi
     chmod a+x graphviz/bin/dot
     chmod 777 output/
@@ -21,6 +22,7 @@
     chcon -t httpd_sys_script_exec_t pdb.cgi
     chcon -t httpd_sys_script_exec_t qsearch.cgi
     chcon -t httpd_sys_script_exec_t ssearch.cgi
+    chcon -t httpd_sys_script_exec_t esearch.cgi
     chcon -t httpd_sys_script_exec_t sym.cgi
     chcon -t httpd_sys_script_exec_t script/receptor1
     chcon -t httpd_sys_script_exec_t script/NWalign

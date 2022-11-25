@@ -49,6 +49,10 @@ if ($hasLoss)
 }
 
 #### remove intermediate file from output ####
+if (-d "$rootdir/weekly/Enzyme")
+{
+    system("rm -rf $rootdir/weekly/Enzyme");
+}
 foreach my $divided(`ls $rootdir/weekly/|grep -F _nr.txt|cut -f2 -d_`)
 {
     chomp($divided);
