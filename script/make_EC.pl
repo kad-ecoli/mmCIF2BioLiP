@@ -36,6 +36,12 @@ foreach my $line(`zcat $rootdir/data/chain2ec.tsv.gz`)
 my $size=scalar @miss_list;
 print "$size chains with EC but not receptor\n";
 
+foreach my $tarfile(`ls $rootdir/weekly/|grep Enzyme_|grep -F .tar.bz2`)
+{
+    chomp($tarfile);
+    system("cd $rootdir/weekly; tar -xf $tarfile");
+}
+
 my @divided_list;
 my %divided_dict;
 foreach my $chain(@miss_list)
@@ -57,6 +63,10 @@ foreach my $chain(@miss_list)
         }
         $divided_dict{$divided}+=1;
         my $chain="$pdb$asym_id";
+        if (-s "$rootdir/weekly/Enzyme/$chain.pdb")
+        {
+            system("mv $rootdir/weekly/Enzyme/$chain.pdb $rootdir/weekly/$divided/Enzyme/$chain.pdb");
+        }
         foreach my $suffix(("gz","bz2"))
         {
             next if (-s "$rootdir/weekly/$divided/Enzyme/$chain.pdb");
@@ -66,8 +76,11 @@ foreach my $chain(@miss_list)
         if (!-s "$rootdir/weekly/$divided/Enzyme/$chain.pdb")
         {
             my $cmd="cd $rootdir/weekly/$divided/Enzyme; $bindir/cif2chain $rootdir/pdb/data/structures/divided/mmCIF/$divided/$pdb.cif.gz $chain.pdb $asym_id";
-            #print "$cmd\n";
-            system("$cmd");
+            if (-s "$rootdir/pdb/data/structures/divided/mmCIF/$divided/$pdb.cif.gz")
+            {
+                #print "$cmd\n";
+                system("$cmd");
+            }
             if (!-f "$rootdir/weekly/$divided/Enzyme/$chain.pdb")
             {
                 print "no such file: $rootdir/weekly/$divided/Enzyme/$chain.pdb\n";
