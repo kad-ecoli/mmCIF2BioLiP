@@ -6,7 +6,7 @@ my $bindir = dirname(abs_path(__FILE__));
 my $rootdir = dirname($bindir);
 
 my @pdb_list;
-foreach my $pdb(`grep ';' $rootdir/pdb/derived_data/index/resolu.idx|cut -f1 -d';'|grep -ohP '^\\S+'|head -10000`)
+foreach my $pdb(`grep ';' $rootdir/pdb/derived_data/index/resolu.idx|cut -f1 -d';'|grep -ohP '^\\S+'`)
 {
     chomp($pdb);
     $pdb=lc($pdb);
