@@ -43,12 +43,15 @@ print "download unichem\n";
 #1	chembl
 #2	drugbank
 #3	pdb
+#7	chebi
 #9	zinc
 system("mkdir -p $rootdir/UniChem/");
 system("wget http://ftp.ebi.ac.uk/pub/databases/chembl/UniChem/data/wholeSourceMapping/src_id1/src1src3.txt.gz -O $rootdir/UniChem/src1src3.txt.gz");
 system("wget ftp://ftp.ebi.ac.uk/pub/databases/chembl/UniChem/data/wholeSourceMapping/src_id1/src1src3.txt.gz -O $rootdir/UniChem/src1src3.txt.gz") if (!-s "$rootdir/UniChem/src1src3.txt.gz");
 system("wget http://ftp.ebi.ac.uk/pub/databases/chembl/UniChem/data/wholeSourceMapping/src_id2/src2src3.txt.gz -O $rootdir/UniChem/src2src3.txt.gz");
 system("wget ftp://ftp.ebi.ac.uk/pub/databases/chembl/UniChem/data/wholeSourceMapping/src_id2/src2src3.txt.gz -O $rootdir/UniChem/src2src3.txt.gz") if (!-s "$rootdir/UniChem/src2src3.txt.gz");
+system("wget http://ftp.ebi.ac.uk/pub/databases/chembl/UniChem/data/wholeSourceMapping/src_id3/src3src7.txt.gz -O $rootdir/UniChem/src3src7.txt.gz");
+system("wget ftp://ftp.ebi.ac.uk/pub/databases/chembl/UniChem/data/wholeSourceMapping/src_id3/src3src7.txt.gz -O $rootdir/UniChem/src3src7.txt.gz") if (!-s "$rootdir/UniChem/src3src7.txt.gz");
 system("wget http://ftp.ebi.ac.uk/pub/databases/chembl/UniChem/data/wholeSourceMapping/src_id3/src3src9.txt.gz -O $rootdir/UniChem/src3src9.txt.gz");
 system("wget ftp://ftp.ebi.ac.uk/pub/databases/chembl/UniChem/data/wholeSourceMapping/src_id3/src3src9.txt.gz -O $rootdir/UniChem/src3src9.txt.gz") if (!-s "$rootdir/UniChem/src3src9.txt.gz");
 my %pdb2chembl;
