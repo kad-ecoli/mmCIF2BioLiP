@@ -41,11 +41,17 @@ stdout,stderr=p.communicate()
 stdout=stdout.decode().strip()
 if len(stdout):
     pdbid,chain=stdout.split('_')[:2]
+    cmd="ls output/%s_*_*_*.pdb.gz|wc -l"%(pdbid)
+    p=subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
+    stdout,stderr=p.communicate()
+    bs=''
+    if int(stdout.decode()):
+        bs="&bs=BS01"
     print('''
 <p>
-<h1><span title="PDB $pdbid Chain $chain Binding Site BS01"><a href=pdb.cgi?pdb=$pdbid&chain=$chain&bs=BS01 target=_blank>Browse a random BioLiP entry</a></span></h1>
+<h1><span title="PDB $pdbid Chain $chain Binding Site BS01"><a href=pdb.cgi?pdb=$pdbid&chain=$chain$bs target=_blank>View a random BioLiP entry</a></span></h1>
 </p>
-'''.replace("$pdbid",pdbid).replace("$chain",chain))
+'''.replace("$pdbid",pdbid).replace("$chain",chain).replace("$bs",bs))
 
 
 if len(html_footer):
