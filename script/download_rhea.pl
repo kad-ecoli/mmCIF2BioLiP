@@ -450,11 +450,7 @@ foreach my $line(`zcat $rootdir/data/lig_all.tsv.gz|tail -n +2|cut -f1,2,4`)
             }
             if ($count)
             {
-                my $cmd="echo '$inchi_line'|sed 's/ /\\n/g'|$bindir/obabel -iinchi -ofpt -xfECFP4 -xN1024|grep -ohP ' = [.\\d]+'|sort -nr|head -1";
-                if ($pdbid eq "1ank" && $asym_id eq "A" && $ccd eq "ANP")
-                {
-                    print "$cmd\n";
-                }
+                my $cmd="echo '$inchi_line'|sed 's/ /\\n/g'|$bindir/obabel -iinchi -ofpt -xfECFP4 -xN1024 -p 7|grep -ohP ' = [.\\d]+'|sort -nr|head -1";
                 if (`$cmd`=~/([.\d]+)$/)
                 {
                     $score="$1";
