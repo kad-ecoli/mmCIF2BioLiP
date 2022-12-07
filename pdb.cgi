@@ -851,6 +851,34 @@ def display_interaction(pdbid,asym_id,bs,title):
     pdbbind  =items[10]
     bindingdb=items[11]
 
+    score=''
+    if os.path.isfile(rootdir+"/data/lig_rhea.tsv.gz"):
+        cmd="zcat %s/data/lig_rhea.tsv.gz|grep -P '^%s\\t%s\\t%s\\t'"%(
+            rootdir,pdbid,asym_id,lig3)
+        p=subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
+        stdout,stderr=p.communicate()
+        line     =stdout.decode().splitlines()[0]
+        items    =line.split('\t')
+        score    =items[3]
+        if score=="cognate":
+            score="<span title=FireDB:cognate>4 <img src=images/4-star.svg width=75></span>"
+        elif score=="ambiguous":
+            score="<span title=FireDB:ambiguous>3 <img src=images/3-star.svg width=75></span>"
+        elif score=="non_cognate":
+            score="<span title=FireDB:non_cognate>1 <img src=images/1-star.svg width=75></span>"
+        else:
+
+            cmd="zcat %s/data/pdb_rhea.tsv.gz|grep -P '^%s\\t%s\\t'"%(
+                rootdir,pdbid,asym_id)
+            p=subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
+            stdout,stderr=p.communicate()
+            line     =stdout.decode().splitlines()[0]
+            items    =line.split('\t')
+            rhea     ='\n'.join(["RHEA:"+r for r in items[2].split(',')])
+
+            score='<span title="%s">%s <img src=images/%s-star.svg width=75></span>'%(
+                rhea,score,score[0])
+
     baff_line=''
     baff_list=[]
     if manual:
@@ -1120,10 +1148,26 @@ $(document).ready(function()
         </td>
         <td>
         <table>
-            <tr BGCOLOR="#DEDEDE"><td align=center><strong>PDB</strong><td><span title="Search BioLiP entries from the same structure"><a href=qsearch.cgi?pdbid=$pdbid target=_blank>$pdbid</a></span> $title</td></tr>
-            <tr><td align=center><strong>Resolution</strong><td>$reso</td></tr>
-            <tr BGCOLOR="#DEDEDE"><td align=center><strong>Binding residue<br>(original residue number in PDB)</strong><td>$resOrig</td></tr>
-            <tr><td align=center><strong>Binding residue<br>(residue number reindexed from 1)</strong><td>$resRenu</td></tr>
+            <tr><td align=center><strong>PDB</strong><td><span title="Search BioLiP entries from the same structure"><a href=qsearch.cgi?pdbid=$pdbid target=_blank>$pdbid</a></span> $title</td></tr>
+            <tr BGCOLOR="#DEDEDE"><td align=center><strong>Resolution</strong><td>$reso</td></tr>
+            <tr><td align=center><strong>Binding residue<br>(original residue number in PDB)</strong><td>$resOrig</td></tr>
+            <tr BGCOLOR="#DEDEDE"><td align=center><strong>Binding residue<br>(residue number reindexed from 1)</strong><td>$resRenu</td></tr>
+            <tr><td align=center><strong><span title="
+Each protein-ligand interaction is assigned an annotation score ranging from
+1 to 5. Higher score suggests greater biological relevance.
+
+If the UniProt protein corresponding to the receptor chain is mapped to at
+least one Rhea reaction, all non-water substrates and products of the 
+reaction(s) are converted to 1024 bit Morgan fingerprint (ECFP4). Their
+chemical similarity to the ligand in question can then be measured by 
+Tanimoto Coefficient (TC). The highest TC among all substracts/products to
+the ligand is used to assign the annotation score: TC of [0,0.4), [0.4,0.6),
+[0.6,0.8), [0.8,1) and 1 correspond to annotation score of 1, 2, 3, 4 and 5, respectively.
+
+If the receptor protein cannot be mapped to Rhea, the annotation score is 
+assigned based on FireDB classification of ligands, where cognate, ambiguous
+and non-cognate ligands are assigned score of 1, 3, and 4, respectively.
+            ">Annotation score</span></strong><td>$score</td></tr>
             $baff_line
         </table>
         </td>
@@ -1142,6 +1186,7 @@ $(document).ready(function()
     ).replace("$resOrig",resOrig
     ).replace("$resRenu",resRenu
     ).replace("$baff_line",baff_line
+    ).replace("$score",score
     ).replace("$xcen","%.3f"%xcen
     ).replace("$ycen","%.3f"%ycen
     ).replace("$zcen","%.3f"%zcen
@@ -1195,6 +1240,12 @@ if __name__=="__main__":
 <table style="table-layout:fixed;" width="100%" cellpadding="2" cellspacing="0">
 <table width=100%>
 ''')
+    if not pdbid and not asym_id:
+        print('''</table>
+<p></p>
+[<a href=.>Back to BioLiP</a>]
+</body> </html>''')
+        exit()
 
     if len(set(pdbid).difference(set("abcdefghijklmnopqrstuvwxyz1234567890"))
         ) or len(set(asym_id).difference(set(
