@@ -11,8 +11,8 @@ The binary executable of [cd-hit](https://github.com/weizhongli/cdhit) is availa
 cd cdhit/
 make install
 ```
-The binary executable of ``makeblastdb``, ``blastn`` and ``blastp`` from the [NCBI BLAST+](https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/) are available at ``script/`. 
-The binary executables of ``USalign``, ``pdb2xyz`` and ``xyz_sfetch` from the [US-align](https://github.com/pylelab/USalign) are available at ``script``.
+The binary executable of ``makeblastdb``, ``blastn`` and ``blastp`` from the [NCBI BLAST+](https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/) are available at ``script/``. 
+The binary executables of ``USalign``, ``pdb2xyz`` and ``xyz_sfetch`` from the [US-align](https://github.com/pylelab/USalign) are available at ``script``.
 The binary executables of [foldseek](https://mmseqs.com/foldseek/foldseek-linux-sse41.tar.gz) is available at ``script/``.
 Reinstall them if not using 64 bit Linux.
 
