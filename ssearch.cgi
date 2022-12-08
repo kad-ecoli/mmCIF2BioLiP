@@ -20,7 +20,7 @@ if os.path.isfile(rootdir+"/index.html"):
 def ExitWithError(msg,html_footer):
     print("ERROR!")
     print(msg)
-    print("<p></p><a href=ssearch.html>[Back to search]</a>")
+    print("<p></p><a href=.>[Back]</a>")
     if len(html_footer):
         print(html_footer)
     else:
@@ -178,7 +178,7 @@ for line in lines:
     nident/Lali,
     evalue, 
     ', '.join(homolog_list)))
-print("</table><p></p><a href=.>[Back to search]</a>")
+print("</table><p></p><a href=.>[Back]</a>")
 if len(html_footer):
     print(html_footer)
 else:
