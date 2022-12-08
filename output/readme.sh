@@ -40,5 +40,5 @@
 
 # You can check the context by
 
-    ls -laZ *cgi script/NWalign script/blastn script/blastp graphviz/bin/dot script/receptor1
+    ls -laZ *cgi script/NWalign script/blastn script/blastp script/USalign script/foldseek script/cif2chain script/xyz_sfetch graphviz/bin/dot script/receptor1
     ls -laZ|grep output
