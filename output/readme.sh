@@ -23,11 +23,16 @@
     chcon -t httpd_sys_script_exec_t qsearch.cgi
     chcon -t httpd_sys_script_exec_t ssearch.cgi
     chcon -t httpd_sys_script_exec_t esearch.cgi
+    chcon -t httpd_sys_script_exec_t fsearch.cgi
     chcon -t httpd_sys_script_exec_t sym.cgi
     chcon -t httpd_sys_script_exec_t script/receptor1
     chcon -t httpd_sys_script_exec_t script/NWalign
     chcon -t httpd_sys_script_exec_t script/blastn
     chcon -t httpd_sys_script_exec_t script/blastp
+    chcon -t httpd_sys_script_exec_t script/USalign
+    chcon -t httpd_sys_script_exec_t script/foldseek
+    chcon -t httpd_sys_script_exec_t script/cif2chain
+    chcon -t httpd_sys_script_exec_t script/xyz_sfetch
     chcon -t httpd_sys_script_exec_t graphviz/bin/dot
     chcon -t httpd_sys_script_exec_t graphviz/lib/*so*
     chcon -t httpd_sys_script_exec_t graphviz/lib/graphviz/*so*
