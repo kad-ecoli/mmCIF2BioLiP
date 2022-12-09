@@ -17,9 +17,7 @@ my $rootdir = dirname($bindir);
 
 if (scalar @ARGV==0)
 {
-    my $lockfile="$rootdir/output/readme.sh";
-    open my $file, "<", "$lockfile" or die $!; 
-    flock $file, LOCK_EX|LOCK_NB or die "Unable to lock file $!";
+    flock DATA, LOCK_EX|LOCK_NB or die "Unable to lock file $!";
     foreach my $line(`ls $rootdir/output/|grep .fsearch.html`)
     {
         chomp($line);
@@ -242,3 +240,4 @@ EOF
 close(FP);
 
 exit(0);
+__DATA__
