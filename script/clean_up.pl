@@ -28,6 +28,15 @@ foreach my $filename(`find $rootdir/output/*.dot -mmin +60 2>/dev/null`)
     #print "$cmd\n";
     system("$cmd");
 }
+foreach my $filename(`find $rootdir/output/*html -mmin +120 2>/dev/null|sed 's/.html\$//g'`)
+{
+    chomp($filename);
+    my $cmd="rm -rf $filename $filename.html";
+    $cmd.=" $filename.pdb" if (-f "$filename.pdb");
+    $cmd.=" $filename.cif" if (-f "$filename.cif");
+    #print "$cmd\n";
+    system("$cmd");
+}
 
 #### check data loss ####
 my $hasLoss=0;

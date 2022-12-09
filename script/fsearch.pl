@@ -2,20 +2,38 @@
 my $docstring=<<EOF
 fsearch.pl jobID
     perform foldseek and TMalign on output/jobID.cif or output/jobID.pdb
+
+fsearch.pl all
+    perform foldseek and TMalign on all jobs at output/
 EOF
 ;
 
 use strict;
 use File::Basename;
 use Cwd 'abs_path';
+use Fcntl qw(:flock);
 my $bindir = dirname(abs_path(__FILE__));
 my $rootdir = dirname($bindir);
 
-if (scalar @ARGV!=1)
+if (scalar @ARGV==0)
 {
-    print "$docstring";
-    exit(1);
+    my $lockfile="$rootdir/output/readme.sh";
+    open my $file, "<", "$lockfile" or die $!; 
+    flock $file, LOCK_EX|LOCK_NB or die "Unable to lock file $!";
+    foreach my $line(`ls $rootdir/output/|grep .fsearch.html`)
+    {
+        chomp($line);
+        if ($line=~/(\S+).html$/)
+        {
+            my $input="$1";
+            next if (-s "$rootdir/output/$input/index.html");
+            my $cmd=abs_path(__FILE__)." $input";
+            system("timeout 1h $cmd");
+        }
+    }
+    exit(0);
 }
+
 my $input =$ARGV[0];
 my $output="$rootdir/output/$input";
 
@@ -25,26 +43,29 @@ if (!-d "$output/")
 }
 
 my $infile="input.pdb";
-if (-s "$output.pdb")
+if (!-s "$output/input.pdb" && !-s "$output/input.cif")
 {
-    system("cp $output.pdb $output/input.pdb");
-}
-else
-{
-    if (!-s "$output.cif")
+    if (-s "$output.pdb")
     {
-        print "no such file $output.cif\n";
-        exit(1);
+        system("mv $output.pdb $output/input.pdb");
     }
-    system("cp $output.cif $output/input.cif");
-    $infile="input.cif";
+    else
+    {
+        if (!-s "$output.cif")
+        {
+            print "no such file $output.cif\n";
+            exit(1);
+        }
+        system("mv $output.cif $output/input.cif");
+    }
 }
+$infile="input.cif" if (-s "$output/input.cif");
 
 if (!-s "$output/aln.m8")
 {
     system("rm -rf $output/tmpFolder/") if (-d "$output/tmpFolder");
     system("cd $output; $bindir/foldseek easy-search $infile $rootdir/foldseek/receptor_DB aln.m8 tmpFolder --threads 1 --format-output target,alnlen,nident,qlen,tlen,evalue -e 1");
-    if (!-s "$output/aln.m8")
+    if (!-f "$output/aln.m8")
     {
         print "no foldseek hit\n";
         exit(2);
@@ -204,4 +225,20 @@ $html_end
 EOF
 ;
 close(FP);
+
+system("mv $output.html $output/old.html");
+open(FP,">$output.html");
+print FP <<EOF
+<html>
+<head>
+<title>BioLiP</title>
+</head>
+<body>
+<meta http-equiv="refresh" content="0; url='$input'"/>
+</body>
+</html>
+EOF
+;
+close(FP);
+
 exit(0);
