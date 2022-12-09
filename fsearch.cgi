@@ -24,7 +24,7 @@ print('''Content-type: text/html
 
 form = cgi.FieldStorage()
 mode = 1
-structure=form.getfirst("structure",'').decode().strip()
+structure=form.getfirst("structure",'').strip()
 if not structure:
     structure=form.getfirst("struct_file",'').decode().strip()
 if not structure:
