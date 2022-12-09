@@ -43,3 +43,4 @@
 
     ls -laZ *cgi script/NWalign script/blastn script/blastp graphviz/bin/dot script/receptor1
     ls -laZ|grep output
+
