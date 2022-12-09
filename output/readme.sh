@@ -33,6 +33,7 @@
     chcon -t httpd_sys_script_exec_t script/foldseek
     chcon -t httpd_sys_script_exec_t script/cif2chain
     chcon -t httpd_sys_script_exec_t script/xyz_sfetch
+    chcon -t httpd_sys_script_exec_t script/pdb2fasta
     chcon -t httpd_sys_script_exec_t graphviz/bin/dot
     chcon -t httpd_sys_script_exec_t graphviz/lib/*so*
     chcon -t httpd_sys_script_exec_t graphviz/lib/graphviz/*so*
@@ -40,5 +41,5 @@
 
 # You can check the context by
 
-    ls -laZ *cgi script/NWalign script/blastn script/blastp script/USalign script/foldseek script/cif2chain script/xyz_sfetch graphviz/bin/dot script/receptor1
+    ls -laZ *cgi script/NWalign script/blastn script/blastp graphviz/bin/dot script/receptor1
     ls -laZ|grep output
