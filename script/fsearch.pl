@@ -3,7 +3,7 @@ my $docstring=<<EOF
 fsearch.pl jobID
     perform foldseek and TMalign on output/jobID.cif or output/jobID.pdb
 
-fsearch.pl all
+fsearch.pl
     perform foldseek and TMalign on all jobs at output/
 EOF
 ;
