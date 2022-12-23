@@ -213,7 +213,13 @@
 
 <div id="menunav">
 <ul id="navbar">
-    <li ><a href=".">HOME</a></li>
+    <li><a href=".">HOME/SEARCH</a>
+        <ul>
+        <li><a href="index.cgi#by_name">Search by name</a></li>
+        <li><a href="index.cgi#by_seq">Search by sequence</a></li>
+        <li><a href="index.cgi#by_struct">Search by structure</a></li>
+        </ul>
+    </li>
     <li><a href="qsearch.cgi">BROWSE</a>
         <ul>
         <li><a href="qsearch.cgi">Browse all entries</a></li>
@@ -226,6 +232,7 @@
         </ul>
     </li>
     <li><a href="ligand.cgi">LIGAND</a></li>
+    <li><a href="/COACH">COACH</a></li>
     <li><a href="download.html">DOWNLOAD</a></li>
     <li><a href="help.html">HELP</a></li>
 </ul>
@@ -330,39 +337,13 @@ function example_pdbfile()
     var STR=IO("example/1a69A.pdb");
     document.fsearchForm.structure.value = STR;
 }
-
-
 </script>
 
-<p>
-<h1><u>Search BioLiP by sequence</u></h1>
-</p>
-<FORM name="ssearchForm" METHOD=POST ACTION="ssearch.cgi"  onsubmit="return checkform(this);">
-Paste your sequence here:&nbsp;&nbsp;&nbsp;&nbsp;
-[<a href="javascript:example_protein()">Sample protein input</a>]
-[<a href="javascript:example_peptide()">Sample peptide input</a>]
-[<a href="javascript:example_rna()">Sample rna input</a>]
-[<a href="javascript:example_dna()">Sample dna input</a>]<br>
-<textarea name="sequence" rows=6 cols=80 placeholder="Example:
-ATPHINAEMGDFADVVLMPGDPLRAKYIAETFLEDAREVNNVRGMLGFTGTYKGRKISVMGHGMGIPSCSIYTKELITDFGVKKIIRVGSCGAVLPHVKLRDVVIGMGACTDSKVNRIRFKDHDFAAIADFDMVRNAVDAAKALGIDARVGNLFSADLFYSPDGEMFDVMEKYGILGVEMEAAGIYGVAAEFGAKALTICTVSDHIRTHEQTTAAERQTTFNDMIKIALESVLLGDKE"></textarea>
-<br>
-Select Sequence type:&nbsp;&nbsp;&nbsp;&nbsp;
-<input type="radio" name="seq_type" value="protein" checked>Protein receptor&nbsp;&nbsp;&nbsp;&nbsp;
-<input type="radio" name="seq_type" value="peptide">Peptide ligand&nbsp;&nbsp;&nbsp;&nbsp;
-<input type="radio" name="seq_type" value="rna">RNA ligand&nbsp;&nbsp;&nbsp;&nbsp;
-<input type="radio" name="seq_type" value="dna">DNA ligand
-<br>
-<span title="Sequences &ge; and &lt;30 residues will be searched by BLAST and
-Needleman-Wunsch alignment (NW-align), respectively.">
-<INPUT TYPE=SUBMIT VALUE="Search">
-&nbsp;&nbsp;
-<INPUT TYPE=RESET VALUE="Clear All">                                     
-</span>
-</FORM>
-<p></p>
 
 <p>
+<a name="by_name">
 <h1><u>Search BioLiP by name</u></h1>
+</a>
 </p>
 <FORM name="qsearchForm" METHOD=POST ACTION="qsearch.cgi"  onsubmit="return checkform(this);">
 <table width=100%>
@@ -409,8 +390,41 @@ Needleman-Wunsch alignment (NW-align), respectively.">
 </FORM>
 <p></p>
 
+
 <p>
+<a name="by_seq">
+<h1><u>Search BioLiP by sequence</u></h1>
+</a>
+</p>
+<FORM name="ssearchForm" METHOD=POST ACTION="ssearch.cgi"  onsubmit="return checkform(this);">
+Paste your sequence here:&nbsp;&nbsp;&nbsp;&nbsp;
+[<a href="javascript:example_protein()">Sample protein input</a>]
+[<a href="javascript:example_peptide()">Sample peptide input</a>]
+[<a href="javascript:example_rna()">Sample rna input</a>]
+[<a href="javascript:example_dna()">Sample dna input</a>]<br>
+<textarea name="sequence" rows=6 cols=80 placeholder="Example:
+ATPHINAEMGDFADVVLMPGDPLRAKYIAETFLEDAREVNNVRGMLGFTGTYKGRKISVMGHGMGIPSCSIYTKELITDFGVKKIIRVGSCGAVLPHVKLRDVVIGMGACTDSKVNRIRFKDHDFAAIADFDMVRNAVDAAKALGIDARVGNLFSADLFYSPDGEMFDVMEKYGILGVEMEAAGIYGVAAEFGAKALTICTVSDHIRTHEQTTAAERQTTFNDMIKIALESVLLGDKE"></textarea>
+<br>
+Select Sequence type:&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="radio" name="seq_type" value="protein" checked>Protein receptor&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="radio" name="seq_type" value="peptide">Peptide ligand&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="radio" name="seq_type" value="rna">RNA ligand&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="radio" name="seq_type" value="dna">DNA ligand
+<br>
+<span title="Sequences &ge; and &lt;30 residues will be searched by BLAST and
+Needleman-Wunsch alignment (NW-align), respectively.">
+<INPUT TYPE=SUBMIT VALUE="Search">
+&nbsp;&nbsp;
+<INPUT TYPE=RESET VALUE="Clear All">                                     
+</span>
+</FORM>
+<p></p>
+
+
+<p>
+<a name="by_struct">
 <h1><u>Search BioLiP by protein structure</u></h1>
+</a>
 </p>
 <FORM name="fsearchForm" METHOD=POST ENCTYPE="MULTIPART/FORM-DATA" ACTION="fsearch.cgi"  onsubmit="return checkform(this);">
 Paste your structure here:&nbsp;&nbsp;&nbsp;&nbsp;

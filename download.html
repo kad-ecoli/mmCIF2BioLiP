@@ -213,7 +213,13 @@
 
 <div id="menunav">
 <ul id="navbar">
-    <li ><a href=".">HOME</a></li>
+    <li><a href=".">HOME/SEARCH</a>
+        <ul>
+        <li><a href="index.cgi#by_name">Search by name</a></li>
+        <li><a href="index.cgi#by_seq">Search by sequence</a></li>
+        <li><a href="index.cgi#by_struct">Search by structure</a></li>
+        </ul>
+    </li>
     <li><a href="qsearch.cgi">BROWSE</a>
         <ul>
         <li><a href="qsearch.cgi">Browse all entries</a></li>
@@ -226,6 +232,7 @@
         </ul>
     </li>
     <li><a href="ligand.cgi">LIGAND</a></li>
+    <li><a href="/COACH">COACH</a></li>
     <li><a href="download.html">DOWNLOAD</a></li>
     <li><a href="help.html">HELP</a></li>
 </ul>
@@ -270,6 +277,12 @@ Download non-redundant dataset
 </table>
 All sequences are converted from residues with experimentally determined coordinates in the structure; residues unobserved in the structure are excluded.
 </li>
+
+<br><br>
+<li > <b>BioLiP source code</b> <br>
+<a href=https://github.com/kad-ecoli/mmCIF2BioLiP>Download the source code for BioLiP database curation and web interface display</a>
+</li>
+
 
 <br><br>
 <li > <b>Template library for protein function prediction by COACH and COFACTOR</b> <br>
