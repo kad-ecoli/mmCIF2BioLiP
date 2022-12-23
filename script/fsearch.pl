@@ -94,7 +94,7 @@ if (!-s "$output/TMalign.tsv" && length $txt)
     print FP "$txt";
     close(FP);
     system("$bindir/xyz_sfetch $rootdir/foldseek/receptor_nr.xyz $output/list | gzip - > $output/xyz.gz");
-    system("cd $output/; $bindir/USalign $infile xyz.gz -infmt2 2 -fast -outfmt 2 |grep -v '^#'|cut -f2-|sed 's/^xyz.gz://g' > TMalign.tsv");
+    system("cd $output/; $bindir/USalign $infile xyz.gz -infmt2 2 -fast -outfmt 2 |grep -v '^#'|cut -f2-|sed 's/^xyz.gz://g' |sort -k2nr > TMalign.tsv");
 }
 
 #### prepare output ####
@@ -110,7 +110,7 @@ $html_header=~s/href="..\/..\/\//href="\//g;
 open(FP,">$output/index.html");
 print FP <<EOF
 $html_header
-Search <a href=$infile>$infile</a> through BioLiP using Foldseek and US-align (-fast mode). Results are ranked in descending order of E-value.<br>
+Search <a href=$infile>$infile</a> through BioLiP using Foldseek and US-align (-fast mode). Results are ranked in descending order of TM-score normalized by query.<br>
 
 <table border="0" align=center width=100%>    
 <tr BGCOLOR="#FF9900">
@@ -154,15 +154,17 @@ if (scalar @m8_list)
 }
 
 my %line_dict;
+my @target_list;
 foreach my $line(`cat $output/TMalign.tsv`)
 {
     chomp($line);
     my @items=split(/\t/,$line);
     $line_dict{$items[0]}=$line;
+    push(@target_list,($items[0]));
 }
 
 my $totalNum=0;
-foreach my $target(@m8_list)
+foreach my $target(@target_list) #foreach my $target(@m8_list)
 {
     my @items=split(/\t/,$line_dict{$target});
     my $sacc =$items[0];
