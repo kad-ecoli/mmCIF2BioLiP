@@ -2968,6 +2968,7 @@ int cif2pdb(const string &infile, string &pdbid,
     double B_iso_or_equiv=0;   // Bfactor
     string alt_id     =" ";    // auth_alt_id, label_alt_id
     string pdbx_PDB_model_num=""; // model index
+    string pdbx_PDB_model_num_prev=""; // model index
 
     string asym_prev    ="";
     string ins_code_prev="";
@@ -3160,11 +3161,15 @@ int cif2pdb(const string &infile, string &pdbid,
             if (_atom_site.count("pdbx_PDB_model_num"))
             {
                 pdbx_PDB_model_num=line_vec[_atom_site["pdbx_PDB_model_num"]];
-                if (pdbx_PDB_model_num!="." && pdbx_PDB_model_num!="?" &&
-                    pdbx_PDB_model_num!="1")
+                if (pdbx_PDB_model_num!="." && pdbx_PDB_model_num!="?")
                 {
-                    clear_line_vec(line_vec);
-                    continue;
+                    if (pdbx_PDB_model_num_prev.size()==0) 
+                        pdbx_PDB_model_num_prev=pdbx_PDB_model_num;
+                    else if (pdbx_PDB_model_num!=pdbx_PDB_model_num_prev)
+                    {
+                        clear_line_vec(line_vec);
+                        continue;
+                    }
                 }
             }
             
@@ -3634,6 +3639,7 @@ COLUMNS        DATA  TYPE    FIELD        DEFINITION
     pdbx_PDB_ins_code.clear();
     alt_id.clear();
     pdbx_PDB_model_num.clear();
+    pdbx_PDB_model_num_prev.clear();
     asym_prev.clear();
     ins_code_prev.clear();
     vector<pair<string,string> >().swap(dbref_vec);
