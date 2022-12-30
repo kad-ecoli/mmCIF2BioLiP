@@ -12,8 +12,8 @@ if os.path.isfile(rootdir+"/index.html"):
     fp=open(rootdir+"/index.html")
     txt=fp.read()
     fp.close()
-    html_header=txt.split('<!-- CONTENT REFRESH -->')[0]
-    html_footer=txt.split('<!-- CONTENT END -->')[-1]
+    html_header=txt.split('<!-- CONTENT REFRESH START -->')[0]
+    html_footer=txt.split('<!-- CONTENT REFRESH END -->')[-1]
 
 print("Content-type: text/html\n")
 if len(html_header):
@@ -49,7 +49,7 @@ if len(stdout):
         bs="&bs=BS01"
     print('''
 <p>
-<h1><span title="PDB $pdbid Chain $chain Binding Site BS01"><a href=pdb.cgi?pdb=$pdbid&chain=$chain$bs target=_blank>View a random BioLiP entry</a></span></h1>
+<h1><span title="PDB $pdbid Chain $chain Binding Site BS01"><a href=pdb.cgi?pdb=$pdbid&chain=$chain$bs target=_blank>View an example BioLiP entry</a></span></h1>
 </p>
 '''.replace("$pdbid",pdbid).replace("$chain",chain).replace("$bs",bs))
 
