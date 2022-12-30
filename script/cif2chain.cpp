@@ -2619,6 +2619,7 @@ int cif2chain(const string &infile, const string &outfile,
     double B_iso_or_equiv=0;   // Bfactor
     string alt_id     =" ";    // auth_alt_id, label_alt_id
     string pdbx_PDB_model_num=""; // model index
+    string pdbx_PDB_model_num_prev=""; // model index
 
     string ins_code_prev="";
     int    seq_id_prev  =0;
@@ -2658,7 +2659,7 @@ int cif2chain(const string &infile, const string &outfile,
         if (line_vec.size()==0) continue;
         else if (line_vec.size()==1 && line_vec[0]=="#")
         {
-            if (parent_comp_id.size() && comp_id.size())
+            if (parent_comp_id.size() && parent_comp_id!="?" && comp_id.size())
             {
                 modres_dict[comp_id]=parent_comp_id;
                 parent_comp_id.clear();
@@ -2706,7 +2707,7 @@ int cif2chain(const string &infile, const string &outfile,
             else if (_pdbx_struct_mod_residue.count("auth_comp_id"))
                 comp_id=Trim(line_vec[_pdbx_struct_mod_residue["auth_comp_id"]],"\"");
             parent_comp_id=Trim(line_vec[_pdbx_struct_mod_residue["parent_comp_id"]],"\"");
-            modres_dict[comp_id]=parent_comp_id;
+            if (parent_comp_id!="?") modres_dict[comp_id]=parent_comp_id;
         }
         else if (StartsWith(line,"_atom_site."))
         {
@@ -2726,11 +2727,15 @@ int cif2chain(const string &infile, const string &outfile,
             if (_atom_site.count("pdbx_PDB_model_num"))
             {
                 pdbx_PDB_model_num=line_vec[_atom_site["pdbx_PDB_model_num"]];
-                if (pdbx_PDB_model_num!="." && pdbx_PDB_model_num!="?" &&
-                    pdbx_PDB_model_num!="1")
+                if (pdbx_PDB_model_num!="." && pdbx_PDB_model_num!="?")
                 {
-                    clear_line_vec(line_vec);
-                    continue;
+                    if (pdbx_PDB_model_num_prev.size()==0) 
+                        pdbx_PDB_model_num_prev=pdbx_PDB_model_num;
+                    else if (pdbx_PDB_model_num!=pdbx_PDB_model_num_prev)
+                    {
+                        clear_line_vec(line_vec);
+                        continue;
+                    }
                 }
             }
             
@@ -2953,6 +2958,7 @@ COLUMNS        DATA  TYPE    FIELD        DEFINITION
     pdbx_PDB_ins_code.clear();
     alt_id.clear();
     pdbx_PDB_model_num.clear();
+    pdbx_PDB_model_num_prev.clear();
     ins_code_prev.clear();
     line.clear();
     vector<string>().swap(lines);
