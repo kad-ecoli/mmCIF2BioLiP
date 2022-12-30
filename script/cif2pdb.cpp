@@ -3018,7 +3018,7 @@ int cif2pdb(const string &infile, string &pdbid,
                 dbref_vec.push_back(make_pair(asym_id,pdbx_db_accession));
                 pdbx_db_accession.clear();
             }
-            if (parent_comp_id.size() && comp_id.size())
+            if (parent_comp_id.size() && parent_comp_id!="?" && comp_id.size())
             {
                 modres_dict[comp_id]=parent_comp_id;
                 parent_comp_id.clear();
@@ -3140,7 +3140,7 @@ int cif2pdb(const string &infile, string &pdbid,
             else if (_pdbx_struct_mod_residue.count("auth_comp_id"))
                 comp_id=Trim(line_vec[_pdbx_struct_mod_residue["auth_comp_id"]],"\"");
             parent_comp_id=Trim(line_vec[_pdbx_struct_mod_residue["parent_comp_id"]],"\"");
-            modres_dict[comp_id]=parent_comp_id;
+            if (parent_comp_id!="?") modres_dict[comp_id]=parent_comp_id;
         }
         else if (StartsWith(line,"_atom_site."))
         {
