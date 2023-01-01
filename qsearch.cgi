@@ -140,7 +140,7 @@ if got:
     fp=gzip.open(rootdir+"/data/pdb_go.tsv.gz",'rt')
     for line in fp.read().splitlines():
         pdb,recCha,go_line=line.split('\t')
-        if got in go_line.split(','):
+        if got=='0' or got in go_line.split(','):
             got2chain_list.append(pdb+':'+recCha)
     fp.close()
     got2chain_set=set(got2chain_list)

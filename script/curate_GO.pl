@@ -152,7 +152,7 @@ BioLiP is updated weekly and the current version ($today) contains:
  <a href=qsearch.cgi?baff=manual>$numManual</a> from manual survey of the original literature)</li>
 <li>Number of protein receptors: <a href=qsearch.cgi>$numProtein</a></li>
 <li>Number of protein receptors with Enzyme Commission numbers: <a href=qsearch.cgi?ecn=0>$numEC</a></li>
-<li>Number of protein receptors with Gene Ontology annotations: $numGO
+<li>Number of protein receptors with Gene Ontology annotations: <a href=qsearch.cgi?&got=0>$numGO</a>
 (<a href=qsearch.cgi?&got=0003674>$numMF</a> with Molecular Function, 
  <a href=qsearch.cgi?&got=0008150>$numBP</a> with Biological Process, and 
  <a href=qsearch.cgi?&got=0005575>$numCC</a> with Cellular Component)</li>
