@@ -320,7 +320,7 @@ print('''
 <h4>Browse Enzyme</h4>
 This page include enzymes with and without ligand interactions. Download all results in tab-seperated text for 
 <a href="?outfmt=txt&%s" download="BioLiP.txt">%d</a> enzymes, whose format is explained at <a href="download/readme_enzyme.txt">readme_enzyme.txt</a>.<br>
-<li>Click <strong>#</strong> to view the structure.</li>
+<li>Click <strong>#</strong> to view details of the structure and (if available) ligand information.</li>
 <li>Hover over <strong>PDB</strong> to view the title of the structure.
 Click <strong>PDB</strong> to view the structure at the RCSB PDB database.
 Resolution -1.00 means the resolution is unavailable, e.g., for NMR structures.</li>
