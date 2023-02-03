@@ -857,27 +857,29 @@ def display_interaction(pdbid,asym_id,bs,title):
             rootdir,pdbid,asym_id,lig3)
         p=subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
         stdout,stderr=p.communicate()
-        line     =stdout.decode().splitlines()[0]
-        items    =line.split('\t')
-        score    =items[3]
-        if score=="cognate":
-            score="<span title=FireDB:cognate>4 <img src=images/4-star.svg width=75></span>"
-        elif score=="ambiguous":
-            score="<span title=FireDB:ambiguous>3 <img src=images/3-star.svg width=75></span>"
-        elif score=="non_cognate":
-            score="<span title=FireDB:non_cognate>1 <img src=images/1-star.svg width=75></span>"
-        else:
-
-            cmd="zcat %s/data/pdb_rhea.tsv.gz|grep -P '^%s\\t%s\\t'"%(
-                rootdir,pdbid,asym_id)
-            p=subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
-            stdout,stderr=p.communicate()
-            line     =stdout.decode().splitlines()[0]
+        stdout   =stdout.decode()
+        if len(stdout.strip()):
+            line     =stdout.splitlines()[0]
             items    =line.split('\t')
-            rhea     ='\n'.join(["RHEA:"+r for r in items[2].split(',')])
+            score    =items[3]
+            if score=="cognate":
+                score="<span title=FireDB:cognate>4 <img src=images/4-star.svg width=75></span>"
+            elif score=="ambiguous":
+                score="<span title=FireDB:ambiguous>3 <img src=images/3-star.svg width=75></span>"
+            elif score=="non_cognate":
+                score="<span title=FireDB:non_cognate>1 <img src=images/1-star.svg width=75></span>"
+            else:
 
-            score='<span title="%s">%s <img src=images/%s-star.svg width=75></span>'%(
-                rhea,score,score[0])
+                cmd="zcat %s/data/pdb_rhea.tsv.gz|grep -P '^%s\\t%s\\t'"%(
+                    rootdir,pdbid,asym_id)
+                p=subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
+                stdout,stderr=p.communicate()
+                line     =stdout.decode().splitlines()[0]
+                items    =line.split('\t')
+                rhea     ='\n'.join(["RHEA:"+r for r in items[2].split(',')])
+
+                score='<span title="%s">%s <img src=images/%s-star.svg width=75></span>'%(
+                    rhea,score,score[0])
 
     baff_line=''
     baff_list=[]
