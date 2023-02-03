@@ -7,14 +7,14 @@ my $rootdir = dirname($bindir);
 
 print "download PDB\n";
 system("mkdir -p $rootdir/pdb/derived_data/index/");
-system("wget http://files.wwpdb.org/pub/pdb/derived_data/index/resolu.idx -O $rootdir/pdb/derived_data/index/resolu.idx");
-system("wget ftp://files.wwpdb.org/pub/pdb/derived_data/index/resolu.idx -O $rootdir/pdb/derived_data/index/resolu.idx") if (!-s "$rootdir/pdb/derived_data/index/resolu.idx");
+system("wget -q http://files.wwpdb.org/pub/pdb/derived_data/index/resolu.idx -O $rootdir/pdb/derived_data/index/resolu.idx");
+system("wget -q ftp://files.wwpdb.org/pub/pdb/derived_data/index/resolu.idx -O $rootdir/pdb/derived_data/index/resolu.idx") if (!-s "$rootdir/pdb/derived_data/index/resolu.idx");
 if (!-s "$rootdir/pdb/derived_data/index/resolu.idx")
 {
     print "ERROR! cannot download $rootdir/pdb/derived_data/index/resolu.idx\n";
     exit(1);
 }
-#system("wget https://ftp.wwpdb.org/pub/pdb/derived_data/index/compound.idx -O $rootdir/pdb/derived_data/index/compound.idx");
+#system("wget -q https://ftp.wwpdb.org/pub/pdb/derived_data/index/compound.idx -O $rootdir/pdb/derived_data/index/compound.idx");
 
 foreach my $pdb(`grep ';' $rootdir/pdb/derived_data/index/resolu.idx|cut -f1 -d';'|grep -ohP '^\\S+'`)
 {

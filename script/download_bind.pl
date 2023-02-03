@@ -8,11 +8,11 @@ my $rootdir = dirname($bindir);
 
 print "download BindingDB\n";
 system("mkdir -p $rootdir/bind");
-system("wget --no-check-certificate 'https://www.bindingdb.org/rwd/bind/chemsearch/marvin/Download.jsp' -O $rootdir/bind/Download.jsp");
+system("wget -q --no-check-certificate 'https://www.bindingdb.org/rwd/bind/chemsearch/marvin/Download.jsp' -O $rootdir/bind/Download.jsp");
 if (`cat $rootdir/bind/Download.jsp`=~/(BindingDB_All_\w+.tsv.zip)/)
 {
     my $outfile="$1";
-    system("wget --no-check-certificate 'https://www.bindingdb.org/rwd/bind/downloads/$outfile' -O $rootdir/bind/BindingDB_All_tsv.zip");
+    system("wget -q --no-check-certificate 'https://www.bindingdb.org/rwd/bind/downloads/$outfile' -O $rootdir/bind/BindingDB_All_tsv.zip");
     if (-s "$rootdir/bind/BindingDB_All_tsv.zip")
     {
         system("zcat $rootdir/bind/BindingDB_All_tsv.zip| cut -f9-14,27,28,42,43,47|  head -1 > $rootdir/bind/BindingDB.tsv");

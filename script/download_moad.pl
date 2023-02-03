@@ -8,7 +8,7 @@ my $rootdir = dirname($bindir);
 
 print "download MOAD\n";
 system("mkdir -p $rootdir/bind");
-system("wget 'http://www.bindingmoad.org/files/csv/every.csv' -O $rootdir/bind/every.csv");
+system("wget -q 'http://www.bindingmoad.org/files/csv/every.csv' -O $rootdir/bind/every.csv");
 
 if (!-s "$rootdir/bind/every.csv")
 {

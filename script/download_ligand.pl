@@ -9,8 +9,8 @@ my $rootdir = dirname($bindir);
 
 print "download enzyme\n";
 system("mkdir -p $rootdir/enzyme/") if (!-d "$rootdir/enzyme/");
-system("wget http://ftp.expasy.org/databases/enzyme/enzyme.dat -O $rootdir/enzyme/enzyme.dat");
-system("wget ftp://ftp.expasy.org/databases/enzyme/enzyme.dat -O $rootdir/enzyme/enzyme.dat") if (!-s"$rootdir/enzyme/enzyme.dat");
+system("wget -q http://ftp.expasy.org/databases/enzyme/enzyme.dat -O $rootdir/enzyme/enzyme.dat");
+system("wget -q  ftp://ftp.expasy.org/databases/enzyme/enzyme.dat -O $rootdir/enzyme/enzyme.dat") if (!-s"$rootdir/enzyme/enzyme.dat");
 my $ID;
 my $DE;
 my $txt;
@@ -46,14 +46,14 @@ print "download unichem\n";
 #7	chebi
 #9	zinc
 system("mkdir -p $rootdir/UniChem/");
-system("wget http://ftp.ebi.ac.uk/pub/databases/chembl/UniChem/data/wholeSourceMapping/src_id1/src1src3.txt.gz -O $rootdir/UniChem/src1src3.txt.gz");
-system("wget ftp://ftp.ebi.ac.uk/pub/databases/chembl/UniChem/data/wholeSourceMapping/src_id1/src1src3.txt.gz -O $rootdir/UniChem/src1src3.txt.gz") if (!-s "$rootdir/UniChem/src1src3.txt.gz");
-system("wget http://ftp.ebi.ac.uk/pub/databases/chembl/UniChem/data/wholeSourceMapping/src_id2/src2src3.txt.gz -O $rootdir/UniChem/src2src3.txt.gz");
-system("wget ftp://ftp.ebi.ac.uk/pub/databases/chembl/UniChem/data/wholeSourceMapping/src_id2/src2src3.txt.gz -O $rootdir/UniChem/src2src3.txt.gz") if (!-s "$rootdir/UniChem/src2src3.txt.gz");
-system("wget http://ftp.ebi.ac.uk/pub/databases/chembl/UniChem/data/wholeSourceMapping/src_id3/src3src7.txt.gz -O $rootdir/UniChem/src3src7.txt.gz");
-system("wget ftp://ftp.ebi.ac.uk/pub/databases/chembl/UniChem/data/wholeSourceMapping/src_id3/src3src7.txt.gz -O $rootdir/UniChem/src3src7.txt.gz") if (!-s "$rootdir/UniChem/src3src7.txt.gz");
-system("wget http://ftp.ebi.ac.uk/pub/databases/chembl/UniChem/data/wholeSourceMapping/src_id3/src3src9.txt.gz -O $rootdir/UniChem/src3src9.txt.gz");
-system("wget ftp://ftp.ebi.ac.uk/pub/databases/chembl/UniChem/data/wholeSourceMapping/src_id3/src3src9.txt.gz -O $rootdir/UniChem/src3src9.txt.gz") if (!-s "$rootdir/UniChem/src3src9.txt.gz");
+system("wget -q http://ftp.ebi.ac.uk/pub/databases/chembl/UniChem/data/wholeSourceMapping/src_id1/src1src3.txt.gz -O $rootdir/UniChem/src1src3.txt.gz");
+system("wget -q  ftp://ftp.ebi.ac.uk/pub/databases/chembl/UniChem/data/wholeSourceMapping/src_id1/src1src3.txt.gz -O $rootdir/UniChem/src1src3.txt.gz") if (!-s "$rootdir/UniChem/src1src3.txt.gz");
+system("wget -q http://ftp.ebi.ac.uk/pub/databases/chembl/UniChem/data/wholeSourceMapping/src_id2/src2src3.txt.gz -O $rootdir/UniChem/src2src3.txt.gz");
+system("wget -q  ftp://ftp.ebi.ac.uk/pub/databases/chembl/UniChem/data/wholeSourceMapping/src_id2/src2src3.txt.gz -O $rootdir/UniChem/src2src3.txt.gz") if (!-s "$rootdir/UniChem/src2src3.txt.gz");
+system("wget -q http://ftp.ebi.ac.uk/pub/databases/chembl/UniChem/data/wholeSourceMapping/src_id3/src3src7.txt.gz -O $rootdir/UniChem/src3src7.txt.gz");
+system("wget -q  ftp://ftp.ebi.ac.uk/pub/databases/chembl/UniChem/data/wholeSourceMapping/src_id3/src3src7.txt.gz -O $rootdir/UniChem/src3src7.txt.gz") if (!-s "$rootdir/UniChem/src3src7.txt.gz");
+system("wget -q http://ftp.ebi.ac.uk/pub/databases/chembl/UniChem/data/wholeSourceMapping/src_id3/src3src9.txt.gz -O $rootdir/UniChem/src3src9.txt.gz");
+system("wget -q  ftp://ftp.ebi.ac.uk/pub/databases/chembl/UniChem/data/wholeSourceMapping/src_id3/src3src9.txt.gz -O $rootdir/UniChem/src3src9.txt.gz") if (!-s "$rootdir/UniChem/src3src9.txt.gz");
 my %pdb2chembl;
 foreach my $line(`zcat $rootdir/UniChem/src1src3.txt.gz|tail -n +2`)
 { 
@@ -74,8 +74,8 @@ foreach my $line(`zcat $rootdir/UniChem/src3src9.txt.gz|tail -n +2`)
 print "download CCD ligand\n";
 system("mkdir -p $rootdir/pdb/data/monomers/");
 my $infile ="$rootdir/pdb/data/monomers/components.cif.gz";
-system("wget http://files.wwpdb.org/pub/pdb/data/monomers/components.cif.gz -O $infile");
-system("wget ftp://files.wwpdb.org/pub/pdb/data/monomers/components.cif.gz -O $infile") if (!-s "$infile");
+system("wget -q http://files.wwpdb.org/pub/pdb/data/monomers/components.cif.gz -O $infile");
+system("wget -q  ftp://files.wwpdb.org/pub/pdb/data/monomers/components.cif.gz -O $infile") if (!-s "$infile");
 if (!-s "$infile")
 {
     print "ERROR! cannot download $infile\n";

@@ -8,8 +8,8 @@ my $rootdir = dirname($bindir);
 
 print "download csa\n";
 system("mkdir -p $rootdir/m-csa/api/");
-system("wget 'http://www.ebi.ac.uk/thornton-srv/m-csa/api/homologues_residues.json' -O $rootdir/m-csa/api/homologues_residues.json");
-system("wget 'http://www.ebi.ac.uk/thornton-srv/m-csa/api/residues/?format=json' -O $rootdir/m-csa/api/residues.json");
+system("wget -q 'http://www.ebi.ac.uk/thornton-srv/m-csa/api/homologues_residues.json' -O $rootdir/m-csa/api/homologues_residues.json");
+system("wget -q 'http://www.ebi.ac.uk/thornton-srv/m-csa/api/residues/?format=json' -O $rootdir/m-csa/api/residues.json");
 
 my $chain_name="";
 my $pdb_id    ="";
