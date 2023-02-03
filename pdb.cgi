@@ -1300,7 +1300,7 @@ if __name__=="__main__":
     print('''
 <tr><td>
 <div id="headerDiv">
-    <div id="titleText">External link</div>
+    <div id="titleText">External links</div>
 </div>
 <div style="clear:both;"></div>
 <div id="contentDiv">
