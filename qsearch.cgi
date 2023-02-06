@@ -121,7 +121,7 @@ else:
             for mem in mem_list:
                 clust_dict[mem]=[m.replace('_%s_'%lig3,':') for m in mem_list if m!=mem]
         fp.close()
-        if lig3=="rna":
+        if lig3=="rna" and os.path.isfile(rootdir+"/data/rna_ss.txt.gz"):
             fp=gzip.open(rootdir+"/data/rna_ss.txt.gz",'rt')
             for line in fp.read().splitlines()[1:]:
                 target,rSS=line.split('\t')
