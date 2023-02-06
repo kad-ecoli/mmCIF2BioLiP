@@ -13,16 +13,13 @@ foreach my $divided(`ls $rootdir/weekly/|grep -F ligand_|grep -F .tar.bz2|grep -
 }
 
 my %cssr_dict;
-my %dssr_dict;
 foreach my $line(`zcat $rootdir/data/rna_ss.txt.gz|grep -v '^#'`)
 {
-    if ($line=~/^(\S+)\s(\S+)\s(\S+)/)
+    if ($line=~/^(\S+)\s(\S+)/)
     {
         my $target="$1";
         my $cssr="$2";
-        my $dssr="$3";
         $cssr_dict{$target}=$cssr;
-        $dssr_dict{$target}=$dssr;
     }
 }
 
@@ -39,24 +36,12 @@ foreach my $target(`zcat $rootdir/data/rna.fasta.gz |grep -ohP ">\\w+"|sed 's/>/
         chomp($cssr);
         $cssr_dict{$target}=$cssr;
     }
-    if (!exists $dssr_dict{$target})
-    {
-        system("cd $rootdir/weekly/ligand; sed 's/HETATM/ATOM  /g' ${target}_0.pdb| $bindir/Arena - - 6| $bindir/dssr -i=stdin --format=PDB");
-        my $dssr="";
-        if (-s "$rootdir/weekly/ligand/dssr-2ndstrs.dbn")
-        {
-            $dssr=`tail -1 $rootdir/weekly/ligand/dssr-2ndstrs.dbn`;
-            chomp($dssr);
-            $dssr_dict{$target}=$dssr;
-            system("rm $rootdir/weekly/ligand/dssr-2ndstrs.dbn");
-        }
-    }
 }
 
-my $txt="#target\tcssr\tdssr\n";
+my $txt="#target\tcssr\n";
 foreach my $target(@target_list)
 {
-    $txt.="$target\t$cssr_dict{$target}\t$dssr_dict{$target}\n";
+    $txt.="$target\t$cssr_dict{$target}\n";
 }
 open(FP,">$rootdir/data/rna_ss.txt");
 print FP "$txt";

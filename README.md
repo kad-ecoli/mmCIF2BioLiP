@@ -14,9 +14,7 @@ make install
 Additionally, we make the following binary executables available under ``script`` that should be reinstalled if not using 64 bit Linux:
 * ``makeblastdb``, ``blastn`` and ``blastp`` from the [NCBI BLAST+](https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/)
 * ``USalign``, ``pdb2xyz``, ``pdb2fasta`` and ``xyz_sfetch`` from the [US-align](https://github.com/pylelab/USalign)
-* ``dssr`` from [DSSR](https://inventions.techventures.columbia.edu/technologies/CU20391)
 * ``cssr`` from [CSSR](https://github.com/pylelab/CSSR)
-* ``Arena`` from [Arena](https://github.com/pylelab/Arena)
 * ``foldseek`` from [foldseek](https://mmseqs.com/foldseek/foldseek-linux-sse41.tar.gz)
 
 ## Installation for web browsing ##

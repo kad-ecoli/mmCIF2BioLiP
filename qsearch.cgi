@@ -101,6 +101,7 @@ elif ligname:
 
 fasta_dict=dict()
 clust_dict=dict()
+rSS_dict=dict()
 if outfmt=='txt':
     fp=gzip.open(rootdir+"/data/protein.fasta.gz",'rt')
     for block in fp.read().split('>')[1:]:
@@ -120,6 +121,13 @@ else:
             for mem in mem_list:
                 clust_dict[mem]=[m.replace('_%s_'%lig3,':') for m in mem_list if m!=mem]
         fp.close()
+        if lig3=="rna":
+            fp=gzip.open(rootdir+"/data/rna_ss.txt.gz",'rt')
+            for line in fp.read().splitlines()[1:]:
+                target,rSS=line.split('\t')
+                rSS_dict[target]=rSS
+            fp.close()
+    
     print("Content-type: text/html\n")
     if len(html_header):
         print(html_header)
@@ -365,7 +373,10 @@ for l in range(totalNum):
         ccd_http=ccd
         if ligKey in fasta_dict:
             sequence=fasta_dict[ligKey]
-            ccd_http='<br>'.join(textwrap.wrap(sequence,50))
+            ccd_http='<pre>\n'+'\n'.join(textwrap.wrap(sequence,50))
+            if ligKey in rSS_dict:
+                ccd_http+='\n'+'\n'.join(textwrap.wrap(rSS_dict[ligKey],50))
+            ccd_http+='</pre>'
             #ccd_http=fasta_dict[ligKey]
             if ligKey in clust_dict:
                 ccd_http="&gt;"+pdb+':'+ligCha+" (identical to "+', '.join(
