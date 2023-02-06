@@ -213,6 +213,14 @@ def display_polymer_ligand(pdbid,asym_id,lig3,title):
     stdout,stderr=p.communicate()
     sequence=stdout.decode().strip()
     seq_txt='<br>'.join(textwrap.wrap(sequence,50))
+    if lig3=="rna":
+        cmd="zcat %s/data/rna_ss.txt.gz|grep -P '^%s\\t'|cut -f2"%(
+            rootdir,prefix)
+        p=subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
+        stdout,stderr=p.communicate()
+        seq_txt+='''</span></td></tr>
+    <tr BGCOLOR="#DEDEDE"><td><span title="CSSR secondary structure assignment">%s'''%(
+        '<br>'.join(textwrap.wrap(stdout.decode(),50)))
     species=''
     if pdbid+':'+asym_id in taxon_dict:
         species="Species: "+taxon_dict[pdbid+':'+asym_id]
@@ -229,8 +237,10 @@ def display_polymer_ligand(pdbid,asym_id,lig3,title):
         homolog_link+=", <a href=pdb.cgi?pdb=%s&chain=%s&lig3=%s&idx=0 target=_blank>%s:%s</a>"%(
             homo_pdbid,homo_asym_id,lig3,homo_pdbid,homo_asym_id)
     if homolog_link:
-        homolog_link='<tr BGCOLOR="#DEDEDE"><td>(Identical to '+ \
-        homolog_link[1:]+")</td></tr>"
+        homolog_link='<tr BGCOLOR="#DEDEDE">'
+        if lig3=="rna":
+            homolog_link='<tr>'
+        homolog_link+='<td>(Identical to '+homolog_link[1:]+")</td></tr>"
 
     print('''
 <tr><td><h1 align=center>Structure of PDB $pdbid Chain $asym_id</h1></td></tr>
@@ -958,6 +968,14 @@ def display_interaction(pdbid,asym_id,bs,title):
         stdout,stderr=p.communicate()
         lig_sequence=stdout.decode().strip()
         lig_seq_txt='<br>'.join(textwrap.wrap(lig_sequence,50))
+        if lig3=="rna":
+            cmd="zcat %s/data/rna_ss.txt.gz|grep -P '^%s_rna_%s\\t'|cut -f2"%(
+                rootdir,pdbid,ligCha)
+            p=subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
+            stdout,stderr=p.communicate()
+            lig_seq_txt+='''</span></td></tr>
+<tr BGCOLOR="#DEDEDE"><td><span title="CSSR secondary structure assignment">%s'''%(
+            '<br>'.join(textwrap.wrap(stdout.decode(),50)))
         species=''
         if pdbid+':'+ligCha in taxon_dict:
             species="Species: "+taxon_dict[pdbid+':'+ligCha]
