@@ -6,15 +6,25 @@ cd script/
 make
 ```
 The compilation requires GCC with C++ 11 support.
-The binary executable of [cd-hit](https://github.com/weizhongli/cdhit) is available at ``script/cd-hit`` for 64 bit Linux. When using other operating system, the cd-hit program needs to be recompiled:
+The binary executable of [cd-hit](https://github.com/weizhongli/cdhit), [CSSR](https://github.com/pylelab/CSSR), and 
+[US-align](https://github.com/pylelab/USalign) are available at ``script/`` for 64 bit Linux. 
+When using other operating system, they can be recompiled:
 ```bash
 cd cdhit/
 make install
+cd ..
+
+cd CSSR/
+make install
+cd ..
+
+cd USalign
+make install
+cd ..
 ```
 Additionally, we make the following binary executables available under ``script`` that should be reinstalled if not using 64 bit Linux:
 * ``makeblastdb``, ``blastn`` and ``blastp`` from the [NCBI BLAST+](https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/)
 * ``USalign``, ``pdb2xyz``, ``pdb2fasta`` and ``xyz_sfetch`` from the [US-align](https://github.com/pylelab/USalign)
-* ``cssr`` from [CSSR](https://github.com/pylelab/CSSR)
 * ``foldseek`` from [foldseek](https://mmseqs.com/foldseek/foldseek-linux-sse41.tar.gz)
 
 ## Installation for web browsing ##
