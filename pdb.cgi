@@ -862,12 +862,13 @@ def display_interaction(pdbid,asym_id,bs,title):
     bindingdb=items[11]
 
     score=''
-    if os.path.isfile(rootdir+"/data/lig_rhea.tsv.gz"):
+    if os.path.isfile(rootdir+"/data/lig_rhea.tsv.gz") and not lig3 in ["peptide","rna","dna"]:
         cmd="zcat %s/data/lig_rhea.tsv.gz|grep -P '^%s\\t%s\\t%s\\t'"%(
             rootdir,pdbid,asym_id,lig3)
         p=subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
         stdout,stderr=p.communicate()
         stdout   =stdout.decode()
+        score    =''
         if len(stdout.strip()):
             line     =stdout.splitlines()[0]
             items    =line.split('\t')
@@ -891,6 +892,24 @@ def display_interaction(pdbid,asym_id,bs,title):
                 score='<span title="%s">%s <img src=images/%s-star.svg width=75></span>'%(
                     rhea,score,score[0])
 
+
+            score='''            <tr><td align=center><strong><span title="
+Each protein-ligand interaction is assigned an annotation score ranging from
+1 to 5. Higher score suggests greater biological relevance.
+
+If the UniProt protein corresponding to the receptor chain is mapped to at
+least one Rhea reaction, all non-water substrates and products of the 
+reaction(s) are converted to 1024 bit Morgan fingerprint (ECFP4). Their
+chemical similarity to the ligand in question can then be measured by 
+Tanimoto Coefficient (TC). The highest TC among all substracts/products to
+the ligand is used to assign the annotation score: TC of [0,0.4), [0.4,0.6),
+[0.6,0.8), [0.8,1) and 1 correspond to annotation score of 1, 2, 3, 4 and 5, respectively.
+
+If the receptor protein cannot be mapped to Rhea, the annotation score is 
+assigned based on FireDB classification of ligands, where cognate, ambiguous
+and non-cognate ligands are assigned score of 1, 3, and 4, respectively.
+            ">Annotation score</span></strong><td>%s</td></tr>'''%(score)
+
     baff_line=''
     baff_list=[]
     if manual:
@@ -902,8 +921,10 @@ def display_interaction(pdbid,asym_id,bs,title):
     if bindingdb:
         baff_list.append("BindingDB: "+bindingdb)
     if len(baff_list):
-        baff_line='''
-            <tr BGCOLOR="#DEDEDE"><td align=center><strong>Binding affinity</strong><td>$baff</td></tr>
+        baff_line='            <tr BGCOLOR="#DEDEDE">'
+        if len(score)==0:
+            baff_line='            <tr>'
+        baff_line+='''<td align=center><strong>Binding affinity</strong><td>$baff</td></tr>
         '''.replace("$baff",'<br>'.join(baff_list))
 
 
@@ -1172,22 +1193,7 @@ $(document).ready(function()
             <tr BGCOLOR="#DEDEDE"><td align=center><strong>Resolution</strong><td>$reso</td></tr>
             <tr><td align=center><strong>Binding residue<br>(original residue number in PDB)</strong><td>$resOrig</td></tr>
             <tr BGCOLOR="#DEDEDE"><td align=center><strong>Binding residue<br>(residue number reindexed from 1)</strong><td>$resRenu</td></tr>
-            <tr><td align=center><strong><span title="
-Each protein-ligand interaction is assigned an annotation score ranging from
-1 to 5. Higher score suggests greater biological relevance.
-
-If the UniProt protein corresponding to the receptor chain is mapped to at
-least one Rhea reaction, all non-water substrates and products of the 
-reaction(s) are converted to 1024 bit Morgan fingerprint (ECFP4). Their
-chemical similarity to the ligand in question can then be measured by 
-Tanimoto Coefficient (TC). The highest TC among all substracts/products to
-the ligand is used to assign the annotation score: TC of [0,0.4), [0.4,0.6),
-[0.6,0.8), [0.8,1) and 1 correspond to annotation score of 1, 2, 3, 4 and 5, respectively.
-
-If the receptor protein cannot be mapped to Rhea, the annotation score is 
-assigned based on FireDB classification of ligands, where cognate, ambiguous
-and non-cognate ligands are assigned score of 1, 3, and 4, respectively.
-            ">Annotation score</span></strong><td>$score</td></tr>
+            $score
             $baff_line
         </table>
         </td>
