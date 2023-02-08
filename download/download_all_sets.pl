@@ -56,7 +56,4 @@ foreach my $r(@all)
 
 print "Cheers! All updates are done.\n";
 print "====================================================\n\n";
-
-print "The old set can be download manually at
-https://zhanggroup.org/BioLiP2/download.html
 ";
