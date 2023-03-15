@@ -3030,7 +3030,7 @@ int rmligand(const string &pdbid, map<string,vector<string> >&artifact_dict,
         if (fasta_dict.count(recCha)) summary_txt+=fasta_dict[recCha];
     }
     summary_txt+="#pdb\trecCha\tBS\tCCD\tligCha\tligIdx"
-        "\tresidueOriginal\tresidueRenumbered\n";
+        "\tresidueOriginal\tresidueRenumbered\tresSeq\n";
     map <string,int> bs_dict;
     for (l=0;l<bsr_mat.size();l++)
     {

@@ -52,6 +52,7 @@ def display_ligand(pdbid,asym_id,lig3,ligIdx,title):
     
     prefix='_'.join((pdbid,lig3,asym_id,ligIdx))
     filename="%s/output/%s.pdb.gz"%(rootdir,prefix)
+    resSeq_txt=""
     if not os.path.isfile(filename):
         divided=pdbid[-3:-1]
         if os.path.isfile("%s/weekly/ligand_%s.tar.bz2"%(rootdir,divided)):
@@ -62,6 +63,8 @@ def display_ligand(pdbid,asym_id,lig3,ligIdx,title):
             for line in lines:
                 if line.startswith("ATOM") or line.startswith("HETATM"):
                     txt+=line[:20]+" L"+line[22:]+'\n'
+                    if not resSeq_txt:
+                        resSeq_txt=line[22:27]
                 else:
                     txt+=line+'\n'
         fout=gzip.open(filename,'wt')
@@ -69,6 +72,13 @@ def display_ligand(pdbid,asym_id,lig3,ligIdx,title):
         fout.close()
         fin.close()
         tar.close()
+    else:
+        fp=gzip.open(filename,'rt')
+        for line in fp.read().splitlines():
+            if line.startswith("ATOM") or line.startswith("HETATM"):
+                resSeq_txt=line[22:27]
+                break
+        fp.close()
     script=''
     if lig3 in ["peptide"]:
         script="cartoons; color group;"
@@ -87,7 +97,8 @@ def display_ligand(pdbid,asym_id,lig3,ligIdx,title):
     <tr><td align=center width=10%><strong>PDB</strong></td><td><a href=qsearch.cgi?pdbid=$pdbid target=_blank>$pdbid</a> $title</td></tr>
     <tr BGCOLOR="#DEDEDE"><td align=center><strong>Chain</strong></td><td><a href=qsearch.cgi?pdbid=$pdbid&chain=$asym_id target=_blank>$asym_id</a></td></tr>
     <tr><td align=center><strong>Resolution</strong></td><td>$reso</a></td></tr>
-    <tr BGCOLOR="#DEDEDE" align=center><td align=center><strong>3D<br>structure</strong></td><td>
+    <tr BGCOLOR="#DEDEDE"><td align=center><strong>Residue<br>sequence<br>number</strong></td><td>$resSeq</a></td></tr>
+    <tr align=center><td align=center><strong>3D<br>structure</strong></td><td>
     <table><tr><td>
 
 <script type="text/javascript"> 
@@ -126,6 +137,7 @@ $(document).ready(function()
   ).replace("$lig3",lig3
   ).replace("$ligIdx",ligIdx
   ).replace("$reso",reso
+  ).replace("$resSeq",resSeq_txt
   ).replace("$prefix",prefix
   ).replace("$script",script
   ))
@@ -933,6 +945,7 @@ and non-cognate ligands are assigned score of 1, 3, and 4, respectively.
     x_list=[]
     y_list=[]
     z_list=[]
+    resSeq_txt=""
     if not os.path.isfile(filename):
         divided=pdbid[-3:-1]
         if os.path.isfile("%s/weekly/ligand_%s.tar.bz2"%(rootdir,divided)):
@@ -946,6 +959,8 @@ and non-cognate ligands are assigned score of 1, 3, and 4, respectively.
                     x_list.append(float(line[30:38]))
                     y_list.append(float(line[38:46]))
                     z_list.append(float(line[46:54]))
+                    if not resSeq_txt:
+                        resSeq_txt=line[22:27]
                 else:
                     txt+=line+'\n'
             fout=gzip.open(filename,'wt')
@@ -960,6 +975,8 @@ and non-cognate ligands are assigned score of 1, 3, and 4, respectively.
                 x_list.append(float(line[30:38]))
                 y_list.append(float(line[38:46]))
                 z_list.append(float(line[46:54]))
+                if not resSeq_txt:
+                    resSeq_txt=line[22:27]
         fin.close()
     if len(x_list):
         xcen=sum(x_list)/len(x_list)
@@ -1052,7 +1069,7 @@ used by the PDB database."><a href=https://rcsb.org/ligand/$lig3>$lig3</a></span
         <tr BGCOLOR="#DEDEDE"><td align=center><a href=https://www.ebi.ac.uk/chembl target=_blank>ChEMBL</a></td><td><a href="https://www.ebi.ac.uk/chembl/compound_report_card/$ChEMBL" target=_blank>$ChEMBL</a></td></tr>
         <tr><td align=center><a href=https://go.drugbank.com target=_blank>DrugBank</a></td><td><a href="https://go.drugbank.com/drugs/$DrugBank" target=_blank>$DrugBank</a></td></tr>
         <tr BGCOLOR="#DEDEDE"><td align=center><a href=https://zinc.docking.org>ZINC</a></td><td><a href="https://zinc.docking.org/substances/$ZINC" target=_blank>$ZINC</a></td></tr>
-        <tr><td align=center>PDB chain</td><td>$pdbid Chain $asym_id 
+        <tr><td align=center>PDB chain</td><td>$pdbid Chain $asym_id Residue $resSeq
         [<a href=output/$prefix.pdb.gz>Download ligand structure</a>] 
         [<a href=?pdb=$pdbid&chain=$asym_id&lig3=$lig3&ligIdx=$ligIdx&outfmt=1 download=$prefix.pdb>Download structure with residue number starting from 1</a>] 
         [<a href=?pdb=$pdbid&chain=$asym_id&lig3=$lig3&ligIdx=$ligIdx target=_blank>View ligand structure</a>]
@@ -1074,6 +1091,7 @@ used by the PDB database."><a href=https://rcsb.org/ligand/$lig3>$lig3</a></span
         ).replace("$ChEMBL",ChEMBL
         ).replace("$DrugBank",DrugBank
         ).replace("$ZINC",ZINC
+        ).replace("$resSeq",resSeq_txt
         ))
     print('''
     </table>

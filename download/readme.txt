@@ -29,7 +29,8 @@ The columns are (from left to right):
 17	Binding affinity provided by the BindingDB database
 18	UniProt ID
 19	PubMed ID
-20	Receptor sequence
+20	Residue sequence number of the ligand (field _atom_site.auth_seq_id in PDBx/mmCIF format)
+21	Receptor sequence
 
 The ligand-protein complex structure for each line entry be obtained by using the two PDB files:
 1. the receptor structure file under the "receptor" folder (name is formed with columns 01,02: i.e., 0102.pdb)

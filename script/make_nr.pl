@@ -195,6 +195,7 @@ foreach my $divided(`ls $rootdir/weekly/|grep -P "BioLiP_\\w+\\.bsr\\.gz"|cut -f
         my $ligIdx =$items[5]; # [7] ligand serial number
         my $resOrig=$items[6]; # [8] binding site residue, original numbering
         my $resRenu=$items[7]; # [9] binding site residue, renumbered from 1
+        my $resSeq =$items[8]; # [10]residue sequence number
         
         my $chain  =$pdbid.$recCha;
 
@@ -235,7 +236,7 @@ foreach my $divided(`ls $rootdir/weekly/|grep -P "BioLiP_\\w+\\.bsr\\.gz"|cut -f
            $csaRes=$csa_dict{$chain} if (exists $csa_dict{$chain});
         $line="$pdbid\t$recCha\t$resolu\t$bs\t$ccd\t$ligCha\t$ligIdx\t".
               "$resOrig\t$resRenu\t$csaRes\t$ec\t$go\t$affman\t".
-              "$moad\t$bindcn\t$binddb\t$uniprot\t$pubmed\t$sequence\n";
+              "$moad\t$bindcn\t$binddb\t$uniprot\t$pubmed\t$resSeq\t$sequence\n";
         $txt_full.="$line";
         next if (!exists $nr_dict{$chain});
         $txt_nr.="$line";
@@ -249,8 +250,8 @@ foreach my $divided(`ls $rootdir/weekly/|grep -P "BioLiP_\\w+\\.bsr\\.gz"|cut -f
     print FP $txt_nr;
     close(FP);
 
-    $lig_full_all.=`cut -f1,2,4-9,14-17 $rootdir/weekly/BioLiP_$divided.txt`;
-    $lig_nr_all.=`cut -f1,2,4-9,14-17 $rootdir/weekly/BioLiP_${divided}_nr.txt`;
+    $lig_full_all.=`cut -f1,2,4-9,14-17,20 $rootdir/weekly/BioLiP_$divided.txt`;
+    $lig_nr_all.=`cut -f1,2,4-9,14-17,20 $rootdir/weekly/BioLiP_${divided}_nr.txt`;
     $pdb_full_all.=`cut -f1-3,10-13,18-19 $rootdir/weekly/BioLiP_$divided.txt|uniq`;
     $pdb_nr_all.=`cut -f1-3,10-13,18-19 $rootdir/weekly/BioLiP_${divided}_nr.txt|uniq`;
 
@@ -301,7 +302,7 @@ foreach my $prefix(("pdb_all","pdb_nr","lig_all","lig_nr"))
     open(FP,">$rootdir/data/$prefix.tsv");
     if ($prefix=~/lig/)
     {
-        print FP "#pdb\tchain\tBS\tCCD\tligandChain\tligIdx\tresidue\tresidueRenumbered\taffinity(manual)\tMOAD\tPDBbind-CN\tBindingDB\n";
+        print FP "#pdb\tchain\tBS\tCCD\tligandChain\tligIdx\tresidue\tresidueRenumbered\taffinity(manual)\tMOAD\tPDBbind-CN\tBindingDB\tresSeq\n";
     }
     else
     {

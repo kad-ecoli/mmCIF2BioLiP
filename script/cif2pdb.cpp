@@ -18,8 +18,9 @@ const char* docstring=""
 "                                  [2] ligand name\n"
 "                                  [3] ligand chainID\n"
 "                                  [4] ligand index\n"
-"                                  [3] original index of residue in contact\n"
-"                                  [4] renumber index of residue in contact\n"
+"                                  [5] original index of residue in contact\n"
+"                                  [6] renumber index of residue in contact\n"
+"                                  [7] residue sequence number of the ligand\n"
 "\n"
 "cif2pdb input.cif prefix ligand_list\n"
 "    convert PDBx/mmCIF format input file 'input.cif' to PDB format output prefix*\n"
@@ -2791,8 +2792,8 @@ inline size_t atom2contact(const vector<double>&atom2,
 size_t getContact(const vector<vector<double> >&ligand_vec, 
     const string &asym_id,const string &comp_id,const size_t ligIdx,
     ModelUnit &pep,const vector<string> &protein_vec,
-    map<string,double> &vdw_dict, string &metadata_txt,
-    const bool artifact=false)
+    map<string,double> &vdw_dict, const string &resSeq_txt,
+    string &metadata_txt, const bool artifact=false)
 {
     string asym_receptor;
     vector<double> atom2(4,0);
@@ -2864,8 +2865,8 @@ size_t getContact(const vector<vector<double> >&ligand_vec,
             buf<<aa3to1(pep.chains[c].residues[r].resn)<<r+1;
             if (a+1<resi_vec.size()) buf<<' ';
         }
-        buf<<endl;
-        metadata_txt+=buf.str();
+        buf<<flush;
+        metadata_txt+=buf.str()+"\t"+resSeq_txt+"\n";
         buf.str(string());
         resi_vec.clear();
         bindingPocket_num++;
@@ -3492,9 +3493,10 @@ COLUMNS        DATA  TYPE    FIELD        DEFINITION
     /* calculate contact for polymer */
     map<string,double> vdw_dict;
     make_vdw(vdw_dict);
-    metadata_txt+="#recCha\tCCD\tligCha\tligIdx\tresidueOriginal\tresidueRenumbered\n";
+    metadata_txt+="#recCha\tCCD\tligCha\tligIdx\tresidueOriginal\tresidueRenumbered\tresSeq\n";
     vector<double> tmp_vec(4,0); // xyz, vdw
     vector<vector<double> > ligand_vec;
+    stringstream resSeq_buf;
     for (c0=0;c0<nonprotein_vec.size();c0++)
     {
         asym_id=nonprotein_vec[c0].first;
@@ -3517,13 +3519,20 @@ COLUMNS        DATA  TYPE    FIELD        DEFINITION
                     else tmp_vec[3]=2.00;
                     ligand_vec.push_back(tmp_vec);
                 }
+                if (r==0) resSeq_buf<<pep.chains[c].residues[r].resi
+                                    <<pep.chains[c].residues[r].icode;
+                else if (r+1==pep.chains[c].residues.size())
+                    resSeq_buf<<"~ "<<pep.chains[c].residues[r].resi
+                                    <<pep.chains[c].residues[r].icode;
+
             }
         }
 
         getContact(ligand_vec, asym_id, comp_id, 0,
-            pep, protein_vec, vdw_dict, metadata_txt);
+            pep, protein_vec, vdw_dict, resSeq_buf.str(), metadata_txt);
         for (a=0;a<ligand_vec.size();a++) ligand_vec[a].clear();
         ligand_vec.clear();
+        resSeq_buf.str(string());
     }
     
     /* count artifact ligand repeat */
@@ -3580,9 +3589,11 @@ COLUMNS        DATA  TYPE    FIELD        DEFINITION
                 else tmp_vec[3]=2.00;
                 ligand_vec.push_back(tmp_vec);
             }
+            resSeq_buf<<pep.chains[c].residues[r].resi
+                      <<pep.chains[c].residues[r].icode;
             if (getContact(ligand_vec, asym_id, comp_id,
-                ligand_dup_map[filename], pep, protein_vec, vdw_dict,
-                metadata_txt, artifact_dict.count(comp_id)))
+                ligand_dup_map[filename], pep, protein_vec, vdw_dict, 
+                resSeq_buf.str(), metadata_txt, artifact_dict.count(comp_id)))
             {
                 buf<<filename<<'_'<<ligand_dup_map[filename]<<".pdb";
                 filename=buf.str();
@@ -3597,6 +3608,7 @@ COLUMNS        DATA  TYPE    FIELD        DEFINITION
             fout_buf.str(string());
             for (a=0;a<ligand_vec.size();a++) ligand_vec[a].clear();
             ligand_vec.clear();
+            resSeq_buf.str(string());
         }
     }
 
