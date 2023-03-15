@@ -54,6 +54,9 @@ echo ./script/make_EC.pl
 echo ./script/curate_GO.pl
 ./script/curate_GO.pl
 
+echo ./script/make_foldseek.pl
+./script/make_foldseek.pl
+
 #### The following script needs internet connection ####
 echo ./script/download_rhea.pl
 ./script/download_rhea.pl

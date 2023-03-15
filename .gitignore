@@ -25,6 +25,9 @@ download/lig_frequency.txt
 download/BioLiP*.txt.gz
 output/*.pdb.gz
 output/*.svg
+foldseek/list
+foldseek/receptor_DB*
+foldseek/receptor_nr*
 
 # Prerequisites
 *.d

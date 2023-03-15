@@ -6,7 +6,7 @@ use Cwd 'abs_path';
 my $bindir = dirname(abs_path(__FILE__));
 my $rootdir = dirname($bindir);
 
-system("mkdir -p $rootdir/foldseek/");
+system("mkdir -p $rootdir/foldseek/") if (! -d "$rootdir/foldseek/");
 system("rm -rf $rootdir/foldseek/receptor_nr") if (-d "$rootdir/foldseek/receptor_nr");
 foreach my $line(`ls $rootdir/weekly/|grep -F receptor_`)
 {

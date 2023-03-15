@@ -163,7 +163,14 @@ This step must be performed after step 11.
 This script reads GO from ``obo/go/go-basic.obo``, ``data/pdb_all.tsv.gz`` and ``data/ec_all.tsv.gz``. It extracts the summary to ``data/go2name.tsv.gz``, ``data/is_a.tsv.gz`` and ``data/pdb_go.tsv.gz``.
 This script reads swissprot name from ``uniprot/current_release/knowledgebase/complete/uniprot_sprot.fasta.gz`` and extract the summary to ``data/uniprot_sprot.tsv.gz``.
 
-### Step 13: curate rhea annotation ###
+### Step 13: make foldseek database ###
+This step must be performed after step 9
+```bash
+./script/make_foldseek.pl
+```
+Thi script creates foldseek database at ``foldseek/``
+
+### Step 14: curate rhea annotation ###
 This step must be performed after step 12.
 ```bash
 ./script/download_rhea.pl
@@ -173,7 +180,7 @@ It then maps protein receptors to rhea according to ``rhea/uniprot2rhea.tsv``; i
 The protein to rhea mappings are then written to ``data/pdb_rhea.tsv.gz``.
 If a protein is present in this rhea mapping, the annotation score of the ligand interaction is calculated by the Tanimoto Coefficient between the ligand and the rhea ligands. Otherwise, the annotation score is categorized by firedb (cognate, ambiguous, non_coganate). The annotation score is saved to ``data/lig_rhea.tsv.gz``.
 
-### Step 14: clean up intermediate files ###
+### Step 15: clean up intermediate files ###
 This step must be run after everything is done.
 ```bash
 ./script/clean_up.pl
