@@ -106,7 +106,8 @@ if outfmt=='txt':
     fp=gzip.open(rootdir+"/data/protein.fasta.gz",'rt')
     for block in fp.read().split('>')[1:]:
         header,sequence=block.splitlines()
-        fasta_dict[header.split()[0][1:]]=sequence
+        fasta_dict[header.split()[0]]=sequence
+    fp.close()
 else:
     if lig3 in ["rna","dna","peptide"]:
         fp=gzip.open("%s/data/%s.fasta.gz"%(rootdir,lig3),'rt')
@@ -211,6 +212,9 @@ for line in fp.read().splitlines()[1:]:
     moad      =items[9].replace(',',', ')
     pdbbind   =items[10].replace(',',', ')
     bindingdb =items[11].replace(',',', ')
+    resSeq    =''
+    if len(items)>12:
+        resSeq=items[12]
     if baff:
         if not manual and not moad and not pdbbind and not bindingdb:
             continue
@@ -262,7 +266,7 @@ for line in fp.read().splitlines()[1:]:
         sequence=fasta_dict[pdb+recCha]
     items=(pdb,recCha,reso,bs,ccd,ligCha,ligIdx,resOrig,
         resRenu,csaOrig,csaRenu,ec,go,manual,moad,pdbbind,bindingdb,
-        accession,pmid,sequence)
+        accession,pmid,resSeq,sequence)
     if outfmt=='txt':
         html_txt+='\t'.join(items)+'\n'
     else:
@@ -318,7 +322,7 @@ for l in range(totalNum):
     bindingdb=items[16]
     accession=items[17]
     pmid     =items[18]
-    sequence =items[19]
+    sequence =items[-1]
     
     if ec:
         ec_list=ec.split(',')
