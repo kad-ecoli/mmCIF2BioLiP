@@ -1,4 +1,5 @@
-A local copy of ligand and binding site information created from mmCIF files of the PDB database.
+# BioLiP: a database for biologically relevant ligand-protein interactions #
+This is the source code for curating a local copy of the BioLiP database from mmCIF files of the PDB database and displaying the database content in web browser.
 
 ## Installation for database update ##
 ```bash
