@@ -120,8 +120,8 @@ $(document).ready(function()
 [<a href="javascript:Jmol.script(jmolApplet0, 'Reset')">Reset orientation</a>]<p></p>
 [<a href="javascript:Jmol.script(jmolApplet0, 'set antialiasDisplay true')">High quality</a>]<br>
 [<a href="javascript:Jmol.script(jmolApplet0, 'set antialiasDisplay false')">Low quality</a>]<p></p>
-[<a href="javascript:Jmol.script(jmolApplet0, 'color background white')">White quality</a>]<br>
-[<a href="javascript:Jmol.script(jmolApplet0, 'color background black')">Black quality</a>]<p></p>
+[<a href="javascript:Jmol.script(jmolApplet0, 'color background white')">White background</a>]<br>
+[<a href="javascript:Jmol.script(jmolApplet0, 'color background black')">Black background</a>]<p></p>
 [<a href=output/$prefix.pdb.gz>Download</a>]<br>
 [<a href=?pdbid=$pdbid&chain=$asym_id&lig3=$lig3&ligIdx=$ligIdx&outfmt=1 download=$prefix.pdb>Download structure with residue number starting from 1</a>]
     </td></tr></table>
@@ -712,8 +712,8 @@ $explainLabel
 [<a href="javascript:Jmol.script(jmolApplet0, 'Reset')">Reset orientation</a>]<p></p>
 [<a href="javascript:Jmol.script(jmolApplet0, 'set antialiasDisplay true')">High quality</a>]<br>
 [<a href="javascript:Jmol.script(jmolApplet0, 'set antialiasDisplay false')">Low quality</a>]<p></p>
-[<a href="javascript:Jmol.script(jmolApplet0, 'color background white')">White quality</a>]<br>
-[<a href="javascript:Jmol.script(jmolApplet0, 'color background black')">Black quality</a>]<p></p>
+[<a href="javascript:Jmol.script(jmolApplet0, 'color background white')">White background</a>]<br>
+[<a href="javascript:Jmol.script(jmolApplet0, 'color background black')">Black background</a>]<p></p>
 [<a href=output/$prefix.pdb.gz>Download</a>]<br>
 [<a href=?pdbid=$pdbid&chain=$asym_id&outfmt=1 download=$prefix.pdb>Download structure with residue number starting from 1</a>]
     </td></tr></table>
@@ -1179,8 +1179,8 @@ $(document).ready(function()
 [<a href="javascript:Jmol.script(jmolApplet0, 'Reset')">Reset</a>]<br>
 [<a href="javascript:Jmol.script(jmolApplet0, 'set antialiasDisplay true')">High quality</a>]
 [<a href="javascript:Jmol.script(jmolApplet0, 'set antialiasDisplay false')">Low quality</a>]<br>
-[<a href="javascript:Jmol.script(jmolApplet0, 'color background white')">White quality</a>]
-[<a href="javascript:Jmol.script(jmolApplet0, 'color background black')">Black quality</a>]
+[<a href="javascript:Jmol.script(jmolApplet0, 'color background white')">White background</a>]
+[<a href="javascript:Jmol.script(jmolApplet0, 'color background black')">Black background</a>]
         </td>
         <td align=center>
 <script type="text/javascript"> 
@@ -1202,8 +1202,8 @@ $(document).ready(function()
 [<a href="javascript:Jmol.script(jmolApplet1, 'Reset')">Reset</a>]<br>
 [<a href="javascript:Jmol.script(jmolApplet1, 'set antialiasDisplay true')">High quality</a>]
 [<a href="javascript:Jmol.script(jmolApplet1, 'set antialiasDisplay false')">Low quality</a>]<br>
-[<a href="javascript:Jmol.script(jmolApplet1, 'color background white')">White quality</a>]
-[<a href="javascript:Jmol.script(jmolApplet1, 'color background black')">Black quality</a>]
+[<a href="javascript:Jmol.script(jmolApplet1, 'color background white')">White background</a>]
+[<a href="javascript:Jmol.script(jmolApplet1, 'color background black')">Black background</a>]
         </td>
         <td>
         <table>
