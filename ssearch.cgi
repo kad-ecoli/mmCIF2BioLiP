@@ -76,9 +76,9 @@ if len(sequence)>1500:
 seqID=100
 if seq_type=="protein":
     seqID=90
-print("Search sequence (length=%d) through non-redundant sequence database <a href=data/%s_nr.fasta.gz>%s_nr.fasta.gz</a> clustered at %d%% identity cutoff.<br>"%(len(sequence),seq_type,seq_type,seqID))
 print('&gt;'+header+'<br>')
-print('<br>'.join(textwrap.wrap(sequence,80))+'<p></p>')
+print('<br>'.join(textwrap.wrap(sequence,80))+'<br><br>')
+print("The query sequence (length=%d) is searched through a non-redundant set of database sequences <a href=data/%s_nr.fasta.gz>%s_nr.fasta.gz</a> clustered at %d%% identity cutoff to identify representative hits. Homologs that belong to the same sequence cluster of the representative hit are listed in the last column of the table.<p></p>"%(len(sequence),seq_type,seq_type,seqID))
 
 blast="blastp"
 if seq_type.endswith("na"):
