@@ -24,7 +24,7 @@ echo ./script/download_moad.pl
 
 echo ./script/download_ligand.pl
 ./script/download_ligand.pl
-
+./script/curate_smiles.pl
 
 #### This following script does NOT need internet connection ####
 echo ./script/curate_pdb.pl
