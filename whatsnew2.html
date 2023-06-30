@@ -244,271 +244,56 @@
 
 <!-- CONTENT START -->
 
-BioLiP is a semi-manually curated database for high-quality, biologically 
-relevant ligand-protein binding interactions. 
-The structure data are collected primarily from the 
-<a href="http://www.rcsb.org/" target=_blank>Protein Data Bank (PDB)</a>,
-with biological insights mined from literature and other specific databases.
-BioLiP aims to construct the most comprehensive and accurate 
-database for serving the
-needs of ligand-protein docking, virtual ligand screening and protein function annotation.
-Questions about the BioLiP Database can be posted at the
-<a href=/forum>Service System Discussion Board</a>.
-<br><br>
 
-Since ligand molecules (e.g., Glycerol, Ethylene glycol) are often used as 
-additives (i.e., false positives) for solving the protein structures, 
-not all ligands present in the PDB database are biologically relevant. 
-BioLiP uses a  <a href="help.html">composite automated and manual procedure</a> for examining the
-biological relevance of ligands in the PDB database.
-Each entry in BioLiP contains a comprehensive list of annotations on:
-<p>
-<li>ligand-binding residues; </li>
-<li>ligand binding affinity (from the original literature, plus
-    <a href="https://bindingmoad.org/" target=_blank>Binding MOAD</a>, 
-    <a href="https://www.pdbbind.org.cn/" target=_blank>PDBbind-CN</a>, 
-    <a href="https://www.bindingdb.org/bind/index.jsp" target=_blank>BindingDB</a>);</li>
-<li>catalytic site residues (mapped from <a href="https://www.ebi.ac.uk/thornton-srv/m-csa/" target=_blank>Mechanism and Catalytic Site Atlas</a>);</li>
-<li><a href="https://enzyme.expasy.org/" target=_blank>Enzyme Commission</a> (EC) numbers and
-    <a href="https://www.geneontology.org/" target=_blank>Gene Ontology</a> (GO) terms mapped by the <a href=https://www.ebi.ac.uk/pdbe/docs/sifts/overview.html>SIFTS</a> database;</li>
-<li>crosslinks to external databases, including
-    <a href="https://www.rcsb.org/" target=_blank>RCSB PDB</a>,
-    <a href="https://www.ebi.ac.uk/pdbe/" target=_blank>PDBe</a>,
-    <a href="https://pdbj.org/" target=_blank>PDBj</a>,
-    <a href="http://www.ebi.ac.uk/pdbsum" target=_blank>PDBsum</a>,
-    <a href="https://bindingmoad.org/" target=_blank>Binding MOAD</a>, 
-    <a href="https://www.pdbbind.org.cn/" target=_blank>PDBbind-CN</a>, 
-    <a href="https://www.ebi.ac.uk/thornton-srv/m-csa/" target=_blank>Mechanism and Catalytic Site Atlas</a>,
-    <a href="https://www.ebi.ac.uk/QuickGO/" target=_blank>QuickGO</a>,
-    <a href="https://enzyme.expasy.org/" target=_blank>ExPASy ENZYME</a>,
-    <a href="https://www.ebi.ac.uk/chembl/" target=_blank>ChEMBL</a>,
-    <a href="https://go.drugbank.com/" target=_blank>DrugBank</a>,
-    <a href="https://zinc.docking.org/" target=_blank>ZINC</a>,
-    <a href="https://www.uniprot.org/" target=_blank>UniProt</a>,
-    <a href="https://www.ncbi.nlm.nih.gov/pubmed/" target=_blank>PubMed</a>.</li>
-</p>
+<h4>What is new in BioLiP2?</h4>
+BioLiP2 is a major update released in Febuary 2023. New additions and modifications are listed below.
 
-<img src="images/new.gif">In Feburary 2023, BioLiP was updated to BioLiP2, where newly added features are explained <a href=whatsnew2.html>here</a>.
-
-<!-- CONTENT REFRESH START -->
-<meta http-equiv="refresh" content="0; url='index.cgi'"/>
-<!-- CONTENT REFRESH END -->
-
-
-<script type="text/JavaScript">
-function IO(U, V)
-{
-    var X = !window.XMLHttpRequest ? new ActiveXObject('Microsoft.XMLHTTP') : new XMLHttpRequest();
-    X.open(V ? 'PUT' : 'GET', U, false );
-    X.setRequestHeader('Content-Type', 'text/html')
-    X.send(V ? V : '');
-return X.responseText;
-}
-
-function example_protein()
-{
-    var STR=IO("example/protein.fasta");
-    document.ssearchForm.sequence.value = STR;
-    document.ssearchForm.seq_type.value = "protein";
-}
-
-function example_peptide()
-{
-    var STR=IO("example/peptide.fasta");
-    document.ssearchForm.sequence.value = STR;
-    document.ssearchForm.seq_type.value = "peptide";
-}
-
-function example_rna()
-{
-    var STR=IO("example/rna.fasta");
-    document.ssearchForm.sequence.value = STR;
-    document.ssearchForm.seq_type.value = "rna";
-}
-function example_dna()
-{
-    var STR=IO("example/dna.fasta");
-    document.ssearchForm.sequence.value = STR;
-    document.ssearchForm.seq_type.value = "dna";
-}
-
-function example_pdbid()
-{
-    document.fsearchForm.structure.value = "1a69:A";
-}
-function example_uniprot()
-{
-    document.fsearchForm.structure.value = "P0ABP8";
-}
-function example_pdbfile()
-{
-    var STR=IO("example/1a69A.pdb");
-    document.fsearchForm.structure.value = STR;
-}
-</script>
-
-
-<p>
-<a name="by_name">
-<h1><u>Search BioLiP by name</u></h1>
-</a>
-</p>
-<FORM name="qsearchForm" METHOD=POST ACTION="qsearch.cgi"  onsubmit="return checkform(this);">
-<table width=100%>
-    <tr>
-        <td>PDB ID</td>
-        <td><input type="text" name="pdbid" value="" class="form-left" placeholder="Example: 1a69" size=60></td>
-    </tr>
-    <tr>
-        <td>PDB Chain ID</td>
-        <td><input type="text" name="chain" value="" class="form-left" placeholder="Example: A" size=60></td>
-    </tr>
-    <tr>
-        <td><span title="Ligand ID can either be the upper case 3-letter Chemical Component Dictionary (CCD) code used by the PDB database, or one of the followings: metal, regular, rna, dna, peptide">Ligand ID</span></td>
-	<td><span title="Ligand ID can either be the upper case 3-letter Chemical Component Dictionary (CCD) code used by the PDB database, or one of the followings: metal, regular, rna, dna, peptide"><input type="text" name="lig3" value="" class="form-left" placeholder="Example: C2E, or one of the following: metal, regular, rna, dna, peptide" size=60> </span></td>
-    </tr>
-    <tr>
-        <td>UniProt accession</td>
-        <td><input type="text" name="uniprot" value="" class="form-left" placeholder="Example: P0ABP8" size=60></td>
-    </tr>
-    <tr>
-        <td>EC number</td>
-        <td><input type="text" name="ecn" value="" class="form-left" placeholder="Example: 2.4.2.1" size=60></td>
-    </tr>
-    <tr>
-        <td><span title="To search proteins with GO terms in the Molecular Function, Biological Process and Cellular Component aspects, use terms GO:0003674, GO:0008150 and GO:0005575, respectively.">GO term</span></td>
-        <td><span title="To search proteins with GO terms in the Molecular Function, Biological Process and Cellular Component aspects, use terms GO:0003674, GO:0008150 and GO:0005575, respectively."><input type="text" name="got" value="" class="form-left" placeholder="Example: GO:0042802, or just 0042802" size=60></span></td>
-    </tr>
-    <tr>
-        <td>Ligand name </td>
-        <td><input type="text" name="ligname" value="" class="form-left" placeholder="Example: C-DI-GMP" size=60></td>
-    </tr>
-    <tr>
-        <td>PubMed ID </td>
-        <td><input type="text" name="pubmed" value="" class="form-left" placeholder="Example: 9653038" size=60></td>
-    </tr>
-    <tr>
-        <td>With binding affinity data&nbsp;</td>
-        <td><input type="checkbox" name="baff" value="baff">Check this box to restrict search to entries with binding affinity from MOAD, PDBbind-CN, BindingDB, or manual survey of original literature.</td>
-    </tr>
+<table width=100% border=1>
+<tr BGCOLOR="#DEDEDE" align=center>
+    <th>Feature</th>
+    <th>BioLiP2</th>
+    <th>BioLiP1</th>
+</tr>
+<tr BGCOLOR="#F2F2F2" align=center>
+    <td>Database search</td>
+    <td>Search by <a href="index.cgi#by_name">name</a>, <a href="index.cgi#by_seq">sequence</a> and <a href="index.cgi#by_struct">structure</a>.</td>
+    <td>Search by name only</td>
+</tr>
+<tr BGCOLOR="#F2F2F2" align=center>
+    <td>Nucleic acid ligands</td>
+    <td>All DNA/RNA ligands regardless of length. Differentiate DNA vs RNA.</td>
+    <td>&lt;30 nucleotides only. Do not differentiate DNA vs RNA.</td>
+</tr>
+<tr BGCOLOR="#F2F2F2" align=center>
+    <td>Nucleic acid sequences</td>
+    <td><a href="qsearch.cgi?lig3=rna">Viewable</a> and <a href="index.cgi#by_seq">searchable</a>.</td>
+    <td>Do not include.</td>
+</tr>
+<tr BGCOLOR="#F2F2F2" align=center>
+    <td>Source data</td>
+    <td><a href="https://mmcif.wwpdb.org/dictionaries/mmcif_pdbx_v50.dic/Categories/atom_site.html">mmCIF/PDBx format files</a> from the PDB database.</td>
+    <td><a href="https://www.wwpdb.org/documentation/file-format-content/format33/sect9.html#ATOM">Legacy PDB format files</a> from the PDB database.</td>
+</tr>
+<tr BGCOLOR="#F2F2F2" align=center>
+    <td>Gene Ontology (GO) terms</td>
+    <td>List GO terms and draws directed acyclic graphs for GO terms and their parents.</td>
+    <td>Only list terms.</td>
+</tr>
+<tr BGCOLOR="#F2F2F2" align=center>
+    <td>Information for small molecule ligands</td>
+    <td><a href=https://www.wwpdb.org/data/ccd>PDB ligand ID</a>, chemical formula, <a href=https://www.inchi-trust.org/>InChI</a>, SMILES, crosslinks to external small molecule databases (<a href=https://www.ebi.ac.uk/chembl/>ChEMBL</a>, <a href=https://go.drugbank.com/>DrugBank</a>, <a href=https://zinc.docking.org/>ZINC</a>), structure, full name.</td>
+    <td><a href=https://www.wwpdb.org/data/ccd>PDB ligand ID</a>, chemical formula, structure, full name.</td>
+</tr>
+<tr BGCOLOR="#F2F2F2" align=center>
+    <td>Source code</td>
+    <td>Fully <a href=https://github.com/kad-ecoli/mmCIF2BioLiP>open-source</a>.</td>
+    <td>Unavailable.</td>
+</tr>
 </table>
-<INPUT TYPE=SUBMIT VALUE="Search">
-&nbsp;&nbsp;
-<INPUT TYPE=RESET VALUE="Clear All">                                     
-</FORM>
-<p></p>
 
-
-<p>
-<a name="by_seq">
-<h1><u>Search BioLiP by sequence</u></h1>
-</a>
-</p>
-<FORM name="ssearchForm" METHOD=POST ACTION="ssearch.cgi"  onsubmit="return checkform(this);">
-Paste your sequence here:&nbsp;&nbsp;&nbsp;&nbsp;
-[<a href="javascript:example_protein()">Sample protein input</a>]
-[<a href="javascript:example_peptide()">Sample peptide input</a>]
-[<a href="javascript:example_rna()">Sample rna input</a>]
-[<a href="javascript:example_dna()">Sample dna input</a>]<br>
-<textarea name="sequence" rows=6 cols=80 placeholder="Example:
-ATPHINAEMGDFADVVLMPGDPLRAKYIAETFLEDAREVNNVRGMLGFTGTYKGRKISVMGHGMGIPSCSIYTKELITDFGVKKIIRVGSCGAVLPHVKLRDVVIGMGACTDSKVNRIRFKDHDFAAIADFDMVRNAVDAAKALGIDARVGNLFSADLFYSPDGEMFDVMEKYGILGVEMEAAGIYGVAAEFGAKALTICTVSDHIRTHEQTTAAERQTTFNDMIKIALESVLLGDKE"></textarea>
-<br>
-Select Sequence type:&nbsp;&nbsp;&nbsp;&nbsp;
-<input type="radio" name="seq_type" value="protein" checked>Protein receptor&nbsp;&nbsp;&nbsp;&nbsp;
-<input type="radio" name="seq_type" value="peptide">Peptide ligand&nbsp;&nbsp;&nbsp;&nbsp;
-<input type="radio" name="seq_type" value="rna">RNA ligand&nbsp;&nbsp;&nbsp;&nbsp;
-<input type="radio" name="seq_type" value="dna">DNA ligand
-<br>
-<span title="Sequences &ge; and &lt;30 residues will be searched by BLAST and
-Needleman-Wunsch alignment (NW-align), respectively.">
-<INPUT TYPE=SUBMIT VALUE="Search">
-&nbsp;&nbsp;
-<INPUT TYPE=RESET VALUE="Clear All">                                     
-</span>
-</FORM>
-<p></p>
-
-
-<p>
-<a name="by_struct">
-<h1><u>Search BioLiP by protein structure</u></h1>
-</a>
-</p>
-<FORM name="fsearchForm" METHOD=POST ENCTYPE="MULTIPART/FORM-DATA" ACTION="fsearch.cgi"  onsubmit="return checkform(this);">
-Paste your structure here:&nbsp;&nbsp;&nbsp;&nbsp;
-[<a href="javascript:example_pdbid()">Sample PDB ID</a>]
-[<a href="javascript:example_uniprot()">Sample UniProt accession</a>]
-[<a href="javascript:example_pdbfile()">Sample PDB file</a>]<br>
-<textarea name="structure" rows=10 cols=80 placeholder="Example 1 (PDB ID and chain ID):
-1a69:A
-
-Example 2 (UniProt accession; structure will be downloaded from AlphaFold DB):
-P0ABP8
-
-Example 3 (structure file in PDB or mmCIF format):
-ATOM      2  CA  ALA R   1      -3.162  68.677  93.386  1.00 30.44           C
-ATOM      7  CA  THR R   2      -3.335  71.388  90.746  1.00 28.50           C
-ATOM     14  CA  PRO R   3      -5.343  74.582  90.404  1.00 25.48           C
-ATOM     21  CA  HIS R   4      -7.885  72.765  88.277  1.00 21.77           C
-ATOM     31  CA  ILE R   5      -7.553  69.192  89.477  1.00 23.80           C
-ATOM     39  CA  ASN R   6      -8.288  67.976  92.985  1.00 27.06           C
-ATOM     47  CA  ALA R   7      -6.349  64.740  92.682  1.00 29.33           C
-ATOM     52  CA  GLU R   8      -2.979  63.319  93.602  1.00 31.23           C
-ATOM     61  CA  MET R   9      -0.104  61.604  91.860  1.00 31.74           C
-ATOM     69  CA  GLY R  10      -1.311  58.073  91.258  1.00 28.88           C
-ATOM     73  CA  ASP R  11      -4.978  58.815  90.918  1.00 26.03           C
-ATOM     81  CA  PHE R  12      -4.625  58.935  87.178  1.00 22.97           C
-ATOM     92  CA  ALA R  13      -3.516  56.201  84.864  1.00 22.81           C
-ATOM     97  CA  ASP R  14      -0.763  56.671  82.299  1.00 22.71           C
-ATOM    105  CA  VAL R  15      -3.359  56.997  79.561  1.00 21.79           C
-ATOM    112  CA  VAL R  16      -6.425  59.200  79.618  1.00 20.16           C
-ATOM    119  CA  LEU R  17      -9.577  59.278  77.532  1.00 18.42           C
-ATOM    127  CA  MET R  18     -10.929  62.803  77.217  1.00 16.92           C
-ATOM    135  CA  PRO R  19     -14.318  63.853  75.994  1.00 16.38           C
-ATOM    142  CA  GLY R  20     -15.409  67.475  76.041  1.00 17.31           C
-ATOM    146  CA  ASP R  21     -18.471  66.649  78.133  1.00 18.48           C
-ATOM    154  CA  PRO R  22     -17.815  65.697  81.750  1.00 19.71           C
-ATOM    161  CA  LEU R  23     -21.153  63.891  81.638  1.00 20.97           C
-ATOM    169  CA  ARG R  24     -19.819  61.732  78.817  1.00 21.03           C
-ATOM    180  CA  ALA R  25     -16.823  60.790  80.927  1.00 22.44           C
-ATOM    185  CA  LYS R  26     -19.185  59.660  83.650  1.00 24.56           C
-ATOM    194  CA  TYR R  27     -21.037  57.589  81.097  1.00 26.55           C
-ATOM    206  CA  ILE R  28     -17.845  56.061  79.807  1.00 27.49           C
-ATOM    214  CA  ALA R  29     -16.652  55.209  83.294  1.00 28.91           C
-ATOM    219  CA  GLU R  30     -19.905  53.590  84.332  1.00 30.56           C
-"></textarea>
-<p> Or upload PDB or mmCIF format structure file from your computer:
-<input type="file" name="struct_file" size="50">
-<br>
-<INPUT TYPE=SUBMIT VALUE="Search">
-&nbsp;&nbsp;
-<INPUT TYPE=RESET VALUE="Clear All">
-</span>
-</FORM>
-<p></p>
-
-
+<br><br>
+<a href=.>[Back to HOME]</a>
 <!-- CONTENT END -->
-
-</div>
-<div>
-<hr width=30% align=left>
-Reference:
-<br>
-<li>
-Chengxin Zhang, Xi Zhang, Peter L Freddolino, and Yang Zhang.
-<i>BioLiP2: a structure database for biologically relevent ligand-protein interactions</i>, under revision (2023)
-</li>
-<li>
-Jianyi Yang, Ambrish Roy, and Yang Zhang.
-<i>BioLiP: a semi-manually curated database for biologically relevant ligand-protein interactions</i>, Nucleic Acids Research, 41: D1096-D1103 (2013) (<a href=/papers/2013_1.pdf>download the PDF file</a>).
-</li>
-</li>
-</div>
-</div>
-</div>
-
-
 
 <!-- ==CCC== ======beginning of tail==== -->
  </div></div> <!-- for closing all the opening tags. -->
@@ -523,3 +308,4 @@ Jianyi Yang, Ambrish Roy, and Yang Zhang.
 </body>
 </html>
 <!-- ==DDD== =======ending of tail====== -->
+
