@@ -299,6 +299,31 @@ def display_regular_ligand(pdbid,asym_id,lig3,ligIdx,title):
     items=stdout.decode().split('\t')
     if len(items)>=9:
         formula,InChI,InChIKey,SMILES,name,ChEMBL,DrugBank,ZINC=items[1:9]
+    filename="%s/data/smiles.tsv.gz"%rootdir
+    if os.path.isfile(filename):
+        cmd="zcat %s | grep -P '^%s\\t'"%(filename,lig3)
+        p=subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
+        stdout,stderr=p.communicate()
+        smiles_dict=dict()
+        for line in stdout.decode().splitlines():
+            items=line.split('\t')
+            if len(items)>=3:
+                if not items[1] in smiles_dict:
+                    smiles_dict[items[1]]=[items[2]]
+                else:
+                    smiles_dict[items[1]].append(items[2])
+        smiles_list=SMILES.split(';')
+        SMILES="<table><tr BGCOLOR='#DEDEDE'><th>Software</th><th>SMILES</th></tr>"
+        for key in smiles_list:
+            key=key.strip()
+            if key in smiles_dict:
+                SMILES+="<tr><td>"+'<br>'.join(smiles_dict[key])+"</td><td>"+key+"</td></tr>"
+            else:
+                SMILES+="<tr><td></td><td>"+key+"</td></tr>"
+        SMILES+="</table>"
+    else:
+        SMILES=SMILES.replace(';',';<br>')
+
     svg="https://cdn.rcsb.org/images/ccd/labeled/%s/%s.svg"%(lig3[0],lig3)
     print('''
 <tr><td><h1 align=center>Structure of PDB $pdbid Chain $asym_id ligand $lig3</h1></td></tr>
@@ -331,7 +356,7 @@ used by the PDB database."><a href=https://rcsb.org/ligand/$lig3>$lig3</a></span
   ).replace("$svg",svg
   ).replace("$InChIKey",InChIKey
   ).replace("$InChI",InChI
-  ).replace("$SMILES",SMILES.replace(';',';<br>')
+  ).replace("$SMILES",SMILES
   ).replace("$formula",formula
   ).replace("$name",name.replace(';',';<br>')
   ).replace("$ChEMBL",ChEMBL
@@ -1050,6 +1075,34 @@ and non-cognate ligands are assigned score of 1, 3, and 4, respectively.
         items=stdout.decode().split('\t')
         if len(items)>=9:
             formula,InChI,InChIKey,SMILES,name,ChEMBL,DrugBank,ZINC=items[1:9]
+
+        filename="%s/data/smiles.tsv.gz"%rootdir
+        if os.path.isfile(filename):
+            cmd="zcat %s | grep -P '^%s\\t'"%(filename,lig3)
+            p=subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
+            stdout,stderr=p.communicate()
+            smiles_dict=dict()
+            for line in stdout.decode().splitlines():
+                items=line.split('\t')
+                if len(items)>=3:
+                    if not items[1] in smiles_dict:
+                        smiles_dict[items[1]]=[items[2]]
+                    else:
+                        smiles_dict[items[1]].append(items[2])
+            smiles_list=SMILES.split(';')
+            SMILES="<table><tr BGCOLOR='#DEDEDE'><th>Software</th><th>SMILES</th></tr>"
+            for key in smiles_list:
+                key=key.strip()
+                if key in smiles_dict:
+                    SMILES+="<tr><td>"+'<br>'.join(smiles_dict[key])+"</td><td>"+key+"</td></tr>"
+                else:
+                    SMILES+="<tr><td></td><td>"+key+"</td></tr>"
+            SMILES+="</table>"
+        else:
+            SMILES=SMILES.replace(';',';<br>')
+
+
+
         svg="https://cdn.rcsb.org/images/ccd/labeled/%s/%s.svg"%(lig3[0],lig3)
         print('''
 <tr>
@@ -1085,7 +1138,7 @@ used by the PDB database."><a href=https://rcsb.org/ligand/$lig3>$lig3</a></span
         ).replace("$svg",svg
         ).replace("$InChIKey",InChIKey
         ).replace("$InChI",InChI
-        ).replace("$SMILES",SMILES.replace(';',';<br>')
+        ).replace("$SMILES",SMILES
         ).replace("$formula",formula
         ).replace("$name",name.replace(';',';<br>')
         ).replace("$ChEMBL",ChEMBL

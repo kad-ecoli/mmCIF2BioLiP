@@ -99,6 +99,7 @@ Again optionally, follow instructions at [bind/README.md](bind/README.md) for ho
 This step can be performed independent of step 1 to 8, but must be done before step 9.
 ```bash
 ./script/download_ligand.pl
+./script/curate_smiles.pl
 ```
 This script downloads CCD ligand to ``pdb/data/monomers/components.cif.gz`` and extract their summary to ``data/ligand.tsv.gz``.
 This script downloads enzyme to ``enzyme/enzyme.dat`` and extract their summary to ``data/enzyme.tsv.gz``.
