@@ -71,6 +71,21 @@ td {
         if len(items)==3 and items[1]==lig3:
             freq_dict[items[1]]=items[2]
     fp.close()
+
+
+    filename="%s/data/smiles.tsv.gz"%rootdir
+    smiles_dict=dict()
+    if os.path.isfile(filename):
+        fp=gzip.open(filename,'rt')
+        for line in fp.read().splitlines():
+            items=line.split('\t')
+            if len(items)>=3 and items[0]==lig3:
+                if not items[1] in smiles_dict:
+                    smiles_dict[items[1]]=[items[2]]
+                else:
+                    smiles_dict[items[1]].append(items[2])
+        fp.close()
+
     fp=gzip.open(rootdir+"/data/ligand.tsv.gz",'rt')
     for line in fp.read().splitlines():
         items=line.split('\t')
@@ -79,6 +94,22 @@ td {
         freq="0"
         if lig3 in freq_dict and freq_dict[lig3]!='0':
             freq='<a href="qsearch.cgi?lig3=%s" target=_blank>%s</a>'%(lig3,freq_dict[lig3])
+        
+        SMILES=items[4]
+        if len(smiles_dict):
+            smiles_list=SMILES.split(';')
+            SMILES="<table width=100%><tr BGCOLOR='#DEDEDE'><th>Software</th><th>SMILES</th></tr>"
+            for key in smiles_list:
+                key=key.strip()
+                if key in smiles_dict:
+                    SMILES+="<tr><td>"+'<br>'.join(smiles_dict[key])+"</td><td>"+key+"</td></tr>"
+                else:
+                    SMILES+="<tr><td></td><td>"+key+"</td></tr>"
+            SMILES+="</table>"
+        else:
+            SMILES=SMILES.replace(";",";<br>")
+
+
         txt_table+='''
 <tr BGCOLOR="#DEDEDE"><td width=10%><strong>PDB CCD ID: </strong></td><td width=90%><a href=https://www.rcsb.org/ligand/$ccd target=_blank>$ccd</a></td></tr>
 <tr><td><strong>Number of entries in BioLiP: </strong></td><td>$freq</td></tr>
@@ -92,7 +123,7 @@ td {
         ).replace("$formula",items[1]
         ).replace("$InChIKey",items[3]
         ).replace("$InChI",items[2]
-        ).replace("$SMILES",items[4].replace(';',';<br>')
+        ).replace("$SMILES",SMILES
         ).replace("$name",items[5].replace(';',';<br>'))
         BGCOLOR=""
         if items[6]:

@@ -313,7 +313,7 @@ def display_regular_ligand(pdbid,asym_id,lig3,ligIdx,title):
                 else:
                     smiles_dict[items[1]].append(items[2])
         smiles_list=SMILES.split(';')
-        SMILES="<table><tr BGCOLOR='#DEDEDE'><th>Software</th><th>SMILES</th></tr>"
+        SMILES="<table width=100%><tr BGCOLOR='#DEDEDE'><th>Software</th><th>SMILES</th></tr>"
         for key in smiles_list:
             key=key.strip()
             if key in smiles_dict:
@@ -1090,7 +1090,7 @@ and non-cognate ligands are assigned score of 1, 3, and 4, respectively.
                     else:
                         smiles_dict[items[1]].append(items[2])
             smiles_list=SMILES.split(';')
-            SMILES="<table><tr BGCOLOR='#DEDEDE'><th>Software</th><th>SMILES</th></tr>"
+            SMILES="<table width=100%><tr BGCOLOR='#DEDEDE'><th>Software</th><th>SMILES</th></tr>"
             for key in smiles_list:
                 key=key.strip()
                 if key in smiles_dict:
