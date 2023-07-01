@@ -938,7 +938,7 @@ If the UniProt protein corresponding to the receptor chain is mapped to at
 least one Rhea reaction, all non-water substrates and products of the 
 reaction(s) are converted to 1024 bit Morgan fingerprint (ECFP4). Their
 chemical similarity to the ligand in question can then be measured by 
-Tanimoto Coefficient (TC). The highest TC among all substracts/products to
+Tanimoto Coefficient (TC). The highest TC among all substrates/products to
 the ligand is used to assign the annotation score: TC of [0,0.4), [0.4,0.6),
 [0.6,0.8), [0.8,1) and 1 correspond to annotation score of 1, 2, 3, 4 and 5, respectively.
 
