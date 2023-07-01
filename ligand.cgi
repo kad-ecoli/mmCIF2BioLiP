@@ -31,6 +31,9 @@ if inchi and not inchi.startswith("INCHI="):
 inchikey= form.getfirst("inchikey",'').upper().replace(' ','')
 smiles  = form.getfirst("smiles",'').upper().replace(' ','').rstrip(';')
 ligname = form.getfirst("ligname",'').upper().replace('"','').replace("'",'')
+img     = form.getfirst("img",'').replace('"','').replace("'",'')
+if not img in ['0','1']:
+    img = '0'
 
 para_list=[]
 if lig3:
@@ -204,19 +207,19 @@ if not inchi and not inchikey: # inchi only has unique hit
 <center> 
 <a class='hover' href='?&page=1&%s'>&lt&lt</a>
 <a class='hover' href='?&page=%d&%s'>&lt</a>
-'''%(para,page-1,para))
+'''%(para+"&img="+img,page-1,para+"&img="+img))
     for p in range(page-10,page+11):
         if p<1 or p>totalPage:
             continue
         elif p==page:
             print(' %d '%(p))
         else:
-            print('''<a class='hover' href='?&page=%d&%s'>%d</a>'''%(p,para,p))
+            print('''<a class='hover' href='?&page=%d&%s'>%d</a>'''%(p,para+"&img="+img,p))
     print('''
 <a class='hover' href='?&page=%d&%s'>&gt</a>
 <a class='hover' href='?&page=last&%s'>&gt&gt</a>
 <form name="pform" action="ligand.cgi">Go to page <select name="page" onchange="this.form.submit()">
-'''%(page+1,para,para))
+'''%(page+1,para+"&img="+img,para+"&img="+img))
     for p in range(1,totalPage+1):
         if p==page:
             print('<option value="%d" selected="selected">%d</option>'%(p,p))
@@ -229,8 +232,12 @@ if not inchi and not inchikey: # inchi only has unique hit
 <input type=hidden name=inchikey value='%s'>
 <input type=hidden name=smiles   value='%s'>
 <input type=hidden name=ligname  value='%s'>
-</form></center><br>'''%(lig3,formula,inchi,inchikey,smiles,ligname))
-
+<input type=hidden name=img      value='%s'>
+</form></center>'''%(lig3,formula,inchi,inchikey,smiles,ligname,img))
+if img=='0':
+    print("<a href='?&page=%d&%s&img=1'>[Click to show 2D diagrams for ligand structures]</a>"%(page,para))
+else:
+    print("<a href='?&page=%d&%s&img=0'>[Click to hide 2D diagrams for ligand structures]</a>"%(page,para))
 
 
 print('''<table border="0" align=center width=100%>    
@@ -263,6 +270,10 @@ for l,items in enumerate(lines):
         ligandID+='<br><span title="View at DrugBank"><a href=http://go.drugbank.com/drugs/%s target=_blank>%s</a>'%(items[7],items[7])
     if items[8]:
         ligandID+='<br><span title="View at ZINC"><a href=http://zinc.docking.org/substances/%s target=_blank>%s</a>'%(items[8],items[8])
+    link_text=str(l+1)
+    if img=='1':
+        ligandID='<span title="View 2D diagram for %s"><a href="sym.cgi?code=%s" target=_blank><img src=https://cdn.rcsb.org/images/ccd/labeled/%s/%s.svg></a></span><br>'%(
+            ccd,ccd,ccd[0],ccd)+ligandID
         
     print('''
 <tr %s ALIGN=center>
