@@ -244,10 +244,13 @@
 
 <!-- CONTENT START -->
 
+<a name=#workflow>
+<h1>BioLiP data curation</h1>
+</a>
 <p>
-BioLiP database is constructed using know protein structures in <a href="https://www.rcsb.org" target=_blank>PDB</a>. The overall flowchart of the database construction is shown below, which includes three major steps. <br>
+BioLiP database is constructed using know protein structures in <a href="https://www.rcsb.org" target=_blank>PDB</a>. The overall workflow for database construction is shown below, which includes three major steps. <br>
 <br>
-<b>Step 1</b>. For each entry in the PDB, the 3D structure in <a href=https://mmcif.wwpdb.org/>mmCIF</a> format is downloaded. For each protein chain (called receptor), the following information (if any) is collected either from the mmCIF file or from the <a href="http://www.ebi.ac.uk/pdbe/docs/sifts/" target=_blank>SIFTS</a> project: catalytic site residues mapped from the <a href="https://www.ebi.ac.uk/thornton-srv/m-csa/" target=_blank>Catalytic Site Atlas</a>; annotated <a href="http://enzyme.expasy.org/" target=_blank>Enzyme Commission</a> (EC) numbers; <a href="http://www.geneontology.org/" target=_blank>Gene Ontology</a> (GO) terms, <a href="http://www.uniprot.org/" target=_blank>UniProt</a> accessions, and the <a href="https://pubmed.ncbi.nlm.nih.gov/">PubMed</a> ID, with which the abstract of the research paper can be downloaded. Modified residues of proteins and nucleic acids are <a href="TextS1.html">mapped to standard residue types</a>.<br>
+<b>Step 1</b>. For each entry in the PDB, the 3D structure in <a href=https://mmcif.wwpdb.org/>mmCIF</a> format is downloaded. For each protein chain (called receptor), the following information (if any) is collected either from the mmCIF file or from the <a href="http://www.ebi.ac.uk/pdbe/docs/sifts/" target=_blank>SIFTS</a> project: catalytic site residues mapped from the <a href="https://www.ebi.ac.uk/thornton-srv/m-csa/" target=_blank>Catalytic Site Atlas</a>; annotated <a href="http://enzyme.expasy.org/" target=_blank>Enzyme Commission</a> (EC) numbers; <a href="http://www.geneontology.org/" target=_blank>Gene Ontology</a> (GO) terms, <a href="http://www.uniprot.org/" target=_blank>UniProt</a> accessions, and the <a href="https://pubmed.ncbi.nlm.nih.gov/">PubMed</a> ID, with which the abstract of the research paper can be downloaded. Modified residues of proteins and nucleic acids are mapped to standard residue types <a href="#TextS1">(See below for details)</a>.<br>
 
 <b>Step 2</b>. Ligands, which are defined as small molecules, are extracted from the mmCIF file. Three kinds of ligands are collected in the BioLiP database: regular ligands (labeled with "." by the _atom_site.label_seq_id record), including metal ions; DNA/RNA; and peptides with less than 30 residues. The binding affinity (if any) for each ligand is taken from the original literature, <a href="http://bindingmoad.org/" target=_blank> Binding MOAD</a>, <a href="http://www.pdbbind.org.cn/" target=_blank>PDBbind-CN</a>, and <a href="http://www.bindingdb.org/bind/index.jsp" target=_blank>Binding DB</a> databases.<br>
 
@@ -260,7 +263,17 @@ BioLiP database is constructed using know protein structures in <a href="https:/
 </a>
 <br><br>
 
-<a name="api">BioLiP can be queried by RESTful API.</a>
+<a name="TextS1">
+<h1>Mapping of modified residues to standard residue types</h1>
+</a>
+BioLiP maps non-standard residue types in proteins and nucleic acids to standard residue types, including the 20 standard amino acids (ALA, CYS, ASP, GLU, PHE, GLY, HIS, ILE, LYS, LEU, MET, ASN, PRO, GLN, ARG, SET, THR, VAL, TRP, TYR), 4 ribonucleotides (A, C, G, U), and 4 deoxyribonucleotides (DA, DC, DG, DT). First, common non-standard residue types MSE and PSU are mapped to the amino acid MET and the ribonucleotide U, respectively.  Second, if the mmCIF file contains the "_pdbx_struct_mod_residue" record, which is equivalent to the "MODRES" record in a PDB file, it is used to map non-standard residue name to standard residue name. Third, for a non-standard residue that cannot be mapped by the previous two rules, the atom names of all non-hydrogen atoms from this residue are compared against those of the 28 standard residue types. For example, for a non-standard residue HYP (4-hydroxyproline) with the following atoms (N, CA, C, O, CB, CG, CD, OD1), its similarity to standard amino acid PRO with atoms (N, CA, O, CB, CG, CD) can be calculated by the Jaccard index:<br>
+<center>J=|HYP&#8745;PRO|/|HYP&cup;PRO|</center><br>
+Here, HYP&#8745;PRO = (N, CA, C, O, CB, CG, CD) is the set of intersection between the atoms of the two residues, while HYP&cup;PRO = (N, CA, C, O, CB, CG, CD, OD1) is the union set between the atoms of the two residues. In this example for HYP versus PRO, the Jaccard index J=7/8. After comparing the atomic compositions between an unmapped non-standard residue to all 28 standard residue types, the non-standard residue is mapped to the standard residue type with the highest Jaccard index.
+<br><br>
+
+<a name="api">
+<h1>BioLiP API</h1>
+</a>BioLiP can be queried by RESTful API.
 <li>
 Chemical information for ligand can be queried by its 3-letter <a href=https://www.wwpdb.org/data/ccd target=_blank>Chemical Component Dictionary (CCD)</a> used by PDB. For example, to show chemical information for FMB (Formycin B):
 <table>
@@ -280,7 +293,7 @@ Ligand-protein interactions can be searched by PDB ID, ligand, UniProt accession
 <tr><td style="background-color:#FFFFFF;"><a href=qsearch.cgi?got=0004731 target=_blank><pre>https://zhanggroup.org/BioLiP/qsearch.cgi?got=0004731</pre></a></td><td>&nbsp;&nbsp;&nbsp;&nbsp;Search interactions for GO term GO:0004731 (purine-nucleoside phosphorylase activity)</td></tr>
 <tr><td style="background-color:#FFFFFF;"><a href=qsearch.cgi?pubmed=9653038 target=_blank><pre>https://zhanggroup.org/BioLiP/qsearch.cgi?pubmed=9653038</pre></a></td><td>&nbsp;&nbsp;&nbsp;&nbsp;Search interactions for primary citation with PubMed ID 9653038</td></tr>
 </table>
-The above queries will return the result in HTML format. Append the "?outfmt=txt" parameter to the query to obtain plain text output. For example, the last query above can be modified to get plain text output by:
+The above queries will return the result in HTML format. Append the "&amp;outfmt=txt" parameter to the query to obtain plain text output. For example, the last query above can be modified to get plain text output by:
 <table><tr><td style="background-color:#FFFFFF;">
 <a href="qsearch.cgi?pubmed=9653038&outfmt=txt" target=_blank>
 <pre>https://zhanggroup.org/BioLiP/qsearch.cgi?pubmed=9653038&outfmt=txt</pre></a>
