@@ -190,4 +190,5 @@ This step must be run after everything is done.
 
 ## Reference ##
 Chengxin Zhang, Xi Zhang, Peter L Freddolino and Yang Zhang (2023)
-BioLiP2: a structure database for biological relevant ligand-protein interactions.
+[BioLiP2: an updated structure database for biologically relevant ligand-protein interactions](https://doi.org/10.1093/nar/gkad630).
+Nucleic Acids Research, gkad630.
