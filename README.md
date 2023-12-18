@@ -118,7 +118,7 @@ This step must be performed after step 2 and 5 (regardless of step 3 and 4).
 ```
 This script checks ``interim/*/*.txt`` for artifact ligand and download pubmed abstract to ``pubmed/*.txt``
 
-### Step 6: remove artifact and unbound ligand ###
+### Step 7: remove artifact and unbound ligand ###
 This step must be performed after step 6.
 ```bash
 ./script/curate_ligand.pl
@@ -127,7 +127,7 @@ This script check potential artifact ligand listed by ``interim/*/*.txt`` agains
 It repackages receptor and biologically relevent ligand pdb files into ``interim/*/*.tar.bz2``. 
 Binding sites are written to ``interim/*/*.bsr``.
 
-### Step 7: prepare redundant dataset ###
+### Step 8: prepare redundant dataset ###
 This step must be performed after step 7.
 ```bash
 ./script/make_weekly.pl
