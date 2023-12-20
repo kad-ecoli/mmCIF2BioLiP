@@ -7,35 +7,36 @@ my $bindir = dirname(abs_path(__FILE__));
 my $rootdir = dirname($bindir);
 
 #### remove files older than 1 hour ####
-foreach my $filename(`find $rootdir/output/*.gz -mmin +60 2>/dev/null`)
+chdir("$rootdir/output");
+foreach my $filename(`find *.gz -mmin +60 2>/dev/null`)
 {
     chomp($filename);
     my $cmd="rm -f $filename";
     #print "$cmd\n";
     system("$cmd");
 }
-foreach my $filename(`find $rootdir/output/*.svg -mmin +60 2>/dev/null`)
+foreach my $filename(`find *.svg -mmin +60 2>/dev/null`)
 {
     chomp($filename);
     my $cmd="rm -f $filename";
     #print "$cmd\n";
     system("$cmd");
 }
-foreach my $filename(`find $rootdir/output/*.log -mmin +60 2>/dev/null`)
+foreach my $filename(`find *.log -mmin +60 2>/dev/null`)
 {
     chomp($filename);
     my $cmd="rm -f $filename";
     #print "$cmd\n";
     system("$cmd");
 }
-foreach my $filename(`find $rootdir/output/*.dot -mmin +60 2>/dev/null`)
+foreach my $filename(`find *.dot -mmin +60 2>/dev/null`)
 {
     chomp($filename);
     my $cmd="rm -f $filename";
     #print "$cmd\n";
     system("$cmd");
 }
-foreach my $filename(`find $rootdir/output/*html -mmin +120 2>/dev/null|sed 's/.html\$//g'`)
+foreach my $filename(`find *html -mmin +120 2>/dev/null|sed 's/.html\$//g'`)
 {
     chomp($filename);
     my $cmd="rm -rf $filename $filename.html";
