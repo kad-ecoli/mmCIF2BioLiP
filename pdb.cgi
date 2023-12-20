@@ -1306,7 +1306,22 @@ def pdb2title(pdbid):
     fp.close()
     return title
 
-def flock_by_ipaddress(pdbid,asym_id,bs,ligIdx,lig3,outfmt):
+if __name__=="__main__":
+    form   =cgi.FieldStorage()
+    pdbid  =form.getfirst("pdb",'').lower()
+    if not pdbid:
+        pdbid=form.getfirst("pdbid",'').lower()
+    asym_id=form.getfirst("chain",'')
+    if not asym_id:
+        asym_id=form.getfirst("asym_id",'')
+    bs     =form.getfirst("bs",'').upper()
+    ligIdx =form.getfirst("idx",'')
+    if not ligIdx:
+        ligIdx =form.getfirst("ligIdx",'')
+    lig3   =form.getfirst("lig3",'')
+    outfmt =form.getfirst("outfmt",'')
+
+    ## flock_by_ipaddress(pdbid,asym_id,bs,ligIdx,lig3,outfmt) ##
     ipaddress=os.getenv("REMOTE_ADDR")
     lock_target="%s/output/%s.log"%(rootdir,ipaddress)
     if not os.path.isfile(lock_target):
@@ -1328,25 +1343,9 @@ Too many requests from IP address %s. Please refresh
 </body>
 '''%(ipaddress,pdbid,asym_id,bs,ligIdx,lig3,outfmt))
         exit()
-    return
 
-if __name__=="__main__":
-    form   =cgi.FieldStorage()
-    pdbid  =form.getfirst("pdb",'').lower()
-    if not pdbid:
-        pdbid=form.getfirst("pdbid",'').lower()
-    asym_id=form.getfirst("chain",'')
-    if not asym_id:
-        asym_id=form.getfirst("asym_id",'')
-    bs     =form.getfirst("bs",'').upper()
-    ligIdx =form.getfirst("idx",'')
-    if not ligIdx:
-        ligIdx =form.getfirst("ligIdx",'')
-    lig3   =form.getfirst("lig3",'')
-    outfmt =form.getfirst("outfmt",'')
 
-    flock_by_ipaddress(pdbid,asym_id,bs,ligIdx,lig3,outfmt)
-    
+
     if outfmt=='1':
         download_pdb1(pdbid,asym_id,lig3,ligIdx)
         exit(0)
