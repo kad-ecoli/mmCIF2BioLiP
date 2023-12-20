@@ -8,6 +8,8 @@ import textwrap
 import tarfile
 import gzip
 import re
+import datetime
+import fcntl
 
 rootdir=os.path.dirname(os.path.abspath(__file__))
 
@@ -1304,6 +1306,30 @@ def pdb2title(pdbid):
     fp.close()
     return title
 
+def flock_by_ipaddress(pdbid,asym_id,bs,ligIdx,lig3,outfmt):
+    ipaddress=os.getenv("REMOTE_ADDR")
+    lock_target="%s/output/%s.log"%(rootdir,ipaddress)
+    if not os.path.isfile(lock_target):
+        fp=open(lock_target,'w')
+        fp.write(str(datetime.datetime.now())+'\n')
+        fp.close()
+    fp=open(lock_target)
+    try:
+        fcntl.flock(fp,fcntl.LOCK_EX|fcntl.LOCK_NB)
+    except IOError:
+        print("Content-type: text/html\n")
+        print('''<html>
+<head>
+<title>BioLiP</title>
+</head>
+<body>
+Too many requests from IP address %s. Please refresh 
+<a href=pdb.cgi?pdb=%s&chain=%s&bs=%s&idx=%s&lig3=%s&outfmt=%s>this page</a> in a few minutes.
+</body>
+'''%(ipaddress,pdbid,asym_id,bs,ligIdx,lig3,outfmt))
+        exit()
+    return
+
 if __name__=="__main__":
     form   =cgi.FieldStorage()
     pdbid  =form.getfirst("pdb",'').lower()
@@ -1318,6 +1344,8 @@ if __name__=="__main__":
         ligIdx =form.getfirst("ligIdx",'')
     lig3   =form.getfirst("lig3",'')
     outfmt =form.getfirst("outfmt",'')
+
+    flock_by_ipaddress(pdbid,asym_id,bs,ligIdx,lig3,outfmt)
     
     if outfmt=='1':
         download_pdb1(pdbid,asym_id,lig3,ligIdx)

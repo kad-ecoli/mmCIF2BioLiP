@@ -4,6 +4,8 @@ import cgitb; cgitb.enable()  # for troubleshooting
 import os
 import gzip
 import textwrap
+import datetime
+import fcntl
 
 rootdir=os.path.dirname(os.path.abspath(__file__))
 
@@ -66,6 +68,31 @@ if baff:
 if pubmed:
     para_list.append("pubmed=%s"%pubmed)
 para='&'.join(para_list)
+
+
+#### flock_by_ipaddress ####
+ipaddress=os.getenv("REMOTE_ADDR")
+lock_target="%s/output/%s.log"%(rootdir,ipaddress)
+if not os.path.isfile(lock_target):
+    fp=open(lock_target,'w')
+    fp.write(str(datetime.datetime.now())+'\n')
+    fp.close()
+fp=open(lock_target)
+try:
+    fcntl.flock(fp,fcntl.LOCK_EX|fcntl.LOCK_NB)
+except IOError:
+    print("Content-type: text/html\n")
+    print('''<html>
+<head>
+<title>BioLiP</title>
+</head>
+<body>
+Too many requests from IP address %s. Please refresh 
+<a href=qsearch.cgi?%s>this page</a> in a few minutes.
+</body>
+'''%(ipaddress,para))
+    exit()
+
 
 #### read database data ####
 # pdb:recCha => resolution csa csa_renumbered ec go uniprot pubmed
