@@ -73,18 +73,33 @@ para='&'.join(para_list)
 #### flock_by_ipaddress ####
 ipaddress=os.getenv("REMOTE_ADDR")
 lock_target="%s/output/%s.log"%(rootdir,ipaddress)
+now=datetime.datetime.strftime(
+    datetime.datetime.now(),"%Y-%m-%d %H:%M:%S")
 if not os.path.isfile(lock_target):
     fp=open(lock_target,'w')
-    fp.write(str(datetime.datetime.now())+'\n')
+    fp.write(now+'\n')
     fp.close()
 else:
     fp=open(lock_target,'a')
-    fp.write(str(datetime.datetime.now())+'\n')
+    fp.write(now+'\n')
     fp.close()
 fp=open(lock_target)
+datetime_list=fp.read().splitlines()
 try:
     fcntl.flock(fp,fcntl.LOCK_EX|fcntl.LOCK_NB)
 except IOError:
+    print("Content-type: text/html\n")
+    print('''<html>
+<head>
+<title>BioLiP</title>
+</head>
+<body>
+Too many requests from IP address %s. Please refresh 
+<a href=qsearch.cgi?%s>this page</a> in a few minutes.
+</body>
+'''%(ipaddress,para))
+    exit()
+if datetime_list.count(now)>=2:
     print("Content-type: text/html\n")
     print('''<html>
 <head>
