@@ -1336,31 +1336,39 @@ if __name__=="__main__":
         fp.close()
     fp=open(lock_target)
     datetime_list=fp.read().splitlines()
+    toomany_txt='''<html>
+<head>
+<title>BioLiP</title>
+</head>
+<body>
+Too many requests from IP address %s. Please refresh 
+<a href=pdb.cgi?pdb=%s&chain=%s&bs=%s&idx=%s&lig3=%s&outfmt=%s>this page</a> in a few minutes.
+
+You may download the full database <a href=download.html>here</a>.
+</body>
+'''%(ipaddress,pdbid,asym_id,bs,ligIdx,lig3,outfmt)
     try:
         fcntl.flock(fp,fcntl.LOCK_EX|fcntl.LOCK_NB)
     except IOError:
         print("Content-type: text/html\n")
-        print('''<html>
-<head>
-<title>BioLiP</title>
-</head>
-<body>
-Too many requests from IP address %s. Please refresh 
-<a href=pdb.cgi?pdb=%s&chain=%s&bs=%s&idx=%s&lig3=%s&outfmt=%s>this page</a> in a few minutes.
-</body>
-'''%(ipaddress,pdbid,asym_id,bs,ligIdx,lig3,outfmt))
+        print(toomany_txt)
         exit()
+    toomany=False
     if datetime_list.count(now)>=2:
+        toomany=True
+    elif len(datetime_list)>=20:
+        datetime_list=[':'.join(d.split(':')[:-1]) for d in datetime_list]
+        now=':'.join(now.split(':')[:-1])
+        if datetime_list.count(now)>=20:
+            toomany=True
+        elif len(datetime_list)>=200:
+            datetime_list=[':'.join(d.split(':')[:-1]) for d in datetime_list]
+            now=':'.join(now.split(':')[:-1])
+            if datetime_list.count(now)>=200:
+                toomany=True
+    if toomany:
         print("Content-type: text/html\n")
-        print('''<html>
-<head>
-<title>BioLiP</title>
-</head>
-<body>
-Too many requests from IP address %s. Please refresh 
-<a href=pdb.cgi?pdb=%s&chain=%s&bs=%s&idx=%s&lig3=%s&outfmt=%s>this page</a> in a few minutes.
-</body>
-'''%(ipaddress,pdbid,asym_id,bs,ligIdx,lig3,outfmt))
+        print(toomany_txt)
         exit()
 
 

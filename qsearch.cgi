@@ -85,32 +85,41 @@ else:
     fp.close()
 fp=open(lock_target)
 datetime_list=fp.read().splitlines()
+toomany_txt='''<html>
+<head>
+<title>BioLiP</title>
+</head>
+<body>
+Too many requests from IP address %s. Please refresh 
+<a href=qsearch.cgi?%s>this page</a> in a few minutes.
+
+You may download the full database <a href=download.html>here</a>.
+</body>
+'''%(ipaddress,para)
 try:
     fcntl.flock(fp,fcntl.LOCK_EX|fcntl.LOCK_NB)
 except IOError:
     print("Content-type: text/html\n")
-    print('''<html>
-<head>
-<title>BioLiP</title>
-</head>
-<body>
-Too many requests from IP address %s. Please refresh 
-<a href=qsearch.cgi?%s>this page</a> in a few minutes.
-</body>
-'''%(ipaddress,para))
+    print(toomany_txt)
     exit()
+toomany=False
 if datetime_list.count(now)>=2:
+    toomany=True
+elif len(datetime_list)>=20:
+    datetime_list=[':'.join(d.split(':')[:-1]) for d in datetime_list]
+    now=':'.join(now.split(':')[:-1])
+    if datetime_list.count(now)>=20:
+        toomany=True
+    elif len(datetime_list)>=200:
+        datetime_list=[':'.join(d.split(':')[:-1]) for d in datetime_list]
+        now=':'.join(now.split(':')[:-1])
+        if datetime_list.count(now)>=200:
+            toomany=True
+if toomany:
     print("Content-type: text/html\n")
-    print('''<html>
-<head>
-<title>BioLiP</title>
-</head>
-<body>
-Too many requests from IP address %s. Please refresh 
-<a href=qsearch.cgi?%s>this page</a> in a few minutes.
-</body>
-'''%(ipaddress,para))
+    print(toomany_txt)
     exit()
+
 
 
 #### read database data ####
