@@ -77,6 +77,10 @@ if not os.path.isfile(lock_target):
     fp=open(lock_target,'w')
     fp.write(str(datetime.datetime.now())+'\n')
     fp.close()
+else:
+    fp=open(lock_target,'a')
+    fp.write(str(datetime.datetime.now())+'\n')
+    fp.close()
 fp=open(lock_target)
 try:
     fcntl.flock(fp,fcntl.LOCK_EX|fcntl.LOCK_NB)
