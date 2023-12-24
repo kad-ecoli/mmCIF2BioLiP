@@ -1323,6 +1323,23 @@ if __name__=="__main__":
 
     ## flock_by_ipaddress(pdbid,asym_id,bs,ligIdx,lig3,outfmt) ##
     ipaddress=os.getenv("REMOTE_ADDR")
+    if ipaddress in ["47.76.35.19",   # Alibaba Cloud LLC
+                     "3.224.220.101", # Amazon Data Services NoVa
+                     "52.70.240.171", # Amazon Technologies Inc
+                     "23.22.35.162",  # Amazon Data Services NoVa
+        ]:
+        print("Content-type: text/html\n")
+        print('''<html>
+<head>
+<title>IP blocked</title>
+</head>
+<body>
+Your IP address is blocked because we detect spam activity from IP address %s. 
+If you believe this is an error, contact zcx@umich.edu
+Meanwhile, you may download the full database <a href=download.html>here</a>.
+</body>
+'''%(ipaddress))
+        exit()
     lock_target="%s/output/%s.log"%(rootdir,ipaddress)
     now=datetime.datetime.strftime(
         datetime.datetime.now(),"%Y-%m-%d %H:%M:%S")
