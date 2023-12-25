@@ -120,17 +120,17 @@ except IOError:
     print(toomany_txt)
     exit()
 toomany=False
-if datetime_list.count(now)>=2:
+if datetime_list.count(now)>2:
     toomany=True
-elif len(datetime_list)>=20:
+elif len(datetime_list)>20:
     datetime_list=[':'.join(d.split(':')[:-1]) for d in datetime_list]
     now=':'.join(now.split(':')[:-1])
-    if datetime_list.count(now)>=20:
+    if datetime_list.count(now)>20:
         toomany=True
-    elif len(datetime_list)>=200:
+    elif len(datetime_list)>200:
         datetime_list=[':'.join(d.split(':')[:-1]) for d in datetime_list]
         now=':'.join(now.split(':')[:-1])
-        if datetime_list.count(now)>=200:
+        if datetime_list.count(now)>200:
             toomany=True
 if toomany:
     print("Content-type: text/html\n")
