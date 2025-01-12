@@ -266,7 +266,6 @@ Each entry in BioLiP contains a comprehensive list of annotations on:
 <li>ligand-binding residues; </li>
 <li>ligand binding affinity (from the original literature, plus
     <a href="https://bindingmoad.org/" target=_blank>Binding MOAD</a>, 
-    <a href="https://www.pdbbind.org.cn/" target=_blank>PDBbind-CN</a>, 
     <a href="https://www.bindingdb.org/bind/index.jsp" target=_blank>BindingDB</a>);</li>
 <li>catalytic site residues (mapped from <a href="https://www.ebi.ac.uk/thornton-srv/m-csa/" target=_blank>Mechanism and Catalytic Site Atlas</a>);</li>
 <li><a href="https://enzyme.expasy.org/" target=_blank>Enzyme Commission</a> (EC) numbers and
@@ -277,7 +276,6 @@ Each entry in BioLiP contains a comprehensive list of annotations on:
     <a href="https://pdbj.org/" target=_blank>PDBj</a>,
     <a href="http://www.ebi.ac.uk/pdbsum" target=_blank>PDBsum</a>,
     <a href="https://bindingmoad.org/" target=_blank>Binding MOAD</a>, 
-    <a href="https://www.pdbbind.org.cn/" target=_blank>PDBbind-CN</a>, 
     <a href="https://www.ebi.ac.uk/thornton-srv/m-csa/" target=_blank>Mechanism and Catalytic Site Atlas</a>,
     <a href="https://www.ebi.ac.uk/QuickGO/" target=_blank>QuickGO</a>,
     <a href="https://enzyme.expasy.org/" target=_blank>ExPASy ENZYME</a>,
@@ -289,6 +287,7 @@ Each entry in BioLiP contains a comprehensive list of annotations on:
 </p>
 
 <img src="images/new.gif">In Feburary 2023, BioLiP was updated to BioLiP2, where newly added features are explained <a href=whatsnew2.html>here</a>.
+<img src="images/new.gif">In January 2025, <a href="download/PDBBind.txt" target=download>24809</a> affinity data from <a href="https://www.pdbbind.org.cn/" target=_blank>PDBbind-CN</a> are removed due to licensing issue</a>.
 
 <!-- CONTENT REFRESH START -->
 <meta http-equiv="refresh" content="0; url='index.cgi'"/>
@@ -389,7 +388,7 @@ function example_pdbfile()
     </tr>
     <tr>
         <td>With binding affinity data&nbsp;</td>
-        <td><input type="checkbox" name="baff" value="baff">Check this box to restrict search to entries with binding affinity from MOAD, PDBbind-CN, BindingDB, or manual survey of original literature.</td>
+        <td><input type="checkbox" name="baff" value="baff">Check this box to restrict search to entries with binding affinity from MOAD, BindingDB, or manual survey of original literature.</td>
     </tr>
 </table>
 <INPUT TYPE=SUBMIT VALUE="Search">
