@@ -147,7 +147,6 @@ BioLiP is updated weekly and the current version ($today) contains:
 <li>Number of entries for RNA ligands: <a href=qsearch.cgi?lig3=rna>$numRna</a></li>
 <li>Number of entries with binding affinity data: <a href=qsearch.cgi?baff=baff>$numBaff</a>
 (<a href=qsearch.cgi?baff=moad>$numMoad</a> from Binding MOAD,
- <a href=qsearch.cgi?baff=pdbbind>$numPdbbind</a> from PDBbind-CN,
  <a href=qsearch.cgi?baff=bindingdb>$numBindingdb</a> from BindingDB, and
  <a href=qsearch.cgi?baff=manual>$numManual</a> from manual survey of the original literature)</li>
 <li>Number of protein receptors: <a href=qsearch.cgi>$numProtein</a></li>
